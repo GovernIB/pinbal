@@ -147,26 +147,35 @@ public interface RecobrimentService {
 	List<ProcedimentBasic> getProcediments(String entitatCodi) throws EntitatNotFoundException;
 
 	/**
+	 * @param ambPermisos si s'ha d'informar, per a cada servei, dels tipus de
+	 *        document admesos i de si l'usuari autenticat hi té permís en
+	 *        alguna de les seves entitats
 	 * @return llista de tots els elements de tipus Servei configurats a PINBAL
 	 */
 	@PreAuthorize("hasRole('PBL_WS')")
-	List<ServeiBasic> getServeis();
+	List<ServeiBasic> getServeis(boolean ambPermisos);
 
 	/**
 	 * @param entitatCodi codi de l'entitat
+	 * @param ambPermisos si s'ha d'informar, per a cada servei, dels tipus de
+	 *        document admesos i de si l'usuari autenticat hi té permís dins
+	 *        l'entitat
 	 * @return lista de tots els elements de tipus Servei d’una entitat
 	 * @throws EntitatNotFoundException
 	 */
 	@PreAuthorize("hasRole('PBL_WS')")
-	List<ServeiBasic> getServeisByEntitat(String entitatCodi) throws EntitatNotFoundException;
+	List<ServeiBasic> getServeisByEntitat(String entitatCodi, boolean ambPermisos) throws EntitatNotFoundException;
 
 	/**
 	 * @param procedimentCodi codi del procediment
+	 * @param ambPermisos si s'ha d'informar, per a cada servei, dels tipus de
+	 *        document admesos i de si l'usuari autenticat hi té permís dins
+	 *        el procediment
 	 * @return llista de tots els elements de tipus Servei d’un procediment
 	 * @throws ProcedimentNotFoundException
 	 */
 	@PreAuthorize("hasRole('PBL_WS')")
-	List<ServeiBasic> getServeisByProcediment(String entitatCodi, String procedimentCodi) throws ProcedimentNotFoundException;
+	List<ServeiBasic> getServeisByProcediment(String entitatCodi, String procedimentCodi, boolean ambPermisos) throws ProcedimentNotFoundException;
 
     /**
      * @param serveiCodi codi del servei

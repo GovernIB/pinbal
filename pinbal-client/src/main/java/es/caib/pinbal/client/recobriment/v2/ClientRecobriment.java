@@ -55,18 +55,57 @@ public class ClientRecobriment extends BasicAuthClientBase {
     // /////////////////////////////////////////////////////////////
 
     public List<ServeiBasic> getServeis() throws IOException {
-        Response response = restPeticioGet("serveis", null);
+        return getServeis(false);
+    }
+
+    /**
+     * @param ambPermisos si s'han d'emplenar els camps 'permis' i
+     *            'documentsTipusPermesos' de cada servei.
+     */
+    public List<ServeiBasic> getServeis(boolean ambPermisos) throws IOException {
+        Response response = restPeticioGet("serveis", queryParamAmbPermisos(ambPermisos));
         return processListResponse(response, ServeiBasic.class);
     }
 
     public List<ServeiBasic> getServeisPerEntitat(String entitatCodi) throws IOException {
-        Response response = restPeticioGet("entitats/" + entitatCodi + "/serveis", null);
+        return getServeisPerEntitat(entitatCodi, false);
+    }
+
+    /**
+     * @param ambPermisos si s'han d'emplenar els camps 'permis' i
+     *            'documentsTipusPermesos' de cada servei.
+     */
+    public List<ServeiBasic> getServeisPerEntitat(String entitatCodi, boolean ambPermisos) throws IOException {
+        Response response = restPeticioGet("entitats/" + entitatCodi + "/serveis", queryParamAmbPermisos(ambPermisos));
         return processListResponse(response, ServeiBasic.class);
     }
 
     public List<ServeiBasic> getServeisPerProcediment(String entitatCodi, String procedimentCodi) throws IOException {
-        Response response = restPeticioGet("entitats/" + entitatCodi + "/procediments/" + procedimentCodi + "/serveis", null);
+        return getServeisPerProcediment(entitatCodi, procedimentCodi, false);
+    }
+
+    /**
+     * @param ambPermisos si s'han d'emplenar els camps 'permis' i
+     *            'documentsTipusPermesos' de cada servei.
+     */
+    public List<ServeiBasic> getServeisPerProcediment(String entitatCodi, String procedimentCodi, boolean ambPermisos) throws IOException {
+        Response response = restPeticioGet(
+                "entitats/" + entitatCodi + "/procediments/" + procedimentCodi + "/serveis",
+                queryParamAmbPermisos(ambPermisos));
         return processListResponse(response, ServeiBasic.class);
+    }
+
+    /**
+     * Només s'envia el paràmetre quan es demanen els permisos, per a que la
+     * petició sigui idèntica a la que feien les versions anteriors del client.
+     */
+    private Map<String, String> queryParamAmbPermisos(boolean ambPermisos) {
+        if (!ambPermisos) {
+            return null;
+        }
+        Map<String, String> queryParams = new HashMap<>();
+        queryParams.put("ambPermisos", "true");
+        return queryParams;
     }
 
     // Obtenció de dades específiques

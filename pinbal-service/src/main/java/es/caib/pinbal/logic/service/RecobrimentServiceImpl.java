@@ -36,6 +36,7 @@ import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.logic.helper.PluginHelper;
 import es.caib.pinbal.logic.helper.RecobrimentHelper;
 import es.caib.pinbal.logic.helper.RecobrimentV2Helper;
+import es.caib.pinbal.logic.helper.ServeiHelper;
 import es.caib.pinbal.logic.intf.dto.ArbreDto;
 import es.caib.pinbal.logic.intf.dto.DadaEspecificaDto;
 import es.caib.pinbal.logic.intf.dto.EstatTipus;
@@ -69,7 +70,6 @@ import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
 import es.caib.pinbal.persist.repository.ProcedimentRepository;
 import es.caib.pinbal.persist.repository.ServeiCampRepository;
 import es.caib.pinbal.persist.repository.ServeiConfigRepository;
-import es.caib.pinbal.persist.repository.ServeiRepository;
 import es.caib.pinbal.plugin.dadescomuns.Municipi;
 import es.caib.pinbal.plugin.dadescomuns.Pais;
 import es.caib.pinbal.plugin.dadescomuns.Provincia;
@@ -127,10 +127,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementació dels mètodes per a fer peticions al recobriment SCSP.
@@ -151,11 +154,11 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     private final ProcedimentRepository procedimentRepository;
     private final ServeiCampRepository serveiCampRepository;
     private final ServeiConfigRepository serveiConfigRepository;
-    private final ServeiRepository serveiRepository;
 
     private final PluginHelper pluginHelper;
     private final RecobrimentHelper recobrimentHelper;
     private final RecobrimentV2Helper recobrimentV2Helper;
+    private final ServeiHelper serveiHelper;
 
     private final DadesExternesService dadesExternesService;
     private final ServeiService serveiService;
@@ -660,36 +663,107 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
     }
 
     @Override
-    @Cacheable(value = "serveis")
     @Transactional(readOnly = true)
-    public List<ServeiBasic> getServeis() {
-        log.debug("Cercant tots els serveis");
+    public List<ServeiBasic> getServeis(boolean ambPermisos) {
+        log.debug("Cercant tots els serveis (ambPermisos=" + ambPermisos + ")");
 
-        return serveiRepository.findAllServeisClient();
+        return toServeisResposta(
+                serveiHelper.findServeisClient(),
+                ambPermisos ? findServeisPermesosTotesEntitats() : null);
     }
 
     @Override
-    @Cacheable(value = "serveisEntitat", key = "#entitatCodi")
     @Transactional(readOnly = true)
-    public List<ServeiBasic> getServeisByEntitat(String entitatCodi) throws EntitatNotFoundException {
-        log.debug("Cercant els serveis per a l'entitat (codi=" + entitatCodi + ")");
+    public List<ServeiBasic> getServeisByEntitat(String entitatCodi, boolean ambPermisos) throws EntitatNotFoundException {
+        log.debug("Cercant els serveis per a l'entitat (codi=" + entitatCodi + ", ambPermisos=" + ambPermisos + ")");
         Entitat entitat = entitatRepository.findByCodi(entitatCodi);
         if (entitat == null)
             throw new EntitatNotFoundException();
 
-        return serveiRepository.findServeisClientByEntitatCodi(entitatCodi);
+        return toServeisResposta(
+                serveiHelper.findServeisClientPerEntitat(entitatCodi),
+                ambPermisos ? findServeisPermesos(entitat, null) : null);
     }
 
     @Override
-    @Cacheable(value = "serveisProcediment", key = "#entitatCodi + ':' + #procedimentCodi")
     @Transactional(readOnly = true)
-    public List<ServeiBasic> getServeisByProcediment(String entitatCodi, String procedimentCodi) throws ProcedimentNotFoundException {
-        log.debug("Cercant els serveis actius per entitat i procediment (codi=" + procedimentCodi + ", entitat=" + entitatCodi + ")");
+    public List<ServeiBasic> getServeisByProcediment(String entitatCodi, String procedimentCodi, boolean ambPermisos) throws ProcedimentNotFoundException {
+        log.debug("Cercant els serveis actius per entitat i procediment (codi=" + procedimentCodi + ", entitat=" + entitatCodi + ", ambPermisos=" + ambPermisos + ")");
         Procediment procediment = procedimentRepository.findByEntitatCodiAndCodi(entitatCodi, procedimentCodi);
         if (procediment == null)
             throw new ProcedimentNotFoundException();
 
-        return serveiRepository.findServeisClientByProcedimentCodi(procedimentCodi);
+        return toServeisResposta(
+                serveiHelper.findServeisClientPerProcediment(entitatCodi, procedimentCodi),
+                ambPermisos ? findServeisPermesos(procediment.getEntitat(), procedimentCodi) : null);
+    }
+
+    /**
+     * Retorna una còpia dels serveis, amb la informació de permisos emplenada
+     * només si el client l'ha demanada.
+     * <p>
+     * Es treballa sobre còpies perquè les llistes de serveis provenen de la
+     * cache (compartida entre usuaris) i el permís depèn de qui fa la petició.
+     * Quan no es demana la informació de permisos, els camps 'permis' i
+     * 'documentsTipusPermesos' queden a null i, per la seva configuració
+     * @JsonInclude, no s'inclouen a la resposta: així es manté idèntica a la de
+     * les versions anteriors de l'API.
+     *
+     * @param serveis
+     *            serveis obtinguts de la cache.
+     * @param serveisPermesos
+     *            codis dels serveis sobre els que l'usuari té permís, o null si
+     *            no s'ha demanat la informació de permisos.
+     * @return la llista de serveis a retornar al client.
+     */
+    private List<ServeiBasic> toServeisResposta(List<ServeiBasic> serveis, Set<String> serveisPermesos) {
+        if (serveis == null)
+            return null;
+
+        List<ServeiBasic> resposta = new ArrayList<>(serveis.size());
+        for (ServeiBasic servei : serveis) {
+            ServeiBasic.ServeiBasicBuilder builder = servei.toBuilder();
+            if (serveisPermesos != null) {
+                builder.permis(serveisPermesos.contains(servei.getCodi()));
+            } else {
+                builder.permis(null).documentsTipusPermesos(null);
+            }
+            resposta.add(builder.build());
+        }
+        return resposta;
+    }
+
+    /**
+     * @param entitat
+     *            entitat sobre la que s'han de comprovar els permisos.
+     * @param procedimentCodi
+     *            codi del procediment a comprovar, o null per a comprovar-los
+     *            sobre tots els procediments de l'entitat.
+     * @return els codis dels serveis sobre els que l'usuari autenticat té
+     *         permís dins l'entitat indicada.
+     */
+    private Set<String> findServeisPermesos(Entitat entitat, String procedimentCodi) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (entitat == null || auth == null)
+            return Collections.emptySet();
+
+        return new HashSet<>(serveiHelper.findServeisPermesosPerUsuari(entitat.getId(), procedimentCodi, auth));
+    }
+
+    /**
+     * @return els codis dels serveis sobre els que l'usuari autenticat té
+     *         permís en alguna de les entitats actives a les que està vinculat.
+     */
+    private Set<String> findServeisPermesosTotesEntitats() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null)
+            return Collections.emptySet();
+
+        Set<String> serveisPermesos = new HashSet<>();
+        for (Entitat entitat : entitatRepository.findActivesPerUsuari(auth.getName())) {
+            serveisPermesos.addAll(serveiHelper.findServeisPermesosPerUsuari(entitat.getId(), null, auth));
+        }
+        return serveisPermesos;
     }
 
     @Override

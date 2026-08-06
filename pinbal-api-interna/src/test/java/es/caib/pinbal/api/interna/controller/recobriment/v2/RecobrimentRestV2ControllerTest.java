@@ -11,6 +11,7 @@ import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
+import es.caib.pinbal.client.recobriment.v2.Titular;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.logic.intf.dto.apiresponse.ServiceExecutionException;
@@ -187,7 +188,7 @@ public class RecobrimentRestV2ControllerTest {
                 ServeiBasic.builder().codi("SERVEI_002").descripcio("Servei 2").build()
         );
 
-        when(recobrimentService.getServeis()).thenReturn(serveis);
+        when(recobrimentService.getServeis(false)).thenReturn(serveis);
 
         mockMvc.perform(get("/recobriment/v2/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -198,9 +199,53 @@ public class RecobrimentRestV2ControllerTest {
                 .andExpect(jsonPath("$.[1].descripcio").value("Servei 2"));
     }
 
+    /**
+     * Sense el paràmetre 'ambPermisos' la resposta ha de ser idèntica a la de
+     * les versions anteriors de l'API: els camps nous no s'hi han d'incloure.
+     */
+    @Test
+    public void testGetServeis_SenseAmbPermisos_NoInclouElsCampsNous() throws Exception {
+        List<ServeiBasic> serveis = Arrays.asList(
+                ServeiBasic.builder().codi("SERVEI_001").descripcio("Servei 1").actiu(true).build()
+        );
+
+        when(recobrimentService.getServeis(false)).thenReturn(serveis);
+
+        mockMvc.perform(get("/recobriment/v2/serveis")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].codi").value("SERVEI_001"))
+                .andExpect(jsonPath("$.[0].actiu").value(true))
+                .andExpect(jsonPath("$.[0].permis").doesNotExist())
+                .andExpect(jsonPath("$.[0].documentsTipusPermesos").doesNotExist());
+    }
+
+    @Test
+    public void testGetServeis_AmbPermisos_InclouElsCampsNous() throws Exception {
+        List<ServeiBasic> serveis = Arrays.asList(
+                ServeiBasic.builder()
+                        .codi("SERVEI_001")
+                        .descripcio("Servei 1")
+                        .actiu(true)
+                        .permis(true)
+                        .documentsTipusPermesos(Arrays.asList(Titular.DocumentTipus.DNI, Titular.DocumentTipus.NIF))
+                        .build()
+        );
+
+        when(recobrimentService.getServeis(true)).thenReturn(serveis);
+
+        mockMvc.perform(get("/recobriment/v2/serveis")
+                        .param("ambPermisos", "true")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].permis").value(true))
+                .andExpect(jsonPath("$.[0].documentsTipusPermesos[0]").value("DNI"))
+                .andExpect(jsonPath("$.[0].documentsTipusPermesos[1]").value("NIF"));
+    }
+
     @Test
     public void testGetServeis_ReturnsNoContentWhenEmpty() throws Exception {
-        when(recobrimentService.getServeis()).thenReturn(new ArrayList<ServeiBasic>());
+        when(recobrimentService.getServeis(false)).thenReturn(new ArrayList<ServeiBasic>());
 
         mockMvc.perform(get("/recobriment/v2/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -209,7 +254,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeis_ReturnsForbiddenWhenAccessDenied() throws Exception {
-        when(recobrimentService.getServeis()).thenThrow(new AccessDenegatException(Arrays.asList("PBL_WS")));
+        when(recobrimentService.getServeis(false)).thenThrow(new AccessDenegatException(Arrays.asList("PBL_WS")));
 
         mockMvc.perform(get("/recobriment/v2/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -218,7 +263,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeis_ReturnsInternalServerErrorWhenServiceException() throws Exception {
-        when(recobrimentService.getServeis()).thenThrow(new ServiceExecutionException("Error occurred"));
+        when(recobrimentService.getServeis(false)).thenThrow(new ServiceExecutionException("Error occurred"));
 
         mockMvc.perform(get("/recobriment/v2/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -235,7 +280,7 @@ public class RecobrimentRestV2ControllerTest {
                 ServeiBasic.builder().codi("SERVEI_002").descripcio("Servei 2").build()
         );
 
-        when(recobrimentService.getServeisByEntitat("ENTITAT01")).thenReturn(serveis);
+        when(recobrimentService.getServeisByEntitat("ENTITAT01", false)).thenReturn(serveis);
 
         mockMvc.perform(get("/recobriment/v2/entitats/ENTITAT01/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -248,7 +293,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerEntitat_ReturnsNoContentWhenEmpty() throws Exception {
-        when(recobrimentService.getServeisByEntitat("ENTITAT01")).thenReturn(new ArrayList<ServeiBasic>());
+        when(recobrimentService.getServeisByEntitat("ENTITAT01", false)).thenReturn(new ArrayList<ServeiBasic>());
 
         mockMvc.perform(get("/recobriment/v2/entitats/ENTITAT01/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -257,7 +302,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerEntitat_ReturnsNotFoundWhenEntityNotFound() throws Exception {
-        when(recobrimentService.getServeisByEntitat("ENTITAT01")).thenThrow(new EntitatNotFoundException("Entity not found"));
+        when(recobrimentService.getServeisByEntitat("ENTITAT01", false)).thenThrow(new EntitatNotFoundException("Entity not found"));
 
         mockMvc.perform(get("/recobriment/v2/entitats/ENTITAT01/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -266,7 +311,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerEntitat_ReturnsForbiddenWhenAccessDenied() throws Exception {
-        when(recobrimentService.getServeisByEntitat("ENTITAT01")).thenThrow(new AccessDenegatException(Arrays.asList("PBL_WS")));
+        when(recobrimentService.getServeisByEntitat("ENTITAT01", false)).thenThrow(new AccessDenegatException(Arrays.asList("PBL_WS")));
 
         mockMvc.perform(get("/recobriment/v2/entitats/ENTITAT01/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -275,7 +320,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerEntitat_ReturnsInternalServerErrorWhenServiceException() throws Exception {
-        when(recobrimentService.getServeisByEntitat("ENTITAT01")).thenThrow(new ServiceExecutionException("Error occurred"));
+        when(recobrimentService.getServeisByEntitat("ENTITAT01", false)).thenThrow(new ServiceExecutionException("Error occurred"));
 
         mockMvc.perform(get("/recobriment/v2/entitats/ENTITAT01/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -292,7 +337,7 @@ public class RecobrimentRestV2ControllerTest {
                 ServeiBasic.builder().codi("SERVEI_002").descripcio("Servei 2").build()
         );
 
-        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001")).thenReturn(serveis);
+        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001", false)).thenReturn(serveis);
 
         mockMvc.perform(get("/recobriment/v2/entitats/ENT001/procediments/PROC001/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -305,7 +350,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerProcediment_ReturnsNoContentWhenEmpty() throws Exception {
-        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001")).thenReturn(new ArrayList<ServeiBasic>());
+        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001", false)).thenReturn(new ArrayList<ServeiBasic>());
 
         mockMvc.perform(get("/recobriment/v2/entitats/ENT001/procediments/PROC001/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -314,7 +359,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerProcediment_ReturnsNotFoundWhenProcedimentNotFound() throws Exception {
-        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001")).thenThrow(new ProcedimentNotFoundException("Procediment not found"));
+        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001", false)).thenThrow(new ProcedimentNotFoundException("Procediment not found"));
 
         mockMvc.perform(get("/recobriment/v2/entitats/ENT001/procediments/PROC001/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -323,7 +368,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerProcediment_ReturnsForbiddenWhenAccessDenied() throws Exception {
-        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001")).thenThrow(new AccessDenegatException(Arrays.asList("PBL_WS")));
+        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001", false)).thenThrow(new AccessDenegatException(Arrays.asList("PBL_WS")));
 
         mockMvc.perform(get("/recobriment/v2/entitats/ENT001/procediments/PROC001/serveis")
                         .accept(MediaType.APPLICATION_JSON))
@@ -332,7 +377,7 @@ public class RecobrimentRestV2ControllerTest {
 
     @Test
     public void testGetServeisPerProcediment_ReturnsInternalServerErrorWhenServiceException() throws Exception {
-        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001")).thenThrow(new ServiceExecutionException("Error occurred"));
+        when(recobrimentService.getServeisByProcediment("ENT001", "PROC001", false)).thenThrow(new ServiceExecutionException("Error occurred"));
 
         mockMvc.perform(get("/recobriment/v2/entitats/ENT001/procediments/PROC001/serveis")
                         .accept(MediaType.APPLICATION_JSON))

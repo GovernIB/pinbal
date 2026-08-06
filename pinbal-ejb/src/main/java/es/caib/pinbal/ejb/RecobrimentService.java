@@ -96,20 +96,20 @@ public class RecobrimentService extends AbstractService<es.caib.pinbal.logic.int
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public List<ServeiBasic> getServeis() {
-		return getDelegateService().getServeis();
+	public List<ServeiBasic> getServeis(boolean ambPermisos) {
+		return getDelegateService().getServeis(ambPermisos);
 	}
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public List<ServeiBasic> getServeisByEntitat(String entitatCodi) throws EntitatNotFoundException {
-		return getDelegateService().getServeisByEntitat(entitatCodi);
+	public List<ServeiBasic> getServeisByEntitat(String entitatCodi, boolean ambPermisos) throws EntitatNotFoundException {
+		return getDelegateService().getServeisByEntitat(entitatCodi, ambPermisos);
 	}
 
 	@Override
 	@RolesAllowed("PBL_WS")
-	public List<ServeiBasic> getServeisByProcediment(String entitatCodi, String procedimentCodi) throws ProcedimentNotFoundException {
-		return getDelegateService().getServeisByProcediment(entitatCodi, procedimentCodi);
+	public List<ServeiBasic> getServeisByProcediment(String entitatCodi, String procedimentCodi, boolean ambPermisos) throws ProcedimentNotFoundException {
+		return getDelegateService().getServeisByProcediment(entitatCodi, procedimentCodi, ambPermisos);
 	}
 
 	@Override

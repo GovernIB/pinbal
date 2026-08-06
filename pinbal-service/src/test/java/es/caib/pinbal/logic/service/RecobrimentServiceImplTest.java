@@ -14,6 +14,7 @@ import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.logic.helper.RecobrimentHelper;
 import es.caib.pinbal.logic.helper.RecobrimentV2Helper;
+import es.caib.pinbal.logic.helper.ServeiHelper;
 import es.caib.pinbal.logic.intf.dto.EstatTipus;
 import es.caib.pinbal.logic.intf.dto.IdiomaEnumDto;
 import es.caib.pinbal.logic.intf.dto.JustificantDto;
@@ -39,7 +40,6 @@ import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
 import es.caib.pinbal.persist.repository.ProcedimentRepository;
 import es.caib.pinbal.persist.repository.ServeiCampRepository;
 import es.caib.pinbal.persist.repository.ServeiConfigRepository;
-import es.caib.pinbal.persist.repository.ServeiRepository;
 import es.caib.pinbal.plugin.dadescomuns.Municipi;
 import es.caib.pinbal.plugin.dadescomuns.Pais;
 import es.caib.pinbal.plugin.dadescomuns.Provincia;
@@ -96,7 +96,7 @@ public class RecobrimentServiceImplTest {
     private ProcedimentRepository procedimentRepository;
 
     @Mock
-    private ServeiRepository serveiRepository;
+    private ServeiHelper serveiHelper;
 
     @Mock
     private ServeiConfigRepository serveiConfigRepository;
@@ -310,10 +310,10 @@ public class RecobrimentServiceImplTest {
         mockServeis.add(servei2);
 
         // Mock behavior
-        when(serveiRepository.findAllServeisClient()).thenReturn(mockServeis);
+        when(serveiHelper.findServeisClient()).thenReturn(mockServeis);
 
         // Call the method
-        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeis();
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeis(true);
 
         // Verify results
         Assertions.assertNotNull(serveis);
@@ -330,14 +330,73 @@ public class RecobrimentServiceImplTest {
     @Test
     public void testGetServeis_NoServeisFound() {
         // Mock behavior
-        when(serveiRepository.findAllServeisClient()).thenReturn(new ArrayList<ServeiBasic>());
+        when(serveiHelper.findServeisClient()).thenReturn(new ArrayList<ServeiBasic>());
 
         // Call the method
-        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeis();
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeis(true);
 
         // Verify results
         Assertions.assertNotNull(serveis);
         Assertions.assertTrue(serveis.isEmpty());
+    }
+
+    /**
+     * Sense demanar els permisos no s'ha de calcular res ni s'han d'informar
+     * els camps nous, per a mantenir la resposta idèntica a la de les versions
+     * anteriors de l'API.
+     */
+    @Test
+    public void testGetServeis_SenseAmbPermisos_NoInformaElsCampsNous() {
+        // Mock data: els serveis de la cache sí porten els tipus de document
+        List<ServeiBasic> mockServeis = Arrays.asList(
+                new ServeiBasic("S001", "Servei 1", true, true, true, true, true, true));
+
+        // Mock behavior
+        mockAuthenticationAmbUsuari("aplicacioIntegracio");
+        when(serveiHelper.findServeisClient()).thenReturn(mockServeis);
+
+        // Call the method
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeis(false);
+
+        // Verify results
+        Assertions.assertEquals("S001", serveis.get(0).getCodi());
+        Assertions.assertNull(serveis.get(0).getPermis());
+        Assertions.assertNull(serveis.get(0).getDocumentsTipusPermesos());
+        // No s'ha de calcular cap permís
+        verify(entitatRepository, never()).findActivesPerUsuari(anyString());
+        verify(serveiHelper, never()).findServeisPermesosPerUsuari(any(), any(), any());
+    }
+
+    @Test
+    public void testGetServeis_PermisosDeTotesLesEntitatsDeLUsuari() {
+        // Mock data
+        String username = "aplicacioIntegracio";
+        Entitat entitat1 = new Entitat();
+        ReflectionTestUtils.setField(entitat1, "id", 1L);
+        Entitat entitat2 = new Entitat();
+        ReflectionTestUtils.setField(entitat2, "id", 2L);
+
+        List<ServeiBasic> mockServeis = Arrays.asList(
+                new ServeiBasic("S001", "Servei 1", true),
+                new ServeiBasic("S002", "Servei 2", true),
+                new ServeiBasic("S003", "Servei 3", true));
+
+        // Mock behavior
+        Authentication authentication = mockAuthenticationAmbUsuari(username);
+        when(serveiHelper.findServeisClient()).thenReturn(mockServeis);
+        when(entitatRepository.findActivesPerUsuari(username)).thenReturn(Arrays.asList(entitat1, entitat2));
+        when(serveiHelper.findServeisPermesosPerUsuari(1L, null, authentication)).thenReturn(Collections.singletonList("S001"));
+        when(serveiHelper.findServeisPermesosPerUsuari(2L, null, authentication)).thenReturn(Collections.singletonList("S002"));
+
+        // Call the method
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeis(true);
+
+        // Verify results: el permís és la unió dels permisos de totes les entitats
+        Assertions.assertTrue(serveis.get(0).getPermis());
+        Assertions.assertTrue(serveis.get(1).getPermis());
+        Assertions.assertFalse(serveis.get(2).getPermis());
+        // Els objectes de la cache no s'han de modificar
+        Assertions.assertNull(mockServeis.get(0).getPermis());
     }
 
     // TESTS getServeisByEntitat
@@ -355,10 +414,10 @@ public class RecobrimentServiceImplTest {
 
         // Mock behavior
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(new Entitat());
-        when(serveiRepository.findServeisClientByEntitatCodi(entitatCodi)).thenReturn(mockServeis);
+        when(serveiHelper.findServeisClientPerEntitat(entitatCodi)).thenReturn(mockServeis);
 
         // Call the method
-        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi);
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi, true);
 
         // Verify results
         Assertions.assertNotNull(serveis);
@@ -378,10 +437,10 @@ public class RecobrimentServiceImplTest {
 
         // Mock behavior
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(new Entitat());
-        when(serveiRepository.findServeisClientByEntitatCodi(entitatCodi)).thenReturn(new ArrayList<ServeiBasic>());
+        when(serveiHelper.findServeisClientPerEntitat(entitatCodi)).thenReturn(new ArrayList<ServeiBasic>());
 
         // Call the method
-        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi);
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi, true);
 
         // Verify results
         Assertions.assertNotNull(serveis);
@@ -398,9 +457,44 @@ public class RecobrimentServiceImplTest {
 
         // Call the method
         assertThrows(EntitatNotFoundException.class, () ->
-                recobrimentServiceImpl.getServeisByEntitat(entitatCodi)
+                recobrimentServiceImpl.getServeisByEntitat(entitatCodi, true)
         );
 
+    }
+
+    @Test
+    public void testGetServeisByEntitat_PermisIDocumentsTipusPermesos() throws EntitatNotFoundException {
+        // Mock data
+        String entitatCodi = "ENT001";
+        String username = "aplicacioIntegracio";
+        Entitat entitat = new Entitat();
+        ReflectionTestUtils.setField(entitat, "id", 1L);
+
+        // Servei que admet DNI, NIF i passaport, però no CIF ni NIE
+        List<ServeiBasic> mockServeis = Arrays.asList(
+                new ServeiBasic("SERV001", "Servei 1", true, true, true, false, false, true),
+                new ServeiBasic("SERV002", "Servei 2", true, false, false, false, false, false));
+
+        // Mock behavior
+        Authentication authentication = mockAuthenticationAmbUsuari(username);
+        when(entitatRepository.findByCodi(entitatCodi)).thenReturn(entitat);
+        when(serveiHelper.findServeisClientPerEntitat(entitatCodi)).thenReturn(mockServeis);
+        when(serveiHelper.findServeisPermesosPerUsuari(1L, null, authentication)).thenReturn(Collections.singletonList("SERV001"));
+
+        // Call the method
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi, true);
+
+        // Verify results
+        Assertions.assertTrue(serveis.get(0).getPermis());
+        Assertions.assertEquals(
+                Arrays.asList(
+                        es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.DNI,
+                        es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.NIF,
+                        es.caib.pinbal.client.recobriment.v2.Titular.DocumentTipus.Pasaporte),
+                serveis.get(0).getDocumentsTipusPermesos());
+
+        Assertions.assertFalse(serveis.get(1).getPermis());
+        Assertions.assertTrue(serveis.get(1).getDocumentsTipusPermesos().isEmpty());
     }
 
     // TESTS getServeisByProcediment
@@ -419,10 +513,10 @@ public class RecobrimentServiceImplTest {
 
         // Mock behavior
         when(procedimentRepository.findByEntitatCodiAndCodi(entitatCodi, procedimentCodi)).thenReturn(new Procediment());
-        when(serveiRepository.findServeisClientByProcedimentCodi(procedimentCodi)).thenReturn(mockServeis);
+        when(serveiHelper.findServeisClientPerProcediment(entitatCodi, procedimentCodi)).thenReturn(mockServeis);
 
         // Call method
-        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi);
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi, true);
 
         // Verify results
         Assertions.assertNotNull(serveis);
@@ -443,10 +537,10 @@ public class RecobrimentServiceImplTest {
 
         // Mock behavior
         when(procedimentRepository.findByEntitatCodiAndCodi(entitatCodi, procedimentCodi)).thenReturn(new Procediment());
-        when(serveiRepository.findServeisClientByProcedimentCodi(procedimentCodi)).thenReturn(new ArrayList<ServeiBasic>());
+        when(serveiHelper.findServeisClientPerProcediment(entitatCodi, procedimentCodi)).thenReturn(new ArrayList<ServeiBasic>());
 
         // Call method
-        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi);
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi, true);
 
         // Verify results
         Assertions.assertNotNull(serveis);
@@ -464,8 +558,37 @@ public class RecobrimentServiceImplTest {
 
         // Call method
         assertThrows(ProcedimentNotFoundException.class, () ->
-                recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi)
+                recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi, true)
         );
+    }
+
+    @Test
+    public void testGetServeisByProcediment_PermisDelProcediment() throws ProcedimentNotFoundException {
+        // Mock data
+        String entitatCodi = "ENT001";
+        String procedimentCodi = "PROC001";
+        String username = "aplicacioIntegracio";
+        Entitat entitat = new Entitat();
+        ReflectionTestUtils.setField(entitat, "id", 1L);
+        Procediment procediment = new Procediment();
+        procediment.setEntitat(entitat);
+
+        List<ServeiBasic> mockServeis = Arrays.asList(
+                new ServeiBasic("SERV001", "Servei 1", true),
+                new ServeiBasic("SERV002", "Servei 2", true));
+
+        // Mock behavior
+        Authentication authentication = mockAuthenticationAmbUsuari(username);
+        when(procedimentRepository.findByEntitatCodiAndCodi(entitatCodi, procedimentCodi)).thenReturn(procediment);
+        when(serveiHelper.findServeisClientPerProcediment(entitatCodi, procedimentCodi)).thenReturn(mockServeis);
+        when(serveiHelper.findServeisPermesosPerUsuari(1L, procedimentCodi, authentication)).thenReturn(Collections.singletonList("SERV002"));
+
+        // Call method
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByProcediment(entitatCodi, procedimentCodi, true);
+
+        // Verify results
+        Assertions.assertFalse(serveis.get(0).getPermis());
+        Assertions.assertTrue(serveis.get(1).getPermis());
     }
 
     // TESTS getDadesEspecifiques
@@ -1079,6 +1202,18 @@ public class RecobrimentServiceImplTest {
 
     // TESTS getJustificant
     // /////////////////////////////////////////////////////////
+
+    /**
+     * Estableix al SecurityContextHolder una autenticació per a l'usuari indicat
+     * i la retorna, per a poder comprovar amb quins arguments es criden els
+     * mètodes que reben l'Authentication.
+     */
+    private Authentication mockAuthenticationAmbUsuari(String usuariCodi) {
+        Authentication authentication = mock(Authentication.class);
+        lenient().when(authentication.getName()).thenReturn(usuariCodi);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return authentication;
+    }
 
     private void mockAuthentication() {
         Authentication authentication = mock(Authentication.class);

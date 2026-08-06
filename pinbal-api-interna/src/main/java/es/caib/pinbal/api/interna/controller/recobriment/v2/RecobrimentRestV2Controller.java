@@ -122,9 +122,10 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	 */
 	@Override
 	@RequestMapping(value = "/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<ServeiBasic>> getServeis() {
+	public ResponseEntity<List<ServeiBasic>> getServeis(
+			@RequestParam(name = "ambPermisos", required = false, defaultValue = "false") boolean ambPermisos) {
 		try {
-			List<ServeiBasic> serveis = recobrimentService.getServeis();
+			List<ServeiBasic> serveis = recobrimentService.getServeis(ambPermisos);
 
 			if (serveis == null || serveis.isEmpty() ) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -144,9 +145,11 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	 */
 	@Override
 	@RequestMapping(value = "/entitats/{entitatCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<ServeiBasic>> getServeisPerEntitat(@PathVariable("entitatCodi") String entitatCodi) {
+	public ResponseEntity<List<ServeiBasic>> getServeisPerEntitat(
+			@PathVariable("entitatCodi") String entitatCodi,
+			@RequestParam(name = "ambPermisos", required = false, defaultValue = "false") boolean ambPermisos) {
 		try {
-			List<ServeiBasic> serveis = recobrimentService.getServeisByEntitat(entitatCodi);
+			List<ServeiBasic> serveis = recobrimentService.getServeisByEntitat(entitatCodi, ambPermisos);
 
 			if (serveis == null || serveis.isEmpty() ) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -170,9 +173,10 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	@RequestMapping(value = "/entitats/{entitatCodi}/procediments/{procedimentCodi}/serveis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ServeiBasic>> getServeisPerProcediment(
 			@PathVariable("entitatCodi") String entitatCodi,
-			@PathVariable("procedimentCodi") String procedimentCodi) {
+			@PathVariable("procedimentCodi") String procedimentCodi,
+			@RequestParam(name = "ambPermisos", required = false, defaultValue = "false") boolean ambPermisos) {
 		try {
-			List<ServeiBasic> serveis = recobrimentService.getServeisByProcediment(entitatCodi, procedimentCodi);
+			List<ServeiBasic> serveis = recobrimentService.getServeisByProcediment(entitatCodi, procedimentCodi, ambPermisos);
 
 			if (serveis == null || serveis.isEmpty() ) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);

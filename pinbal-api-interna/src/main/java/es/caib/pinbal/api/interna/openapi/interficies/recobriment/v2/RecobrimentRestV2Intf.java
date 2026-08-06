@@ -30,6 +30,15 @@ import java.util.List;
 @Tag(name = "Recobriment SCSP v2", description = "Operacions de recobriment SCSP versió 2: entitats, procediments, serveis, dades específiques i realització de consultes síncrones i asíncrones.")
 public interface RecobrimentRestV2Intf {
 
+    /**
+     * Descripció compartida pel paràmetre opcional que activa la informació de
+     * permisos als mètodes d'obtenció de serveis. Per defecte és 'false' per a
+     * mantenir la resposta idèntica a la de les versions anteriors de l'API.
+     */
+    String PARAM_AMB_PERMISOS = "Si és 'true', afegeix a cada servei els camps 'permis' (indica si l'usuari autenticat té permís " +
+            "sobre el servei) i 'documentsTipusPermesos' (tipus de document identificatiu del titular admesos pel servei). " +
+            "Per defecte és 'false' i aquests camps no s'inclouen a la resposta.";
+
     // Obtencio d'entitats
     // /////////////////////////////////////////////////////////////
 
@@ -70,7 +79,10 @@ public interface RecobrimentRestV2Intf {
 
     @Operation(
             summary = "Obtenir tots els serveis",
-            description = "Retorna una llista de tots els serveis disponibles a Pinbal.",
+            description = "Retorna una llista de tots els serveis disponibles a Pinbal. Si s'indica 'ambPermisos=true', per a cada " +
+                    "servei s'afegeix el camp 'permis', que indica si l'usuari autenticat hi té permís en alguna de les entitats a " +
+                    "les que està vinculat, i el camp 'documentsTipusPermesos', amb els tipus de document identificatiu del titular " +
+                    "admesos pel servei. Si no s'indica, aquests dos camps no s'inclouen a la resposta.",
             operationId = "getServeisV2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Serveis obtinguts amb èxit",
@@ -79,11 +91,16 @@ public interface RecobrimentRestV2Intf {
             @ApiResponse(responseCode = "204", description = "No s'han trobat serveis", content = @Content),
             @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
-    ResponseEntity<List<ServeiBasic>> getServeis();
+    ResponseEntity<List<ServeiBasic>> getServeis(
+            @Parameter(description = PARAM_AMB_PERMISOS, required = false, example = "true")
+            boolean ambPermisos);
 
     @Operation(
             summary = "Obtenir serveis per entitat",
-            description = "Retorna una llista dels serveis disponibles a Pinbal per a una entitat.",
+            description = "Retorna una llista dels serveis disponibles a Pinbal per a una entitat. Si s'indica 'ambPermisos=true', per " +
+                    "a cada servei s'afegeix el camp 'permis', que indica si l'usuari autenticat hi té permís dins l'entitat, i el " +
+                    "camp 'documentsTipusPermesos', amb els tipus de document identificatiu del titular admesos pel servei. Si no " +
+                    "s'indica, aquests dos camps no s'inclouen a la resposta.",
             operationId = "getServeisPerEntitatV2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Serveis obtinguts amb èxit",
@@ -95,11 +112,16 @@ public interface RecobrimentRestV2Intf {
     })
     ResponseEntity<List<ServeiBasic>> getServeisPerEntitat(
             @Parameter(description = "Codi de l'entitat", required = true, example = "A04003003")
-            String entitatCodi);
+            String entitatCodi,
+            @Parameter(description = PARAM_AMB_PERMISOS, required = false, example = "true")
+            boolean ambPermisos);
 
     @Operation(
             summary = "Obtenir serveis per procediment",
-            description = "Retorna una llista de serveis disponibles a Pinbal per a un procediment d'una entitat.",
+            description = "Retorna una llista de serveis disponibles a Pinbal per a un procediment d'una entitat. Si s'indica " +
+                    "'ambPermisos=true', per a cada servei s'afegeix el camp 'permis', que indica si l'usuari autenticat hi té permís " +
+                    "dins el procediment, i el camp 'documentsTipusPermesos', amb els tipus de document identificatiu del titular " +
+                    "admesos pel servei. Si no s'indica, aquests dos camps no s'inclouen a la resposta.",
             operationId = "getServeisPerProcedimentV2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Serveis obtinguts amb èxit",
@@ -112,7 +134,9 @@ public interface RecobrimentRestV2Intf {
             @Parameter(description = "Codi de l'entitat", required = true, example = "A04003003")
             String entitatCodi,
             @Parameter(description = "Codi del procediment", required = true, example = "PROC001")
-            String procedimentCodi);
+            String procedimentCodi,
+            @Parameter(description = PARAM_AMB_PERMISOS, required = false, example = "true")
+            boolean ambPermisos);
 
     // Obtenció de dades específiques
     // /////////////////////////////////////////////////////////////

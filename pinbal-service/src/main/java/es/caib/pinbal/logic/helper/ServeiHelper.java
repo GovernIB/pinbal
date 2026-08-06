@@ -4,12 +4,15 @@
 package es.caib.pinbal.logic.helper;
 
 import lombok.RequiredArgsConstructor;
+import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.logic.helper.PermisosHelper.ObjectIdentifierExtractor;
 import es.caib.pinbal.persist.entity.*;
 import es.caib.pinbal.persist.repository.EntitatServeiRepository;
 import es.caib.pinbal.persist.repository.EntitatUsuariRepository;
 import es.caib.pinbal.persist.repository.ProcedimentServeiRepository;
 import es.caib.pinbal.persist.repository.ServeiConfigRepository;
+import es.caib.pinbal.persist.repository.ServeiRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.acls.domain.BasePermission;
 import org.springframework.security.acls.model.MutableAclService;
 import org.springframework.security.acls.model.Permission;
@@ -33,8 +36,55 @@ public class ServeiHelper {
 	private final ProcedimentServeiRepository procedimentServeiRepository;
 	private final EntitatServeiRepository entitatServeiRepository;
 	private final EntitatUsuariRepository entitatUsuariRepository;
+	private final ServeiRepository serveiRepository;
 
 	private final MutableAclService aclService;
+
+	/**
+	 * Obté la informació bàsica de tots els serveis configurats a PINBAL.
+	 * <p>
+	 * El resultat no depèn de l'usuari autenticat i per això es pot cachejar.
+	 * Els objectes retornats formen part de la cache i no s'han de modificar:
+	 * les dades que depenen de l'usuari s'han d'afegir sobre còpies.
+	 *
+	 * @return la llista de serveis.
+	 */
+	@Cacheable(value = "serveis")
+	public List<ServeiBasic> findServeisClient() {
+		return serveiRepository.findAllServeisClient();
+	}
+
+	/**
+	 * Obté la informació bàsica dels serveis disponibles per a una entitat.
+	 * <p>
+	 * Els objectes retornats formen part de la cache i no s'han de modificar
+	 * (veure {@link #findServeisClient()}).
+	 *
+	 * @param entitatCodi
+	 *            codi de l'entitat.
+	 * @return la llista de serveis de l'entitat.
+	 */
+	@Cacheable(value = "serveisEntitat", key = "#entitatCodi")
+	public List<ServeiBasic> findServeisClientPerEntitat(String entitatCodi) {
+		return serveiRepository.findServeisClientByEntitatCodi(entitatCodi);
+	}
+
+	/**
+	 * Obté la informació bàsica dels serveis d'un procediment d'una entitat.
+	 * <p>
+	 * Els objectes retornats formen part de la cache i no s'han de modificar
+	 * (veure {@link #findServeisClient()}).
+	 *
+	 * @param entitatCodi
+	 *            codi de l'entitat.
+	 * @param procedimentCodi
+	 *            codi del procediment.
+	 * @return la llista de serveis del procediment.
+	 */
+	@Cacheable(value = "serveisProcediment", key = "#entitatCodi + ':' + #procedimentCodi")
+	public List<ServeiBasic> findServeisClientPerProcediment(String entitatCodi, String procedimentCodi) {
+		return serveiRepository.findServeisClientByProcedimentCodi(procedimentCodi);
+	}
 
 	public boolean isServeiPermesPerUsuari(
 			Entitat entitat,

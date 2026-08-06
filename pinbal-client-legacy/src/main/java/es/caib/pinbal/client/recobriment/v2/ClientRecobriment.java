@@ -86,7 +86,16 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @return llista de serveis disponibles a Pinbal
      */
     public List<ServeiBasic> getServeis() throws IOException {
-        ClientResponse response = restPeticioGet("serveis", null, ClientResponse.class);
+        return getServeis(false);
+    }
+
+    /**
+     * Obtén tots els serveis de Pinbal
+     * @param ambPermisos si s'han d'emplenar els camps 'permis' i 'documentsTipusPermesos' de cada servei
+     * @return llista de serveis disponibles a Pinbal
+     */
+    public List<ServeiBasic> getServeis(boolean ambPermisos) throws IOException {
+        ClientResponse response = restPeticioGet("serveis", queryParamAmbPermisos(ambPermisos), ClientResponse.class);
         return processListResponse(response, ServeiBasic.class);
     }
 
@@ -96,7 +105,17 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @return llista dels serveis disponibles a Pinbal per una entitat
      */
     public List<ServeiBasic> getServeisPerEntitat(String entitatCodi) throws IOException {
-        ClientResponse response = restPeticioGet("entitats/" + entitatCodi + "/serveis", null, ClientResponse.class);
+        return getServeisPerEntitat(entitatCodi, false);
+    }
+
+    /**
+     * Obtén els serveis d'una entitat
+     * @param entitatCodi Codi de l'entitat
+     * @param ambPermisos si s'han d'emplenar els camps 'permis' i 'documentsTipusPermesos' de cada servei
+     * @return llista dels serveis disponibles a Pinbal per una entitat
+     */
+    public List<ServeiBasic> getServeisPerEntitat(String entitatCodi, boolean ambPermisos) throws IOException {
+        ClientResponse response = restPeticioGet("entitats/" + entitatCodi + "/serveis", queryParamAmbPermisos(ambPermisos), ClientResponse.class);
         return processListResponse(response, ServeiBasic.class);
     }
 
@@ -106,8 +125,35 @@ public class ClientRecobriment extends BasicAuthClientBase {
      * @return llista de serveis disponibles a Pinbal per un procediment
      */
     public List<ServeiBasic> getServeisPerProcediment(String entitatCodi, String procedimentCodi) throws IOException {
-        ClientResponse response = restPeticioGet("entitats/" + entitatCodi + "/procediments/" + procedimentCodi + "/serveis", null, ClientResponse.class);
+        return getServeisPerProcediment(entitatCodi, procedimentCodi, false);
+    }
+
+    /**
+     * Obtén els serveis d'un procediment
+     * @param entitatCodi Codi de l'entitat
+     * @param procedimentCodi Codi del procediment
+     * @param ambPermisos si s'han d'emplenar els camps 'permis' i 'documentsTipusPermesos' de cada servei
+     * @return llista de serveis disponibles a Pinbal per un procediment
+     */
+    public List<ServeiBasic> getServeisPerProcediment(String entitatCodi, String procedimentCodi, boolean ambPermisos) throws IOException {
+        ClientResponse response = restPeticioGet(
+                "entitats/" + entitatCodi + "/procediments/" + procedimentCodi + "/serveis",
+                queryParamAmbPermisos(ambPermisos),
+                ClientResponse.class);
         return processListResponse(response, ServeiBasic.class);
+    }
+
+    /**
+     * Només s'envia el paràmetre quan es demanen els permisos, per a que la
+     * petició sigui idèntica a la que feien les versions anteriors del client.
+     */
+    private Map<String, String> queryParamAmbPermisos(boolean ambPermisos) {
+        if (!ambPermisos) {
+            return null;
+        }
+        Map<String, String> params = new HashMap<>();
+        params.put("ambPermisos", "true");
+        return params;
     }
 
     // Obtenció de dades específiques

@@ -1,5 +1,6 @@
 package es.caib.pinbal.logic.helper;
 
+import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.persist.entity.Entitat;
 import es.caib.pinbal.persist.entity.EntitatUsuari;
 import es.caib.pinbal.persist.entity.Procediment;
@@ -7,6 +8,7 @@ import es.caib.pinbal.persist.repository.EntitatServeiRepository;
 import es.caib.pinbal.persist.repository.EntitatUsuariRepository;
 import es.caib.pinbal.persist.repository.ProcedimentServeiRepository;
 import es.caib.pinbal.persist.repository.ServeiConfigRepository;
+import es.caib.pinbal.persist.repository.ServeiRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +37,7 @@ public class ServeiHelperTest {
     @Mock private ProcedimentServeiRepository procedimentServeiRepository;
     @Mock private EntitatServeiRepository entitatServeiRepository;
     @Mock private EntitatUsuariRepository entitatUsuariRepository;
+    @Mock private ServeiRepository serveiRepository;
     @Mock private MutableAclService aclService;
 
     @InjectMocks
@@ -51,6 +54,30 @@ public class ServeiHelperTest {
         securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(auth);
         SecurityContextHolder.setContext(securityContext);
+    }
+
+    @Test
+    public void findServeisClient_delegaAlRepositori() {
+        List<ServeiBasic> serveis = Collections.singletonList(new ServeiBasic("SERV001", "Servei 1", true));
+        when(serveiRepository.findAllServeisClient()).thenReturn(serveis);
+
+        assertSame(serveis, serveiHelper.findServeisClient());
+    }
+
+    @Test
+    public void findServeisClientPerEntitat_delegaAlRepositori() {
+        List<ServeiBasic> serveis = Collections.singletonList(new ServeiBasic("SERV001", "Servei 1", true));
+        when(serveiRepository.findServeisClientByEntitatCodi("ENT001")).thenReturn(serveis);
+
+        assertSame(serveis, serveiHelper.findServeisClientPerEntitat("ENT001"));
+    }
+
+    @Test
+    public void findServeisClientPerProcediment_delegaAlRepositori() {
+        List<ServeiBasic> serveis = Collections.singletonList(new ServeiBasic("SERV001", "Servei 1", true));
+        when(serveiRepository.findServeisClientByProcedimentCodi("PROC001")).thenReturn(serveis);
+
+        assertSame(serveis, serveiHelper.findServeisClientPerProcediment("ENT001", "PROC001"));
     }
 
     @Test

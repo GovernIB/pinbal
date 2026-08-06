@@ -99,7 +99,12 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 	@Query("select new es.caib.pinbal.client.serveis.ServeiBasic(" +
 			"	s.codi, " +
 			"	s.descripcio, " +
-			"	sc.actiu " +
+			"	sc.actiu, " +
+			"	sc.permesDocumentTipusDni, " +
+			"	sc.permesDocumentTipusNif, " +
+			"	sc.permesDocumentTipusCif, " +
+			"	sc.permesDocumentTipusNie, " +
+			"	sc.permesDocumentTipusPas " +
 			") " +
 			"  from Servei s, " +
 			" 		ServeiConfig sc " +
@@ -109,7 +114,12 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 	@Query("select new es.caib.pinbal.client.serveis.ServeiBasic(" +
 			"	s.codi, " +
 			"	s.descripcio, " +
-			"	sc.actiu " +
+			"	sc.actiu, " +
+			"	sc.permesDocumentTipusDni, " +
+			"	sc.permesDocumentTipusNif, " +
+			"	sc.permesDocumentTipusCif, " +
+			"	sc.permesDocumentTipusNie, " +
+			"	sc.permesDocumentTipusPas " +
 			") " +
 			"  from Servei s, " +
 			" 		ServeiConfig sc," +
@@ -122,7 +132,12 @@ public interface ServeiRepository extends JpaRepository<Servei, Long> {
 	@Query("select new es.caib.pinbal.client.serveis.ServeiBasic(" +
 			"	s.codi, " +
 			"	s.descripcio, " +
-			"	sc.actiu " +
+			"	sc.actiu, " +
+			"	sc.permesDocumentTipusDni, " +
+			"	sc.permesDocumentTipusNif, " +
+			"	sc.permesDocumentTipusCif, " +
+			"	sc.permesDocumentTipusNie, " +
+			"	sc.permesDocumentTipusPas " +
 			") " +
 			"  from Servei s, " +
 			" 		ServeiConfig sc," +

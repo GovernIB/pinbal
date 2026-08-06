@@ -23,6 +23,7 @@ import es.caib.pluginsib.arxiu.api.DocumentMetadades;
 import es.caib.pinbal.logic.helper.PluginHelper;
 import es.caib.pinbal.logic.helper.RecobrimentHelper;
 import es.caib.pinbal.logic.helper.RecobrimentV2Helper;
+import es.caib.pinbal.logic.helper.ServeiHelper;
 import es.caib.pinbal.logic.intf.dto.ArbreDto;
 import es.caib.pinbal.logic.intf.dto.DadaEspecificaDto;
 import es.caib.pinbal.logic.intf.dto.EstatTipus;
@@ -45,7 +46,6 @@ import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
 import es.caib.pinbal.persist.repository.ProcedimentRepository;
 import es.caib.pinbal.persist.repository.ServeiCampRepository;
 import es.caib.pinbal.persist.repository.ServeiConfigRepository;
-import es.caib.pinbal.persist.repository.ServeiRepository;
 import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.bean.common.peticion.Peticion;
 import es.scsp.bean.common.respuesta.Atributos;
@@ -113,7 +113,7 @@ public class RecobrimentServiceImplTopUpTest {
     private ServeiCampRepository serveiCampRepository;
 
     @Mock
-    private ServeiRepository serveiRepository;
+    private ServeiHelper serveiHelper;
 
     @Mock
     private ServeiConfigRepository serveiConfigRepository;
