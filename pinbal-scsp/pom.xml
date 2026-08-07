@@ -370,30 +370,6 @@
 			</resource>
 		</resources>
 		<plugins>
-			<!-- Patcheja scsp-core.jar a local-repo/ i ~/.m2/ eliminant les classes
-			     que pinbal-scsp sobreescriu (detectades dinàmicament dels fonts).
-			     Fase initialize: s'executa abans de qualsevol compilació i per tant
-			     afecta a tots els builds: EAR, Spring Boot directe i tests. -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>3.1.0</version>
-				<executions>
-					<execution>
-						<id>patch-scsp-core-in-local-repo</id>
-						<phase>initialize</phase>
-						<goals><goal>exec</goal></goals>
-						<configuration>
-							<executable>python3</executable>
-							<arguments>
-								<argument>${project.basedir}/src/main/scripts/patch-scsp-local-repo.py</argument>
-								<argument>${project.basedir}/src/main/java</argument>
-								<argument>${project.basedir}/../local-repo</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -437,4 +413,39 @@
 			<url>file://${basedir}/../local-repo</url>
 		</repository>
 	</repositories>
+	<profiles>
+		<!-- No activa per defecte: el JAR de local-repo/ ja es distribueix patchejat
+		     (veure *.jar.original), així que un build normal no necessita Python.
+		     Activar-la només quan es puja de versió scsp-core/scsp-beans o es
+		     modifiquen les classes override sota src/main/java/es/scsp/, i fer
+		     commit del JAR (i el seu .original) resultant:
+		       mvn -pl pinbal-scsp -Ppatch-scsp-local-repo initialize -->
+		<profile>
+			<id>patch-scsp-local-repo</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>3.1.0</version>
+						<executions>
+							<execution>
+								<id>patch-scsp-core-in-local-repo</id>
+								<phase>initialize</phase>
+								<goals><goal>exec</goal></goals>
+								<configuration>
+									<executable>python3</executable>
+									<arguments>
+										<argument>${project.basedir}/src/main/scripts/patch-scsp-local-repo.py</argument>
+										<argument>${project.basedir}/src/main/java</argument>
+										<argument>${project.basedir}/../local-repo</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
