@@ -9,6 +9,7 @@ import es.caib.pinbal.logic.intf.service.SalutService;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,6 +29,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/salut/v1")
@@ -111,7 +113,7 @@ public class SalutRestController extends PinbalHalRestController implements Salu
             java.util.Calendar cal = DatatypeConverter.parseDateTime(isoDate);
             return cal.getTime();
         } catch (IllegalArgumentException e) {
-            System.out.println("El format de la data és incorrecte: " + e.getMessage());
+            log.error("El format de la data és incorrecte: " + e.getMessage(), e);
             return null;
         }
     }

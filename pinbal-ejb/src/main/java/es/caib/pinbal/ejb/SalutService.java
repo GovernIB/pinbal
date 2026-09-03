@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package es.caib.pinbal.ejb;
 
@@ -7,6 +7,7 @@ import es.caib.comanda.model.server.monitoring.*;
 import es.caib.comanda.ms.log.helper.LogFileStream;
 import org.springframework.context.annotation.Primary;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -16,7 +17,7 @@ import java.util.List;
 /**
  * Implementació de AplicacioService com a EJB que empra una clase
  * delegada per accedir a la funcionalitat de salut.
- * 
+ *
  * @author Limit Tecnologies <limit@limit.es>
  */
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -41,7 +42,7 @@ public class SalutService extends AbstractService<es.caib.pinbal.logic.intf.serv
     }
 
     @Override
-    @RolesAllowed("**")
+    @PermitAll
     public SalutInfo checkSalut(String versio) {
         return getDelegateService().checkSalut(versio);
     }
