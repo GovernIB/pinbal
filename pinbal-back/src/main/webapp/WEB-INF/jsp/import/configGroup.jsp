@@ -43,7 +43,7 @@
                             </div>
                             </c:when>
                             <c:when test="${config.validValues != null and fn:length(config.validValues) > 2}">
-                                <form:select path="value" cssClass="form-control" id="config_${config.key}" disabled="${config.sourceProperty != 'DATABASE'}" style="width:100%" data-toggle="select2" data-placeholder="${config.description}">
+                                <form:select path="value" cssClass="form-control" id="config_${config.key}" disabled="${config.sourceProperty != 'DATABASE'}" style="width:100%" data-toggle="select2" data-placeholder="${config.key}">
                                     <c:forEach var="opt" items="${config.validValues}">
                                         <form:option value="${opt}"/>
                                     </c:forEach>
