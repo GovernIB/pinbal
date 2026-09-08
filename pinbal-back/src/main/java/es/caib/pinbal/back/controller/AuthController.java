@@ -3,14 +3,14 @@ package es.caib.pinbal.back.controller;
 import es.caib.pinbal.back.config.WebSecurityConfig;
 import es.caib.pinbal.back.helper.OidcDiscoveryHelper;
 import es.caib.pinbal.logic.intf.base.config.BaseConfig;
-import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.keycloak.KeycloakSecurityContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.net.URLEncoder;
@@ -24,7 +24,6 @@ import java.nio.charset.StandardCharsets;
  *
  * @author Limit Tecnologies <limit@limit.es>
  */
-@Slf4j
 @Controller
 public class AuthController {
 
@@ -38,39 +37,44 @@ public class AuthController {
 	private String authClientId;
 
 	private static final String ORIGEN_REACT = "react";
+	private static final String REDIRECT = "redirect:";
+	private static final String PATH_DELIMITER = "/";
 
 	@GetMapping("/usuari/logout")
 	public String logout(
 			HttpServletRequest request,
 			@RequestParam(value = "origen", required = false) String origen) {
+
+		if (jbossHomeDir == null) {
+			// Spring Boot: delega en el logout de Spring Security (WebSecurityConfig.LOGOUT_URL), que ja fa
+			// el flux OIDC complet (end_session_endpoint de Keycloak) i neteja les cookies corresponents.
+			return REDIRECT + WebSecurityConfig.LOGOUT_URL;
+		}
+
+		// Cal llegir l'id_token ABANS d'invalidar la sessió, perquè Keycloak >= 18 exigeix
+		// "id_token_hint" per fer el logout sense demanar confirmació a l'usuari.
+		String idTokenHint = getIdTokenHint(request);
+
 		// Destí on ha d'aterrar el navegador un cop Keycloak acaba el logout: l'arrel de la interfície
 		// JSP (comportament per defecte) o l'arrel de la SPA React si el logout s'ha iniciat des d'allà
 		// (identificat pel paràmetre "origen", que ContainerAuthProvider.tsx afegeix a signOutUrl). Així
 		// el següent login torna a la mateixa interfície des d'on s'ha fet el "Desconnectar".
-		String postLogoutPath = ORIGEN_REACT.equals(origen) ? BaseConfig.REACT_APP_PATH + "/" : "/";
-		if (jbossHomeDir == null) {
-			// Spring Boot: delega en el logout de Spring Security (WebSecurityConfig.LOGOUT_URL), que ja fa
-			// el flux OIDC complet (end_session_endpoint de Keycloak) i neteja les cookies corresponents.
-			return "redirect:" + WebSecurityConfig.LOGOUT_URL;
-		}
-		// JBoss: request.logout() tanca la sessió local a l'adaptador servlet de Keycloak, però NO tanca la
-		// sessió SSO al propi Keycloak. Sense el redirect explícit de sota a l'"end session endpoint", la
-		// següent visita hi torna a entrar silenciosament amb l'usuari anterior (sessió SSO encara viva) en
-		// lloc de mostrar el formulari de login, i a més l'"state" OAuth de la petició anterior ja no és
-		// vàlid per aquest nou intent, provocant un "Bad Request" a Keycloak.
-		// Cal obtenir l'id_token ABANS de request.logout() (que invalida el KeycloakSecurityContext), perquè
-		// Keycloak >= 18 exigeix "id_token_hint" per fer el logout sense demanar confirmació a l'usuari.
-		String idTokenHint = null;
-		Object keycloakSecurityContext = request.getAttribute(KeycloakSecurityContext.class.getName());
-		if (keycloakSecurityContext instanceof KeycloakSecurityContext) {
-			idTokenHint = ((KeycloakSecurityContext) keycloakSecurityContext).getIdTokenString();
-		}
-		try {
-			request.logout();
-		} catch (ServletException e) {
-			log.warn("Error fent logout", e);
-		}
-		// NO facis un bucle genèric que reenviï totes les cookies de la petició amb valor buit:
+		String postLogoutPath = ORIGEN_REACT.equals(origen) ? BaseConfig.REACT_APP_PATH + PATH_DELIMITER : PATH_DELIMITER;
+
+
+		// NO cridis request.logout() aquí:
+		// a l'adaptador Keycloak d'Undertow/WildFly, request.logout() no es limita a
+		// netejar l'estat local, sinó quefa una petició backchannel REAL a Keycloak (amb el refresh_token)
+		// i tanca la sessió SSO immediatament -- abans que el redirect explícit de sota hi arribi mai.
+		// Com que aquesta petició mai interactua amb el navegador, les cookies de sessió SSO
+		// de Keycloak (al domini de l'IdP) no s'arriben a esborrar mai per aquesta via: el redirect
+		// posterior a l'"end session endpoint" amb l'"id_token_hint" ja capturat rep "Session not active"
+		// (Keycloak ja no troba la sessió, l'acaba de matar request.logout()) en lloc d'executar el camí
+		// d'èxit -- l'únic que sí esborraria aquestes cookies. Resultat: l'usuari veu l'error de Keycloak
+		// i, en tornar a entrar a l'aplicació, hi torna a entrar silenciosament (la cookie SSO de Keycloak
+		// encara és vàlida). La sessió SSO de Keycloak l'ha de tancar únicament el redirect explícit de
+		// sota, executant-se contra una sessió que encara és viva.
+		// NO facis tampoc un bucle genèric que reenviï totes les cookies de la petició amb valor buit:
 		// request.getCookies() no exposa el path/domain amb què cada cookie es va crear
 		// originalment (només ho sap el navegador), així que reenviar-les totes amb
 		// path=contextPath ("/pinbalback") no esborra les que l'adaptador de Keycloak crea a
@@ -86,26 +90,19 @@ public class AuthController {
 			try {
 				session.invalidate();
 			} catch (IllegalStateException e) {
-				// Ja invalidada (p.ex. per request.logout()); res a fer.
+				// Ja invalidada; res a fer.
 			}
 		}
 		if (authUrl != null && authRealm != null) {
-			String baseUrl = request.getScheme() + "://" + request.getServerName() +
-					((request.getServerPort() == 80 || request.getServerPort() == 443) ? "" : ":" + request.getServerPort()) +
-					request.getContextPath() + postLogoutPath;
-			String authUrlSensePrefix = authUrl.endsWith("/") ? authUrl.substring(0, authUrl.length() - 1) : authUrl;
-			String issuerUrl = authUrlSensePrefix + "/realms/" + authRealm;
+			String baseUrl = getBaseUrl(request, postLogoutPath);
+			String issuerUrl = getIssuerUrl();
+
 			// No es pot assumir que l'"end session endpoint" viu sempre a "/protocol/openid-connect/logout":
 			// és el path de Keycloak, però als entorns de producció l'IdP darrere de l'adaptador pot ser
 			// Soffid (que emula el protocol de Keycloak per a login/token, però no necessàriament exposa el
 			// logout al mateix path). Es llegeix del document de descobriment OIDC i només es cau al path de
 			// Keycloak com a fallback si la descoberta no és accessible.
-			String endSessionEndpoint = OidcDiscoveryHelper.getEndSessionEndpoint(issuerUrl);
-			if (endSessionEndpoint == null) {
-				endSessionEndpoint = issuerUrl + "/protocol/openid-connect/logout";
-			}
-			StringBuilder logoutUrl = new StringBuilder(endSessionEndpoint)
-					.append("?post_logout_redirect_uri=").append(URLEncoder.encode(baseUrl, StandardCharsets.UTF_8));
+			StringBuilder logoutUrl = getLogoutUrl(issuerUrl, baseUrl);
 			// S'envien tots dos paràmetres (no és excloent): alguns IdP OIDC exigeixen "client_id" encara que
 			// hi hagi "id_token_hint", i l'especificació RP-Initiated Logout permet enviar-los junts.
 			if (idTokenHint != null) {
@@ -114,9 +111,53 @@ public class AuthController {
 			if (authClientId != null) {
 				logoutUrl.append("&client_id=").append(URLEncoder.encode(authClientId, StandardCharsets.UTF_8));
 			}
-			return "redirect:" + logoutUrl;
+			return REDIRECT + logoutUrl;
 		}
-		return "redirect:" + postLogoutPath;
+		return REDIRECT + postLogoutPath;
+	}
+
+	@NotNull
+	private static String getBaseUrl(HttpServletRequest request, String postLogoutPath) {
+		String serverPath = getServerPath(request);
+		return serverPath + request.getContextPath() + postLogoutPath;
+	}
+
+	@NotNull
+	private static String getServerPath(HttpServletRequest request) {
+		int port = request.getServerPort();
+		String portSuffix = isDefaultHttpPort(port) ? "" : ":" + port;
+		return request.getScheme() + "://" + request.getServerName() + portSuffix;
+	}
+
+	private static boolean isDefaultHttpPort(int port) {
+		return port == 80 || port == 443;
+	}
+
+	@NotNull
+	private String getIssuerUrl() {
+		String authUrlSensePrefix = authUrl.endsWith(PATH_DELIMITER) ? authUrl.substring(0, authUrl.length() - 1) : authUrl;
+		return authUrlSensePrefix + "/realms/" + authRealm;
+	}
+
+	@NotNull
+	private static StringBuilder getLogoutUrl(String issuerUrl, String baseUrl) {
+		String endSessionEndpoint = OidcDiscoveryHelper.getEndSessionEndpoint(issuerUrl);
+		if (endSessionEndpoint == null) {
+			endSessionEndpoint = issuerUrl + "/protocol/openid-connect/logout";
+		}
+		return new StringBuilder(endSessionEndpoint)
+			.append("?post_logout_redirect_uri=")
+			.append(URLEncoder.encode(baseUrl, StandardCharsets.UTF_8));
+	}
+
+	@Nullable
+	private static String getIdTokenHint(HttpServletRequest request) {
+		String idTokenHint = null;
+		Object keycloakSecurityContext = request.getAttribute(KeycloakSecurityContext.class.getName());
+		if (keycloakSecurityContext instanceof KeycloakSecurityContext) {
+			idTokenHint = ((KeycloakSecurityContext) keycloakSecurityContext).getIdTokenString();
+		}
+		return idTokenHint;
 	}
 
 }
