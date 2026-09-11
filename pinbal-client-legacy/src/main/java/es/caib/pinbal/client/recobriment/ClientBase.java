@@ -6,6 +6,8 @@ package es.caib.pinbal.client.recobriment;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import es.caib.pinbal.client.recobriment.model.ScspAtributos;
 import es.caib.pinbal.client.recobriment.model.ScspConfirmacionPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspDatosGenericos;
@@ -34,6 +36,8 @@ import java.util.Map;
  * @author Limit Tecnologies <limit@limit.es>
  */
 public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
+
+	private static final Logger logger = LoggerFactory.getLogger(ClientBase.class);
 
 	private static final String BASE_URL_SUFIX = "/interna/recobriment/";
 
@@ -66,25 +70,9 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 					MediaType.APPLICATION_JSON_TYPE);
 			return response;
 		} catch (UniformInterfaceException ex) {
-			ClientResponse response = ex.getResponse();
-			ErrorResponse errorResponse;
-			try {
-				errorResponse = response.getEntity(ErrorResponse.class);
-			} catch (Exception e) {
-				throw new RecobrimentException(ex.getMessage(), response.getStatus(), null);
-			}
-			String[] errorMessageParts = errorResponse.getMessage() != null ? errorResponse.getMessage().split("\n", 2) : null;
-			throw new RecobrimentException(
-					(errorMessageParts != null && errorMessageParts.length > 0) ? errorMessageParts[0] : null,
-					response.getStatus(),
-					errorResponse.getTrace());
+			throw toRecobrimentException("peticionSincrona", ex);
 		} catch (ClientHandlerException ex) {
-			boolean isErrorAutenticacio = ex.getMessage().contains("media type text/html");
-			if (isErrorAutenticacio) {
-				throw new RecobrimentException("Error d'autenticació: usuari o contrasenya incorrectes.", 403, null);
-			} else {
-				throw new RecobrimentException(ex.getMessage(), 500, null);
-			}
+			throw toRecobrimentException("peticionSincrona", ex);
 		}
 	}
 
@@ -100,25 +88,9 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 					MediaType.APPLICATION_JSON_TYPE);
 			return response;
 		} catch (UniformInterfaceException ex) {
-			ClientResponse response = ex.getResponse();
-			ErrorResponse errorResponse = ex.getResponse().getEntity(ErrorResponse.class);
-			throw new RecobrimentException(
-					errorResponse.getMessage(),
-					response.getStatus(),
-					errorResponse.getTrace());
+			throw toRecobrimentException("peticionAsincrona", ex);
 		} catch (ClientHandlerException ex) {
-			boolean isErrorAutenticacio = ex.getMessage().contains("media type text/html");
-			if (isErrorAutenticacio) {
-				throw new RecobrimentException(
-						"Error d'autenticació: usuari o contrasenya incorrectes.",
-						403,
-						null);
-			} else {
-				throw new RecobrimentException(
-						ex.getMessage(),
-						500,
-						null);
-			}
+			throw toRecobrimentException("peticionAsincrona", ex);
 		}
 	}
 
@@ -133,25 +105,9 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 					ScspRespuesta.class);
 			return response;
 		} catch (UniformInterfaceException ex) {
-			ClientResponse response = ex.getResponse();
-			ErrorResponse errorResponse = ex.getResponse().getEntity(ErrorResponse.class);
-			throw new RecobrimentException(
-					errorResponse.getMessage(),
-					response.getStatus(),
-					errorResponse.getTrace());
+			throw toRecobrimentException("getRespuesta", ex);
 		} catch (ClientHandlerException ex) {
-			boolean isErrorAutenticacio = ex.getMessage().contains("media type text/html");
-			if (isErrorAutenticacio) {
-				throw new RecobrimentException(
-						"Error d'autenticació: usuari o contrasenya incorrectes.",
-						403,
-						null);
-			} else {
-				throw new RecobrimentException(
-						ex.getMessage(),
-						500,
-						null);
-			}
+			throw toRecobrimentException("getRespuesta", ex);
 		}
 	}
 
@@ -202,12 +158,64 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 				}
 			}
 		} catch (UniformInterfaceException ex) {
-			ClientResponse response = ex.getResponse();
-			ErrorResponse errorResponse = ex.getResponse().getEntity(ErrorResponse.class);
-			throw new RecobrimentException(
-					errorResponse.getMessage(),
-					response.getStatus(),
-					errorResponse.getTrace());
+			throw toRecobrimentException("getJustificante", ex);
+		}
+	}
+
+	/**
+	 * Converteix un error HTTP rebut de PINBAL en una {@link RecobrimentException}, deixant sempre
+	 * a la traça de log el motiu exacte de l'error: si PINBAL ha respost amb el seu format habitual
+	 * d'error de negoci (JSON amb "message"/"trace"), o si la resposta prové d'un element
+	 * d'infraestructura (proxy, balancejador, contenidor) davant de PINBAL -- p.ex. un rebuig per
+	 * capçalera de petició massa gran -- cas en què el cos de la resposta no és el JSON esperat.
+	 */
+	private RecobrimentException toRecobrimentException(String operacio, UniformInterfaceException ex) {
+		ClientResponse response = ex.getResponse();
+		String contentType = response.getType() != null ? response.getType().toString() : null;
+		String body = null;
+		try {
+			if (response.hasEntity()) {
+				body = response.getEntity(String.class);
+			}
+		} catch (Exception e) {
+			// No s'ha pogut llegir el cos de la resposta; es continua amb body = null.
+		}
+		ErrorResponse errorResponse = null;
+		if (body != null) {
+			try {
+				errorResponse = mapper.readValue(body, ErrorResponse.class);
+			} catch (Exception e) {
+				errorResponse = null;
+			}
+		}
+		if (errorResponse == null || errorResponse.getMessage() == null) {
+			logger.error(
+					"PINBAL ({}) ha retornat HTTP {} amb un cos que no és el format JSON d'error de negoci de PINBAL " +
+					"(Content-Type={}). Això normalment indica que la resposta prové d'un element d'infraestructura " +
+					"(proxy, balancejador o contenidor JBoss) i no de la lògica de negoci de PINBAL -- per exemple, " +
+					"un rebuig per capçalera de petició (Cookie inclosa) massa gran. Cos de la resposta: {}",
+					operacio, response.getStatus(), contentType, body);
+			return new RecobrimentException(ex.getMessage(), response.getStatus(), null);
+		}
+		String[] errorMessageParts = errorResponse.getMessage().split("\n", 2);
+		String message = errorMessageParts.length > 0 ? errorMessageParts[0] : null;
+		logger.error(
+				"PINBAL ({}) ha retornat un error de validació de negoci HTTP {}: {}",
+				operacio, response.getStatus(), message);
+		return new RecobrimentException(message, response.getStatus(), errorResponse.getTrace());
+	}
+
+	private RecobrimentException toRecobrimentException(String operacio, ClientHandlerException ex) {
+		boolean isErrorAutenticacio = ex.getMessage() != null && ex.getMessage().contains("media type text/html");
+		if (isErrorAutenticacio) {
+			logger.error(
+					"PINBAL ({}) ha retornat una pàgina HTML en lloc de JSON -- probablement la sessió/autenticació " +
+					"ha caducat o les credencials són incorrectes.", operacio);
+			return new RecobrimentException("Error d'autenticació: usuari o contrasenya incorrectes.", 403, null);
+		} else {
+			logger.error(
+					"Error de comunicació amb PINBAL ({}): {}", operacio, ex.getMessage(), ex);
+			return new RecobrimentException(ex.getMessage(), 500, null);
 		}
 	}
 

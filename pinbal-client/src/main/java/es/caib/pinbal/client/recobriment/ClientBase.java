@@ -12,6 +12,8 @@ import es.caib.pinbal.client.recobriment.model.ScspSolicitud;
 import es.caib.pinbal.client.recobriment.model.SolicitudBase;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.MediaType;
@@ -30,6 +32,8 @@ import java.util.Map;
  * @author Limit Tecnologies <limit@limit.es>
  */
 public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
+
+	private static final Logger logger = LoggerFactory.getLogger(ClientBase.class);
 
 	private static final String BASE_URL_SUFIX = "/interna/recobriment/";
 
@@ -61,7 +65,7 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 				throw new RecobrimentException("Error d'autenticació: usuari o contrasenya incorrectes.", 403, null);
 			}
 			if (rawResponse.getStatus() >= 400) {
-				throwRecobrimentException(rawResponse);
+				throwRecobrimentException("peticionSincrona", rawResponse);
 			}
 			return rawResponse.readEntity(ScspRespuesta.class);
 		} catch (RecobrimentException re) {
@@ -70,6 +74,7 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 			if (ex.getMessage() != null && ex.getMessage().contains("media type text/html")) {
 				throw new RecobrimentException("Error d'autenticació: usuari o contrasenya incorrectes.", 403, null);
 			}
+			logger.error("Error de comunicació amb PINBAL (peticionSincrona): {}", ex.getMessage(), ex);
 			throw new RecobrimentException(ex.getMessage(), 500, null);
 		} finally {
 			rawResponse.close();
@@ -87,7 +92,7 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 				throw new RecobrimentException("Error d'autenticació: usuari o contrasenya incorrectes.", 403, null);
 			}
 			if (rawResponse.getStatus() >= 400) {
-				throwRecobrimentException(rawResponse);
+				throwRecobrimentException("peticionAsincrona", rawResponse);
 			}
 			return rawResponse.readEntity(ScspConfirmacionPeticion.class);
 		} catch (RecobrimentException re) {
@@ -96,6 +101,7 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 			if (ex.getMessage() != null && ex.getMessage().contains("media type text/html")) {
 				throw new RecobrimentException("Error d'autenticació: usuari o contrasenya incorrectes.", 403, null);
 			}
+			logger.error("Error de comunicació amb PINBAL (peticionAsincrona): {}", ex.getMessage(), ex);
 			throw new RecobrimentException(ex.getMessage(), 500, null);
 		} finally {
 			rawResponse.close();
@@ -113,7 +119,7 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 				throw new RecobrimentException("Error d'autenticació: usuari o contrasenya incorrectes.", 403, null);
 			}
 			if (rawResponse.getStatus() >= 400) {
-				throwRecobrimentException(rawResponse);
+				throwRecobrimentException("getRespuesta", rawResponse);
 			}
 			return rawResponse.readEntity(ScspRespuesta.class);
 		} catch (RecobrimentException re) {
@@ -122,6 +128,7 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 			if (ex.getMessage() != null && ex.getMessage().contains("media type text/html")) {
 				throw new RecobrimentException("Error d'autenticació: usuari o contrasenya incorrectes.", 403, null);
 			}
+			logger.error("Error de comunicació amb PINBAL (getRespuesta): {}", ex.getMessage(), ex);
 			throw new RecobrimentException(ex.getMessage(), 500, null);
 		} finally {
 			rawResponse.close();
@@ -172,6 +179,7 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 		} catch (RecobrimentException re) {
 			throw re;
 		} catch (ProcessingException ex) {
+			logger.error("Error de comunicació amb PINBAL (getJustificante): {}", ex.getMessage(), ex);
 			throw new RecobrimentException(ex.getMessage(), 500, null);
 		} finally {
 			response.close();
@@ -183,19 +191,36 @@ public abstract class ClientBase extends es.caib.pinbal.client.comu.ClientBase {
 		return mediaType != null && mediaType.isCompatible(MediaType.TEXT_HTML_TYPE);
 	}
 
-	private void throwRecobrimentException(Response response) throws RecobrimentException {
+	/**
+	 * Converteix un error HTTP rebut de PINBAL en una {@link RecobrimentException}, deixant sempre
+	 * a la traça de log el motiu exacte de l'error: si PINBAL ha respost amb el seu format habitual
+	 * d'error de negoci (JSON amb "message"/"trace"), o si la resposta prové d'un element
+	 * d'infraestructura (proxy, balancejador, contenidor) davant de PINBAL -- p.ex. un rebuig per
+	 * capçalera de petició massa gran -- cas en què el cos de la resposta no és el JSON esperat.
+	 */
+	private void throwRecobrimentException(String operacio, Response response) throws RecobrimentException {
 		String errorBody = response.readEntity(String.class);
+		String contentType = response.getMediaType() != null ? response.getMediaType().toString() : null;
 		ErrorResponse errorResponse = null;
 		try {
 			errorResponse = mapper.readValue(errorBody, ErrorResponse.class);
 		} catch (Exception ignored) {}
 		if (errorResponse != null && errorResponse.getMessage() != null) {
 			String[] parts = errorResponse.getMessage().split("\n", 2);
+			logger.error(
+					"PINBAL ({}) ha retornat un error de validació de negoci HTTP {}: {}",
+					operacio, response.getStatus(), parts.length > 0 ? parts[0] : null);
 			throw new RecobrimentException(
 					parts.length > 0 ? parts[0] : null,
 					response.getStatus(),
 					errorResponse.getTrace());
 		}
+		logger.error(
+				"PINBAL ({}) ha retornat HTTP {} amb un cos que no és el format JSON d'error de negoci de PINBAL " +
+				"(Content-Type={}). Això normalment indica que la resposta prové d'un element d'infraestructura " +
+				"(proxy, balancejador o contenidor JBoss) i no de la lògica de negoci de PINBAL -- per exemple, " +
+				"un rebuig per capçalera de petició (Cookie inclosa) massa gran. Cos de la resposta: {}",
+				operacio, response.getStatus(), contentType, errorBody);
 		throw new RecobrimentException(errorBody, response.getStatus(), null);
 	}
 
