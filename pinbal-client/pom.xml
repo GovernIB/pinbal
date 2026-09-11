@@ -4,9 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.caib.pinbal</groupId>
 	<artifactId>pinbal-client</artifactId>
-	<version>1.4.44</version>
+	<version>1.4.45</version>
 
 	<properties>
+		<pinbal.version>1.4.44</pinbal.version>
 		<jersey.version>1.19.4</jersey.version>
 		<jackson.version>2.6.3</jackson.version>
 		<slf4j.version>1.7.7</slf4j.version>
@@ -64,7 +65,7 @@
 		<dependency>
 			<groupId>es.caib.pinbal</groupId>
 			<artifactId>pinbal-client-api</artifactId>
-			<version>${project.version}</version>
+			<version>${pinbal.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -82,7 +83,7 @@
 				<artifactId>site-maven-plugin</artifactId>
 				<version>0.12</version>
 				<configuration>
-					<message>Maven artifacts for ${project.version}</message>
+					<message>Maven artifacts for ${pinbal.version}</message>
 					<outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
 					<noJekyll>true</noJekyll>
 					<branch>refs/heads/gh-pages</branch>

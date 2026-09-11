@@ -27,12 +27,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -44,6 +46,10 @@ import java.util.TimeZone;
  * @author Limit Tecnologies <limit@limit.es>
  */
 public abstract class BasicAuthClientBase {
+
+	// Mida (en caràcters) de la capçalera Cookie a partir de la qual s'avisa per log,
+	// ja que molts servidors/proxies rebutgen amb HTTP 400 les peticions amb capçaleres massa grans.
+	private static final int COOKIE_HEADER_WARN_THRESHOLD = 4096;
 
 	private String urlBase;
 	private Client jerseyClient;
@@ -221,18 +227,33 @@ public abstract class BasicAuthClientBase {
 		}
 		jerseyClient.addFilter(
 				new ClientFilter() {
-					private ArrayList<Object> cookies;
+					// Cookies indexades pel seu nom: cada Set-Cookie rebut substitueix el valor anterior
+					// amb el mateix nom, en lloc d'acumular-se indefinidament. Això permet reutilitzar
+					// aquest client durant un temps il·limitat sense que la capçalera Cookie creixi sense control.
+					private final Map<String, NewCookie> cookies = new LinkedHashMap<String, NewCookie>();
 					@Override
 					public ClientResponse handle(ClientRequest request) throws ClientHandlerException {
-						if (cookies != null) {
-							request.getHeaders().put("Cookie", cookies);
+						if (!cookies.isEmpty()) {
+							StringBuilder cookieHeader = new StringBuilder();
+							for (NewCookie cookie: cookies.values()) {
+								if (cookieHeader.length() > 0) {
+									cookieHeader.append("; ");
+								}
+								cookieHeader.append(cookie.getName()).append('=').append(cookie.getValue());
+							}
+							request.getHeaders().putSingle("Cookie", cookieHeader.toString());
+							if (cookieHeader.length() > COOKIE_HEADER_WARN_THRESHOLD) {
+								logWarn(
+										"La capçalera Cookie enviada a PINBAL té " + cookieHeader.length() + " caràcters " +
+										"(" + cookies.size() + " cookies: " + cookies.keySet() + "). Una capçalera " +
+										"massa gran pot fer que el servidor/proxy rebutgi la petició amb HTTP 400.");
+							}
 						}
 						ClientResponse response = getNext().handle(request);
 						if (response.getCookies() != null) {
-							if (cookies == null) {
-								cookies = new ArrayList<Object>();
+							for (NewCookie cookie: response.getCookies()) {
+								cookies.put(cookie.getName(), cookie);
 							}
-							cookies.addAll(response.getCookies());
 						}
 						return response;
 					}
