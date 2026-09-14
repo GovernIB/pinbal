@@ -167,6 +167,7 @@ class DadesUsuariPluginKeycloakTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setUsername("usuari-resolt");
         userInfo.setName("Maria");
+        userInfo.setSurname1("Bonet");
         userInfo.setAdministrationID("12345678A");
         userInfo.setEmail("maria@test.com");
         doReturn(userInfo).when(spy).getUserInfoByAdministrationID("12345678A");
@@ -175,6 +176,8 @@ class DadesUsuariPluginKeycloakTest {
         DadesUsuari resultat = spy.consultarAmbUsuariNif("12345678A");
 
         assertThat(resultat.getCodi()).isEqualTo("usuari-resolt");
+        // El nom ha de ser el nom complet (nom + llinatges), no només el nom de pila
+        assertThat(resultat.getNom()).isEqualTo("Maria Bonet");
         assertThat(resultat.getRols()).containsExactly("ROL1");
         // Les rols es consulten amb l'username resolt, no amb el NIF cercat
         verify(spy).getRolesByUsername("usuari-resolt");
