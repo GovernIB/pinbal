@@ -1,0 +1,47 @@
+databaseChangeLog:
+- changeSet:
+    id: 2.0.1-cleanup-orphan-claveprivada-reqcesionaris-servicis
+    author: Limit
+    comment: >-
+      core_req_cesionarios_servicios.claveprivada mai ha tingut una FK cap a
+      core_clave_privada (a diferència de la taula bessona
+      core_req_ssl_cesionarios, que sí té fk_clave_priv_sslcesionario). Això
+      permet esborrar una ClauPrivada (ScspServiceImpl.deleteClauPrivada)
+      encara referenciada per registres històrics (bloqueado=1) d'aquesta
+      taula, deixant-los orfes. es.scsp.common.domain.req.ServicioOrganismo
+      Cesionario mapeja clavePrivada amb @ManyToOne per defecte (EAGER, sense
+      @NotFound), així que la propera vegada que es carrega l'històric
+      complet d'un organisme (ScspHelper.actualitzarServiciosActivosOrganismo
+      Cesionario -> selectHistorico, invocat en activar/desactivar un servei
+      d'una entitat) Hibernate intenta resoldre la clau esborrada i llança
+      EntityNotFoundException via TwoPhaseLoad, tombant l'operació.
+      Sanejam les dades existents abans d'afegir la FK al canvi següent
+      (04b), perquè si hi ha cap referència orfa la creació de la FK fallaria.
+      El camp claveprivada no s'usa mai per als registres històrics
+      (ScspHelper només llegeix getServicio() per decidir si bloquejar-los),
+      per tant posar-lo a NULL és segur.
+    changes:
+    - sql:
+        sql: >-
+          UPDATE core_req_cesionarios_servicios
+          SET claveprivada = NULL
+          WHERE claveprivada IS NOT NULL
+          AND claveprivada NOT IN (SELECT id FROM core_clave_privada)
+- changeSet:
+    id: 2.0.1-fk-clave-privada-reqcesionaris-servicis
+    author: Limit
+    comment: >-
+      Afegeix la FK que faltava (veure comentari del canvi anterior),
+      amb ON DELETE SET NULL: esborrar una ClauPrivada no ha de bloquejar-se
+      ni deixar referències òrfenes, i el camp ja es tracta com a opcional a
+      la resta del codi (p.ex. ScspHelper.actualitzarServiciosActivosOrganismo
+      Cesionario/actualitzarServeiOrganismoCesionario recorren a
+      servicio.getClaveFirma() quan no hi ha una clau específica).
+    changes:
+    - addForeignKeyConstraint:
+        baseTableName: core_req_cesionarios_servicios
+        baseColumnNames: claveprivada
+        constraintName: fk_clave_priv_reqcesionaris
+        referencedTableName: core_clave_privada
+        referencedColumnNames: id
+        onDelete: SET NULL
