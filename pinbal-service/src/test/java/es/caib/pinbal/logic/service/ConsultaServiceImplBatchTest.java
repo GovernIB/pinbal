@@ -180,6 +180,30 @@ public class ConsultaServiceImplBatchTest {
         assertEquals(1, resposta.size());
     }
 
+    @Test
+    public void findAmbPare_unaFillaAmbErrorScsp_noOcultaLaResta() throws Exception {
+        // Una sol·licitud en estat d'error pot no tenir resposta ni token associats a l'SCSP:
+        // l'error en obtenir aquesta informació no ha de fer desaparèixer tot el llistat de
+        // sol·licituds, sinó només deixar sense enriquir la sol·licitud afectada.
+        Consulta pare = mock(Consulta.class);
+        Consulta fillaOk = mock(Consulta.class);
+        Consulta fillaError = mock(Consulta.class);
+        when(fillaOk.getScspPeticionId()).thenReturn("PET-OK");
+        when(fillaOk.getScspSolicitudId()).thenReturn("SOL-OK");
+        when(fillaError.getId()).thenReturn(2L);
+        when(fillaError.getScspPeticionId()).thenReturn("PET-ERROR");
+        when(fillaError.getScspSolicitudId()).thenReturn("SOL-ERROR");
+        when(consultaRepository.findById(1L)).thenReturn(Optional.of(pare));
+        when(consultaRepository.findByPareOrderByScspSolicitudIdAsc(pare)).thenReturn(Arrays.asList(fillaOk, fillaError));
+        when(mapperFacade.map(any(Consulta.class), eq(ConsultaDto.class))).thenReturn(dtoAmbEstat("Error"));
+        when(scspHelper.recuperarResposta(eq("PET-ERROR"), eq("SOL-ERROR"), anyBoolean()))
+                .thenThrow(new RuntimeException("No hi ha token per a la sol·licitud"));
+
+        List<ConsultaDto> resposta = consultaService.findAmbPare(1L);
+
+        assertEquals(2, resposta.size());
+    }
+
     // ===================== countConsultesMultiplesProcessant =====================
 
     @Test
@@ -332,6 +356,63 @@ public class ConsultaServiceImplBatchTest {
         assertEquals(1, resposta.size());
         assertEquals(6, resposta.get(0).getNumRecobrimentOk());
         assertEquals(9, resposta.get(0).getNumWebUIOk());
+    }
+
+    @Test
+    public void findEstadistiquesByFiltre_ambDiversosUsuarisMateixProcedimentIServei_agregaSenseError() throws Exception {
+        // Els fets es consulten desglossats per usuari (ExplotConsultaFetsRepository.findByFiltre
+        // agrupa també per usuariCodi), així que hi pot haver diverses files per a un mateix
+        // entitat/procediment/servei. No s'ha de llançar cap error i els resultats s'han de sumar.
+        EstadistiquesFiltreDto filtre = new EstadistiquesFiltreDto();
+        java.util.Date dataFi = new java.util.Date();
+        java.util.Date dataInici = new java.util.Date(dataFi.getTime() - 86400000L);
+        filtre.setDataFi(dataFi);
+        filtre.setDataInici(dataInici);
+        ExplotTempsEntity tempsFinal = new ExplotTempsEntity(dataFi);
+        ExplotTempsEntity tempsInicial = new ExplotTempsEntity(dataInici);
+        when(explotTempsRepository.findFirstByData(any()))
+                .thenReturn(tempsFinal)
+                .thenReturn(tempsInicial);
+
+        ExplotConsultaFets fetFinalUsuari1 = ExplotConsultaFets.builder()
+                .entitatId(1L).entitatCodi("E1").procedimentId(10L).procedimentCodi("P10")
+                .serveiCodi("SV_A").usuariCodi("U1")
+                .recOk(10).webOk(10)
+                .build();
+        ExplotConsultaFets fetFinalUsuari2 = ExplotConsultaFets.builder()
+                .entitatId(1L).entitatCodi("E1").procedimentId(10L).procedimentCodi("P10")
+                .serveiCodi("SV_A").usuariCodi("U2")
+                .recOk(7).webOk(2)
+                .build();
+        ExplotConsultaFets fetInicialUsuari1 = ExplotConsultaFets.builder()
+                .entitatId(1L).entitatCodi("E1").procedimentId(10L).procedimentCodi("P10")
+                .serveiCodi("SV_A").usuariCodi("U1")
+                .recOk(4).webOk(1)
+                .build();
+        ExplotConsultaFets fetInicialUsuari2 = ExplotConsultaFets.builder()
+                .entitatId(1L).entitatCodi("E1").procedimentId(10L).procedimentCodi("P10")
+                .serveiCodi("SV_A").usuariCodi("U2")
+                .recOk(2).webOk(0)
+                .build();
+        when(explotConsultaFetsRepository.findByFiltre(eq(tempsFinal), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any()))
+                .thenReturn(Arrays.asList(fetFinalUsuari1, fetFinalUsuari2));
+        when(explotConsultaFetsRepository.findByFiltre(eq(tempsInicial), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any()))
+                .thenReturn(Arrays.asList(fetInicialUsuari1, fetInicialUsuari2));
+
+        Procediment procediment = mock(Procediment.class);
+        when(procediment.getNom()).thenReturn("Procediment Deu");
+        when(procediment.getCodi()).thenReturn("P10");
+        when(procedimentRepository.findById(10L)).thenReturn(Optional.of(procediment));
+        Servei servei = mock(Servei.class);
+        when(servei.getDescripcio()).thenReturn("Servei A");
+        when(serveiRepository.findByCode("SV_A")).thenReturn(Collections.singletonList(servei));
+
+        List<EstadisticaDto> resposta = consultaService.findEstadistiquesByFiltre(filtre);
+
+        // (10+7) - (4+2) = 11 ; (10+2) - (1+0) = 11
+        assertEquals(1, resposta.size());
+        assertEquals(11, resposta.get(0).getNumRecobrimentOk());
+        assertEquals(11, resposta.get(0).getNumWebUIOk());
     }
 
     // ===================== findEstadistiquesGlobalsByFiltre =====================

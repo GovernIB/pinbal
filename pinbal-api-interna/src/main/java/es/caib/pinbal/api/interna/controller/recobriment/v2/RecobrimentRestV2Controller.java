@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package es.caib.pinbal.api.interna.controller.recobriment.v2;
 
@@ -28,6 +28,7 @@ import es.caib.pinbal.logic.intf.service.exception.ProcedimentNotFoundException;
 import es.caib.pinbal.logic.intf.service.exception.ResourceNotFoundException;
 import es.caib.pinbal.logic.intf.service.exception.ServeiCampNotFoundException;
 import es.caib.pinbal.logic.intf.service.exception.ServeiNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.ServeiRespostaNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,7 @@ import java.util.Map;
 
 /**
  * Controlador pel servei REST de recobriment.
- * 
+ *
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
@@ -235,6 +236,8 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
             return new ResponseEntity<>(dadesEspecifiques, HttpStatus.OK);
         } catch (ServeiNotFoundException e) {
             throw new ResourceNotFoundException(e.getDefaultMessage(), e);
+        } catch (ServeiRespostaNotFoundException e) {
+            throw new ResourceNotFoundException(e.getDefaultMessage(), e);
         } catch (AccessDeniedException | AccessDenegatException ade) {
             throw new AccessDenegatException(Arrays.asList("PBL_WS"));
         } catch (Exception ex) {
@@ -252,13 +255,19 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 	@RequestMapping(value = "/serveis/{serveiCodi}/camps/**", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<ValorEnum>> getValorsEnum(
 			@PathVariable("serveiCodi") String serveiCodi,
-			@RequestParam(required = false)String filtre,
+			@RequestParam(required = false) String filtre,
 			HttpServletRequest request
 	) {
 		String fullPath = new UrlPathHelper().getPathWithinApplication(request);
 
-		String prefix = "/recobriment/v2/serveis/" + serveiCodi + "/camps/";
-		String remainingPath = fullPath.substring(prefix.length());
+		String basePath = "/recobriment/v2/serveis/" + serveiCodi + "/camps";
+		if (!fullPath.startsWith(basePath)) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		String remainingPath = fullPath.substring(basePath.length());
+		if (remainingPath.startsWith("/")) {
+			remainingPath = remainingPath.substring(1);
+		}
 
 		// Verificar si el camí restant està buit per evitar errors
 		if (remainingPath.isEmpty()) {

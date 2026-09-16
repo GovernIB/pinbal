@@ -23,10 +23,12 @@ public interface ServeiCampRepository extends JpaRepository<ServeiCamp, Long> {
 
 	@Query(	"from " +
 			"    ServeiCamp sc " +
+			"left join " +
+			"    sc.grup g " +
 			"where " +
 			"    sc.servei=?1 " +
 			"order by " +
-			"    sc.grup.nom asc, " +
+			"    g.nom asc, " +
 			"    sc.ordre asc")
 	List<ServeiCamp> findByServeiOrderByGrupOrdreAsc(String servei);
 

@@ -333,12 +333,36 @@ public class ConsultaAdminController extends BaseController {
 				writeFileToResponse(fitxer.getNom(), fitxer.getContingut(), response);
 				return null;
 			} else {
-				AlertHelper.warning(request, getMessage(request, "consulta.controller.xmlzip.buit"));
-				return "redirect:../../consulta";
+				return getModalControllerReturnValueWarning(request, "redirect:../../consulta", "consulta.controller.xmlzip.buit", null);
 			}
 		} catch (Exception ex) {
-			AlertHelper.error(request, getMessage(request, "consulta.controller.xmlzip.error"));
-			return "redirect:../../consulta";
+			return getModalControllerReturnValueError(request, "redirect:../../consulta", "consulta.controller.xmlzip.error");
+		}
+	}
+
+	/**
+	 * Variant del ZIP de missatges XML per a ser descarregada via AJAX des del detall de la
+	 * consulta (modal), sense navegar l'iframe de la modal: si no hi ha missatges o hi ha un
+	 * error, es retorna un avís que es mostra dins la mateixa modal en lloc de tancar-la.
+	 */
+	@GetMapping("/{consultaId}/xmlZip/json")
+	@ResponseBody
+	public JsonResponse xmlZipJson(
+			HttpServletRequest request,
+			@PathVariable Long consultaId) {
+		try {
+			// Només ADMIN pot descarregar
+			// Sense comprovar entitat; s'aplica seguretat a nivell de servei
+			FitxerDto fitxer = isHistoric(request)
+					? historicConsultaService.descarregarXmlTokensZip(consultaId)
+					: consultaService.descarregarXmlTokensZip(consultaId);
+			if (fitxer != null && fitxer.getContingut() != null) {
+				return new JsonResponse(fitxer);
+			} else {
+				return new JsonResponse(getMessage(request, "consulta.controller.xmlzip.buit"), true);
+			}
+		} catch (Exception ex) {
+			return new JsonResponse(true, getMessage(request, "consulta.controller.xmlzip.error"));
 		}
 	}
 

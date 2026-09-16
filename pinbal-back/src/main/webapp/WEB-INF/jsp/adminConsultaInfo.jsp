@@ -34,6 +34,54 @@ function initModalXml(element) {
 	$('#modal-missatge-xml').modal('toggle');
 }
 
+// Descàrrega del ZIP de missatges XML via AJAX perquè, si no hi ha missatges o hi ha un
+// error, es pugui mostrar l'avís dins la mateixa modal del detall en lloc de navegar-hi
+// (cosa que mostraria el llistat de consultes dins la modal, o la tancaria).
+function descarregarXmlZip(url) {
+	$('#xmlzip-missatge').remove();
+	$.ajax({
+		type: 'GET',
+		url: url,
+		success: function(json) {
+			if (json.error) {
+				mostrarMissatgeXmlZip('alert-danger', json.errorMsg);
+			} else if (json.warning) {
+				mostrarMissatgeXmlZip('alert-warning', json.warningMsg);
+			} else {
+				const fitxer = json.data;
+				const blob = base64toBlob(fitxer.contingut, fitxer.contentType);
+				const enllac = document.createElement('a');
+				enllac.href = URL.createObjectURL(blob);
+				enllac.download = fitxer.nom;
+				document.body.appendChild(enllac);
+				enllac.click();
+				document.body.removeChild(enllac);
+			}
+		},
+		error: function() {
+			mostrarMissatgeXmlZip('alert-danger', msgXmlZipError);
+		}
+	});
+	return false;
+}
+function mostrarMissatgeXmlZip(classeAlerta, missatge) {
+	$('<div id="xmlzip-missatge" class="alert ' + classeAlerta + ' fade in">' +
+			'<button class="close" data-dismiss="alert" aria-label="close">&times;</button>' +
+			'<p>' + missatge + '</p>' +
+		'</div>').insertAfter('#xmlzip-boto-container');
+	webutilModalAdjustHeight();
+}
+function base64toBlob(b64Data, contentType) {
+	var byteCharacters = atob(b64Data);
+	var byteNumbers = new Array(byteCharacters.length);
+	for (var i = 0; i < byteCharacters.length; i++) {
+		byteNumbers[i] = byteCharacters.charCodeAt(i);
+	}
+	return new Blob([new Uint8Array(byteNumbers)], {type: contentType});
+}
+
+var msgXmlZipError = '<spring:message code="consulta.controller.xmlzip.error" javaScriptEscape="true"/>';
+
 $(document).ready(function () {
 	$("#cbcopy").click(() => {
 		let xml = $('#modal-missatge-xml .modal-body').find('#missatgeXml').val();
@@ -126,9 +174,9 @@ $(document).ready(function () {
 						</div>
 					</div>
 				</form>
-                <div class="row">
+                <div class="row" id="xmlzip-boto-container">
                     <div class="col-md-offset-10 col-md-2">
-                        <a class="btn btn-default pull-right" style="top: -4px; position: relative;" href="<c:url value="/modal/admin/consulta/${consulta.id}/xmlZip"/>">
+                        <a class="btn btn-default pull-right" style="top: -4px; position: relative;" href="#" onclick="return descarregarXmlZip('<c:url value="/admin/consulta/${consulta.id}/xmlZip/json"/>');">
                             <i class="fas fa-download"></i> <spring:message code="admin.consulta.info.xmlzip"/>
                         </a>
                     </div>

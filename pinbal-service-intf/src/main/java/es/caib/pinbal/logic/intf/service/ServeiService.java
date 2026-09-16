@@ -121,7 +121,7 @@ public interface ServeiService {
 	 * @throws ServeiNotFoundException
 	 *             Si no s'ha trobat troba cap servei amb l'id especificat.
 	 */
-	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES') or hasRole('PBL_WS')")
 	public ServeiDto findAmbCodiPerAdminORepresentant(String serveiCodi) throws ServeiNotFoundException;
 
 	/**

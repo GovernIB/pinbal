@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package es.caib.pinbal.logic.service;
 
@@ -178,7 +178,7 @@ import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  * Implementació dels mètodes per a gestionar les consultes al SCSP.
- * 
+ *
  * @author Limit Tecnologies <limit@limit.es>
  */
 @Slf4j
@@ -1911,10 +1911,22 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		List<ConsultaDto> resposta = new ArrayList<ConsultaDto>();
 		List<Consulta> filles = consultaRepository.findByPareOrderByScspSolicitudIdAsc(pare);
 		for (Consulta filla: filles) {
-			resposta.add(
-					toConsultaDto(
-							null,
-							filla));
+			try {
+				resposta.add(
+						toConsultaDto(
+								null,
+								filla));
+			} catch (ScspException ex) {
+				// No s'ha pogut enriquir la sol·licitud amb les dades de l'SCSP (p.e. una
+				// sol·licitud en estat d'error sense resposta ni token associat). No es vol
+				// que un únic error faci desaparèixer tot el llistat de sol·licituds, així que
+				// s'afegeix igualment amb les dades bàsiques disponibles.
+				log.error("No s'han pogut obtenir totes les dades de la sol·licitud (id=" + filla.getId() + ") de la consulta múltiple (pareId=" + pareId + ")", ex);
+				resposta.add(
+						dtoMappingHelper.getMapperFacade().map(
+								filla,
+								ConsultaDto.class));
+			}
 		}
 		return resposta;
 	}
@@ -1958,8 +1970,11 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			return resposta;
 		}
 
+		// Els fets es consulten desglossats per usuari, però aquí es volen agregats per
+		// entitat/procediment/servei, així que se sumen tots els usuaris d'un mateix registre.
 		for (ExplotConsultaFets fet: fetsAcumulatFinal) {
-			fetsMap.put(new EstadisticaKey(fet.getEntitatId(), fet.getProcedimentId(), fet.getServeiCodi()), fet);
+			EstadisticaKey key = new EstadisticaKey(fet.getEntitatId(), fet.getProcedimentId(), fet.getServeiCodi());
+			fetsMap.merge(key, fet, ExplotConsultaFets::plus);
 		}
 
 		if (filtre.getDataInici() != null) {
@@ -1967,9 +1982,18 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			List<ExplotConsultaFets> fetsAcumulatInicial = getFetsByFiltre(tempsInicial, filtre);
 
 			if (fetsAcumulatInicial != null && !fetsAcumulatInicial.isEmpty()) {
+				Map<EstadisticaKey, ExplotConsultaFets> fetsMapInicial = new LinkedHashMap<>();
 				for (ExplotConsultaFets fet : fetsAcumulatInicial) {
 					EstadisticaKey key = new EstadisticaKey(fet.getEntitatId(), fet.getProcedimentId(), fet.getServeiCodi());
-					fetsMap.put(key, fetsMap.get(key).minus(fet));
+					fetsMapInicial.merge(key, fet, ExplotConsultaFets::plus);
+				}
+				for (Map.Entry<EstadisticaKey, ExplotConsultaFets> entry : fetsMapInicial.entrySet()) {
+					ExplotConsultaFets fetFinal = fetsMap.get(entry.getKey());
+					if (fetFinal == null) {
+						log.warn("No s'han trobat dades finals per a la clau " + entry.getKey() + " en calcular les estadístiques, s'ignoren les dades inicials");
+						continue;
+					}
+					fetsMap.put(entry.getKey(), fetFinal.minus(entry.getValue()));
 				}
 			}
 
@@ -3491,7 +3515,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 		solicitud.setServeiCodi(consulta.getServeiCodi());
 		Procediment procediment = procedimentRepository.findById(procedimentServei.getProcediment().getId());
 		solicitud.setProcedimentCodi(
-				(procedimentServei.getProcedimentCodi() != null && !("".equalsIgnoreCase(procedimentServei.getProcedimentCodi())) ? 
+				(procedimentServei.getProcedimentCodi() != null && !("".equalsIgnoreCase(procedimentServei.getProcedimentCodi())) ?
 						procedimentServei.getProcedimentCodi("[" + scspException.getScspCode() + "] " + ) :
 						procediment.getCodi()));
 		solicitud.setProcedimentNom(procediment.getNom());

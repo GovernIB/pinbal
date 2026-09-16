@@ -47,7 +47,7 @@ public class InformeGeneralEstatExcelViewTest {
         HSSFWorkbook workbook = new HSSFWorkbook();
         view.buildExcelDocument(model, workbook, request, response);
 
-        verify(response).setHeader("Content-Disposition", "Inline; filename=informeServeis.xls");
+        verify(response).setHeader("Content-Disposition", "Inline; filename=informeGeneralEstat.xls");
         HSSFSheet sheet = workbook.getSheetAt(0);
         assertEquals("Entitat 1", sheet.getRow(1).getCell(0).getStringCellValue());
         assertEquals("B00000000", sheet.getRow(1).getCell(1).getStringCellValue());

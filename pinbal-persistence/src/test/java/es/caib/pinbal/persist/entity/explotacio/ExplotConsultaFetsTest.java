@@ -160,6 +160,128 @@ public class ExplotConsultaFetsTest {
     }
 
     @Test
+    public void testMinus_fetAnteriorNull_llancaExceptionControlada() {
+        ExplotConsultaFets actual = crear(1, 1);
+
+        assertThrows(RuntimeException.class, () -> actual.minus(null));
+    }
+
+    @Test
+    public void testMinus_entitatIdNullEnAmbdosCostats_esConsiderenIguals() {
+        ExplotConsultaFets actual = ExplotConsultaFets.builder()
+                .entitatId(null)
+                .procedimentId(2L)
+                .serveiCodi("SERVEI1")
+                .usuariCodi(null)
+                .recOk(10)
+                .build();
+        ExplotConsultaFets anterior = ExplotConsultaFets.builder()
+                .entitatId(null)
+                .procedimentId(2L)
+                .serveiCodi("SERVEI1")
+                .usuariCodi(null)
+                .recOk(4)
+                .build();
+
+        ExplotConsultaFets resultat = actual.minus(anterior);
+
+        assertNull(resultat.getEntitatId());
+        assertEquals(6, resultat.getRecOk());
+    }
+
+    @Test
+    public void testMinus_entitatIdNullNomesEnUnCostat_llancaExceptionControladaSenseNPE() {
+        ExplotConsultaFets actual = ExplotConsultaFets.builder()
+                .entitatId(null)
+                .procedimentId(2L)
+                .serveiCodi("SERVEI1")
+                .usuariCodi("USUARI1")
+                .build();
+        ExplotConsultaFets anterior = ExplotConsultaFets.builder()
+                .entitatId(1L)
+                .procedimentId(2L)
+                .serveiCodi("SERVEI1")
+                .usuariCodi("USUARI1")
+                .build();
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> actual.minus(anterior));
+        assertNotEquals(NullPointerException.class, ex.getClass());
+    }
+
+    @Test
+    public void testMinus_usuariCodiNullEnAmbdosCostats_esConsiderenIguals() {
+        ExplotConsultaFets actual = ExplotConsultaFets.builder()
+                .entitatId(1L)
+                .procedimentId(2L)
+                .serveiCodi("SERVEI1")
+                .usuariCodi(null)
+                .recOk(10)
+                .build();
+        ExplotConsultaFets anterior = ExplotConsultaFets.builder()
+                .entitatId(1L)
+                .procedimentId(2L)
+                .serveiCodi("SERVEI1")
+                .usuariCodi(null)
+                .recOk(4)
+                .build();
+
+        ExplotConsultaFets resultat = actual.minus(anterior);
+
+        assertEquals(6, resultat.getRecOk());
+    }
+
+    @Test
+    public void testPlus_mateixUsuari_sumaIMantéUsuari() {
+        ExplotConsultaFets fet1 = crear(10, 1);
+        ExplotConsultaFets fet2 = crear(5, 2);
+
+        ExplotConsultaFets resultat = fet1.plus(fet2);
+
+        assertEquals("USUARI1", resultat.getUsuariCodi());
+        assertEquals(15, resultat.getRecOk());
+        assertEquals(3, resultat.getRecError());
+    }
+
+    @Test
+    public void testPlus_usuarisDiferents_sumaIDeixaUsuariNull() {
+        ExplotConsultaFets fet1 = crear(10, 1);
+        ExplotConsultaFets fet2 = ExplotConsultaFets.builder()
+                .entitatId(1L)
+                .entitatCodi("ENT1")
+                .procedimentId(2L)
+                .procedimentCodi("PROC1")
+                .serveiCodi("SERVEI1")
+                .usuariCodi("USUARI2")
+                .recOk(5)
+                .recError(2)
+                .build();
+
+        ExplotConsultaFets resultat = fet1.plus(fet2);
+
+        assertNull(resultat.getUsuariCodi());
+        assertEquals(15, resultat.getRecOk());
+    }
+
+    @Test
+    public void testPlus_altreNull_retornaElMateix() {
+        ExplotConsultaFets fet1 = crear(10, 1);
+
+        assertEquals(fet1, fet1.plus(null));
+    }
+
+    @Test
+    public void testPlus_procedimentIncorrecte_llancaException() {
+        ExplotConsultaFets fet1 = crear(10, 1);
+        ExplotConsultaFets fet2 = ExplotConsultaFets.builder()
+                .entitatId(1L)
+                .procedimentId(99L)
+                .serveiCodi("SERVEI1")
+                .build();
+
+        assertThrows(RuntimeException.class, () -> fet1.plus(fet2));
+    }
+
+    @Test
     public void testEqualsAndHashCode() {
         ExplotConsultaFets fets1 = crear(1, 1);
         ExplotConsultaFets fets2 = crear(1, 1);

@@ -32,11 +32,11 @@ public interface UsuariApi {
 
     @Operation(summary = "Llistar usuaris", description = "Consulta paginada d'usuaris per entitat amb filtre JSON opcional.", operationId = "getUsuarisIntern")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Correcte"), @ApiResponse(responseCode = "204", description = "Sense contingut", content = @Content)})
-    ResponseEntity<PagedModel<EntityModel<UsuariEntitat>>> getUsuaris(String entitatCodi, String filtreUsuarisString, @Parameter(hidden = true) Pageable pageable);
+    ResponseEntity<PagedModel<EntityModel<UsuariEntitat>>> getUsuaris(@Parameter(required = true) String entitatCodi, String filtreUsuarisString, @Parameter(hidden = true) Pageable pageable);
 
     @Operation(summary = "Obtenir usuari", description = "Retorna les dades d'un usuari per codi i entitat.", operationId = "getUsuariIntern")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Correcte"), @ApiResponse(responseCode = "204", description = "Sense contingut", content = @Content)})
-    ResponseEntity<EntityModel<UsuariEntitat>> getUsuari(String usuariCodi, String entitatCodi);
+    ResponseEntity<EntityModel<UsuariEntitat>> getUsuari(String usuariCodi, @Parameter(required = true) String entitatCodi);
 
     @Operation(summary = "Atorgar permisos", description = "Atorga permisos seleccionats de procediment/servei a un usuari.", operationId = "grantUsuariPermissionsIntern")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Correcte"), @ApiResponse(responseCode = "400", description = "Entrada invàlida", content = @Content)})
@@ -46,5 +46,5 @@ public interface UsuariApi {
 
     @Operation(summary = "Obtenir permisos d'usuari", description = "Retorna permisos de l'usuari en una entitat.", operationId = "getUserPermissionsIntern")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Correcte"), @ApiResponse(responseCode = "204", description = "Sense contingut", content = @Content)})
-    ResponseEntity<EntityModel<PermisosServei>> getUserPermissions(String usuariCodi, String entitatCodi);
+    ResponseEntity<EntityModel<PermisosServei>> getUserPermissions(String usuariCodi, @Parameter(required = true) String entitatCodi);
 }

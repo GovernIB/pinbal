@@ -21,12 +21,17 @@ import static org.mockito.Mockito.mock;
 public class InformeUsuarisExcelViewTest {
 
     private InformeUsuariDto usuari(EntitatDto entitat, String departament, String codi, String nom) {
+        return usuari(entitat, departament, codi, nom, true);
+    }
+
+    private InformeUsuariDto usuari(EntitatDto entitat, String departament, String codi, String nom, boolean actiu) {
         InformeUsuariDto dada = new InformeUsuariDto();
         dada.setEntitat(entitat);
         dada.setDepartament(departament);
         dada.setCodi(codi);
         dada.setNom(nom);
         dada.setNif("12345678Z");
+        dada.setActiu(actiu);
         return dada;
     }
 
@@ -45,8 +50,8 @@ public class InformeUsuarisExcelViewTest {
         entitat2.setNom("Entitat 2");
 
         List<InformeUsuariDto> dades = new ArrayList<>();
-        dades.add(usuari(entitat1, "Departament A", "U1", "Usuari 1"));
-        dades.add(usuari(entitat1, "Departament A", "U2", "Usuari 2"));
+        dades.add(usuari(entitat1, "Departament A", "U1", "Usuari 1", true));
+        dades.add(usuari(entitat1, "Departament A", "U2", "Usuari 2", false));
         dades.add(usuari(entitat1, null, "U3", "Usuari 3"));
         dades.add(usuari(entitat2, "Departament B", "U4", "Usuari 4"));
 
@@ -70,6 +75,19 @@ public class InformeUsuarisExcelViewTest {
         assertTrue(contingut.contains("Departament A (2)"));
         assertTrue(contingut.contains("sense.departament (1)"));
         assertTrue(contingut.contains("Departament B (1)"));
+
+        // Columna "Actiu": capçalera i valors Sí/No per usuari
+        StringBuilder columnaActiu = new StringBuilder();
+        for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+            var row = sheet.getRow(i);
+            if (row != null && row.getCell(3) != null && row.getCell(3).getCellType() == org.apache.poi.ss.usermodel.CellType.STRING) {
+                columnaActiu.append(row.getCell(3).getStringCellValue()).append("|");
+            }
+        }
+        String contingutColumnaActiu = columnaActiu.toString();
+        assertTrue(contingutColumnaActiu.contains("informe.usuaris.excel.columna.actiu"));
+        assertTrue(contingutColumnaActiu.contains("comu.si"));
+        assertTrue(contingutColumnaActiu.contains("comu.no"));
         workbook.close();
     }
 }

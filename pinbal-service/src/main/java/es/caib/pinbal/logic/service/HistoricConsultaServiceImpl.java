@@ -661,10 +661,22 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 		List<ConsultaDto> resposta = new ArrayList<ConsultaDto>();
 		List<HistoricConsulta> filles = historicConsultaRepository.findByPareOrderByScspSolicitudIdAsc(pare);
 		for (HistoricConsulta filla: filles) {
-			resposta.add(
-					toConsultaDto(
-							null,
-							filla));
+			try {
+				resposta.add(
+						toConsultaDto(
+								null,
+								filla));
+			} catch (ScspException ex) {
+				// No s'ha pogut enriquir la sol·licitud amb les dades de l'SCSP (p.e. una
+				// sol·licitud en estat d'error sense resposta ni token associat). No es vol
+				// que un únic error faci desaparèixer tot el llistat de sol·licituds, així que
+				// s'afegeix igualment amb les dades bàsiques disponibles.
+				log.error("No s'han pogut obtenir totes les dades de la sol·licitud (id=" + filla.getId() + ") de la consulta múltiple (pareId=" + pareId + ")", ex);
+				resposta.add(
+						dtoMappingHelper.getMapperFacade().map(
+								filla,
+								ConsultaDto.class));
+			}
 		}
 		return resposta;
 	}

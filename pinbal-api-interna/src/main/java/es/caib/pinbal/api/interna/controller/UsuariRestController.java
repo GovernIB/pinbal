@@ -52,7 +52,7 @@ public class UsuariRestController extends PinbalHalRestController implements Usu
      */
     // TODO: Revisar si s'utilitza en algun lloc. Canviat de /usuari/entitats a /usuaris/actual/entitats
     @Override
-    @GetMapping(value = "/usuaris/actual/entitats", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/actual/entitats", produces = MediaType.APPLICATION_JSON_VALUE)
     // IMPORTANT: Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI definida a la interfície UsuariApi.
     public ResponseEntity<List<Entitat>> getEntitats() {
         try {

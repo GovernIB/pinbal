@@ -22,6 +22,7 @@ public class InformeUsuariDto implements Serializable {
 	private String nif;
 	private String nom;
 	private String departament;
+	private boolean actiu;
 
 	private EntitatDto entitat;
 

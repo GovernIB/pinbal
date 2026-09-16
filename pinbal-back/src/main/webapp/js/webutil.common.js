@@ -180,8 +180,13 @@ $(document).ajaxError(function(event, jqxhr, ajaxSettings, thrownError) {
 				timeout: 10000,
 				success: function() {
 					webutilRefreshMissatges();
-					if ($element.closest('.dataTables_wrapper')) {
-						var $dataTable = $('table.dataTable', $element.closest('.dataTables_wrapper'));
+					// Si l'element que ha llançat l'acció és dins la taula (p.e. un botó
+					// d'una fila) es refresca només aquesta taula; si no (p.e. un botó
+					// d'acció general com "buidar totes"), es refresquen totes les
+					// taules de la pàgina.
+					var $wrapper = $element.closest('.dataTables_wrapper');
+					var $dataTable = $wrapper.length ? $('table.dataTable', $wrapper) : $('table.dataTable');
+					if ($dataTable.length) {
 						$dataTable.dataTable().fnDraw();
 						// $dataTable.webutilDatatable('refresh');
 					}

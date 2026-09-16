@@ -57,7 +57,7 @@ public class ServeiService extends AbstractService<es.caib.pinbal.logic.intf.ser
 	}
 
 	@Override
-	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES", "PBL_WS"})
 	public ServeiDto findAmbCodiPerAdminORepresentant(
 			String codi) throws ServeiNotFoundException {
 		return getDelegateService().findAmbCodiPerAdminORepresentant(codi);

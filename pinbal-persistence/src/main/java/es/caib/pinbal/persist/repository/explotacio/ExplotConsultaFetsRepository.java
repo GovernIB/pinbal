@@ -19,7 +19,7 @@ public interface ExplotConsultaFetsRepository extends JpaRepository<ExplotConsul
             "    d.procedimentId, " +
             "    d.procedimentCodi, " +
             "    d.serveiCodi, " +
-            "    '', " +
+            "    d.usuariCodi, " +
             "    sum(f.numRecobrimentOk), " +
             "    sum(f.numRecobrimentError), " +
             "    sum(f.numRecobrimentPendent), " +
@@ -48,7 +48,8 @@ public interface ExplotConsultaFetsRepository extends JpaRepository<ExplotConsul
             "   d.entitatCodi, " +
             "   d.procedimentId, " +
             "   d.procedimentCodi, " +
-            "   d.serveiCodi")
+            "   d.serveiCodi," +
+			"	d.usuariCodi")
     public List<ExplotConsultaFets> findByFiltre(
             @Param("temps")ExplotTempsEntity temps,
             @Param("esNullEntitatId") boolean esNullEntitatId,

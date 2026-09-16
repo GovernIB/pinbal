@@ -41,7 +41,7 @@ public interface ProcedimentApi {
 
     @Operation(summary = "Llistar procediments", description = "Consulta paginada de procediments.", operationId = "getProcedimentsIntern")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Correcte"), @ApiResponse(responseCode = "204", description = "Sense contingut", content = @Content)})
-    ResponseEntity<PagedModel<EntityModel<Procediment>>> getProcediments(String entitatCodi, String codi, String nom, String organGestor, @Parameter(hidden = true) Pageable pageable);
+    ResponseEntity<PagedModel<EntityModel<Procediment>>> getProcediments(@Parameter(required = true) String entitatCodi, String codi, String nom, String organGestor, @Parameter(hidden = true) Pageable pageable);
 
     @Operation(summary = "Obtenir procediment per id", description = "Retorna un procediment per identificador.", operationId = "getProcedimentByIdIntern")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Correcte"), @ApiResponse(responseCode = "404", description = "No trobat", content = @Content)})
@@ -49,7 +49,7 @@ public interface ProcedimentApi {
 
     @Operation(summary = "Obtenir procediment per codi", description = "Retorna un procediment per codi i entitat.", operationId = "getProcedimentByCodiIntern")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Correcte"), @ApiResponse(responseCode = "404", description = "No trobat", content = @Content)})
-    ResponseEntity<EntityModel<Procediment>> getProcediment(String procedimentCodi, String entitatCodi);
+    ResponseEntity<EntityModel<Procediment>> getProcediment(String procedimentCodi, @Parameter(required = true) String entitatCodi);
 
     @Operation(summary = "Llistar serveis del procediment", description = "Llista paginada de serveis d'un procediment per id.", operationId = "getProcedimentServeisIntern")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Correcte"), @ApiResponse(responseCode = "204", description = "Sense contingut", content = @Content)})
@@ -57,5 +57,5 @@ public interface ProcedimentApi {
 
     @Operation(summary = "Llistar serveis del procediment per codi", description = "Llista paginada de serveis per codi de procediment i entitat.", operationId = "getProcedimentServeisByCodiIntern")
     @ApiResponses({@ApiResponse(responseCode = "200", description = "Correcte"), @ApiResponse(responseCode = "204", description = "Sense contingut", content = @Content)})
-    ResponseEntity<PagedModel<EntityModel<Servei>>> getProcedimentServeisByCodi(String procedimentCodi, String entitatCodi, @Parameter(hidden = true) Pageable pageable);
+    ResponseEntity<PagedModel<EntityModel<Servei>>> getProcedimentServeisByCodi(String procedimentCodi, @Parameter(required = true) String entitatCodi, @Parameter(hidden = true) Pageable pageable);
 }

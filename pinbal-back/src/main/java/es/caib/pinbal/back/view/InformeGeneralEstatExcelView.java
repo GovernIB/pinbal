@@ -41,7 +41,7 @@ public class InformeGeneralEstatExcelView extends AbstractHssfView implements Me
 			HSSFWorkbook workbook,
 			HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		response.setHeader("Content-Disposition", "Inline; filename=informeServeis.xls");
+		response.setHeader("Content-Disposition", "Inline; filename=informeGeneralEstat.xls");
 		List<InformeGeneralEstatDto> informeDades = (List<InformeGeneralEstatDto>)model.get("informeDades");
 		HSSFSheet sheet = workbook.createSheet(
 				getMessage(

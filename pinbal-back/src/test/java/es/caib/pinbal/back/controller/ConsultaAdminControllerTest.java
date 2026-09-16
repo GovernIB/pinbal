@@ -491,6 +491,38 @@ public class ConsultaAdminControllerTest {
         assertEquals("redirect:../../consulta", controller.xmlZip(request, mock(HttpServletResponse.class), 1L, new ExtendedModelMap()));
     }
 
+    // ------------------------- xmlZipJson -------------------------
+
+    @Test
+    public void xmlZipJsonAmbExitRetornaElFitxer() throws Exception {
+        FitxerDto fitxer = FitxerDto.builder().nom("xmls.zip").contentType("application/zip").contingut(new byte[]{1, 2}).build();
+        when(consultaService.descarregarXmlTokensZip(1L)).thenReturn(fitxer);
+
+        var resposta = controller.xmlZipJson(request, 1L);
+
+        assertTrue(!resposta.isError() && !resposta.isWarning());
+        assertEquals(fitxer, resposta.getData());
+    }
+
+    @Test
+    public void xmlZipJsonAmbFitxerBuitRetornaAvis() throws Exception {
+        when(consultaService.descarregarXmlTokensZip(1L)).thenReturn(null);
+
+        var resposta = controller.xmlZipJson(request, 1L);
+
+        assertTrue(resposta.isWarning());
+        assertTrue(!resposta.isError());
+    }
+
+    @Test
+    public void xmlZipJsonAmbExcepcioRetornaError() throws Exception {
+        when(consultaService.descarregarXmlTokensZip(1L)).thenThrow(new RuntimeException("error"));
+
+        var resposta = controller.xmlZipJson(request, 1L);
+
+        assertTrue(resposta.isError());
+    }
+
     // ------------------------- justificantPrevisualitzacio -------------------------
 
     @Test

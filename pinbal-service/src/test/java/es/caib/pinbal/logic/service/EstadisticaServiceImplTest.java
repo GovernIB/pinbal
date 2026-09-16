@@ -123,6 +123,39 @@ public class EstadisticaServiceImplTest {
     }
 
     @Test
+    public void consultaEstadistiques_claueNomesEnDadesInicials_noLlencaNPEIIgnoraLaClau() {
+        Date dataAhir = dataAhir();
+        ExplotTempsEntity tempsFinal = new ExplotTempsEntity();
+        ExplotTempsEntity tempsInicial = new ExplotTempsEntity();
+        when(explotTempsRepository.findFirstByData(any()))
+                .thenReturn(tempsFinal)
+                .thenReturn(tempsInicial);
+
+        ExplotConsultaFets fetFinal = ExplotConsultaFets.builder()
+                .entitatId(1L).entitatCodi("ENT001")
+                .procedimentId(1L).procedimentCodi("PRC001")
+                .serveiCodi("SV001").usuariCodi("USU001")
+                .webOk(5L)
+                .build();
+        // Combinació entitat/procediment/servei/usuari que només existeix a les dades inicials
+        // (p.e. l'usuari va deixar de fer consultes): no hi ha cap valor amb aquesta clau a
+        // fetsMap, així que abans es produïa una NullPointerException.
+        ExplotConsultaFets fetInicialSenseFinal = ExplotConsultaFets.builder()
+                .entitatId(1L).entitatCodi("ENT001")
+                .procedimentId(2L).procedimentCodi("PRC002")
+                .serveiCodi("SV002").usuariCodi("USU002")
+                .webOk(3L)
+                .build();
+        when(explotConsultaFetsRepository.findByTemps(tempsFinal)).thenReturn(Collections.singletonList(fetFinal));
+        when(explotConsultaFetsRepository.findByTemps(tempsInicial)).thenReturn(Collections.singletonList(fetInicialSenseFinal));
+
+        RegistresEstadistics result = assertDoesNotThrow(() -> estadisticaService.consultaEstadistiques(dataAhir));
+
+        assertNotNull(result);
+        assertNotNull(result.getFets());
+    }
+
+    @Test
     public void consultaEstadistiques_rangeDataes_buidesRetornaLluidaBuida() {
         List<RegistresEstadistics> result = estadisticaService.consultaEstadistiques(null, null);
         assertTrue(result.isEmpty());

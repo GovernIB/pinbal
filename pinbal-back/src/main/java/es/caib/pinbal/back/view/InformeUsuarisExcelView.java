@@ -134,7 +134,7 @@ public class InformeUsuarisExcelView extends AbstractHssfView implements Message
 								filaDepartament,
 								filaDepartament,
 								columnaInicial,
-								columnaInicial + 2));
+								columnaInicial + 3));
 				capsaleraDepartament.setHeight((short)0);
 				insertarFilaCapsalera(
 						request,
@@ -150,6 +150,11 @@ public class InformeUsuarisExcelView extends AbstractHssfView implements Message
 			dadaNomCell.setCellValue(informeDada.getNom());
 			HSSFCell dadaNifCell = filaDada.createCell(columnaInicial + 2);
 			dadaNifCell.setCellValue(informeDada.getNif());
+			HSSFCell dadaActiuCell = filaDada.createCell(columnaInicial + 3);
+			dadaActiuCell.setCellValue(
+					getMessage(
+							request,
+							informeDada.isActiu() ? "comu.si" : "comu.no"));
 			totalUsuarisEntitat++;
 			subtotalDepartament++;
 		}
@@ -195,6 +200,12 @@ public class InformeUsuarisExcelView extends AbstractHssfView implements Message
 				getMessage(
 						request,
 						"informe.usuaris.excel.columna.nif"));
+		HSSFCell actiuCell = titolsColumna.createCell(columnaInicial + 3);
+		actiuCell.setCellStyle(style);
+		actiuCell.setCellValue(
+				getMessage(
+						request,
+						"informe.usuaris.excel.columna.actiu"));
 	}
 
 	private void insertarValorDepartament(

@@ -787,14 +787,14 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         if (serveiConfig == null)
             throw new ServeiNotFoundException(serveiCodi);
         if (serveiConfig.getArrelRespostaPath() == null || serveiConfig.getArrelRespostaPath().isEmpty()) {
-            throw new ServeiRespostaNotFoundException("serveiCodi");
+            throw new ServeiRespostaNotFoundException(serveiCodi);
         }
 
         ArbreDto<DadaEspecificaDto> arbreDadesEspecifiques = serveiService.generarArbreDadesEspecifiques(serveiCodi);
         NodeDto<DadaEspecificaDto> nodeResposta = findNodeByPath(arbreDadesEspecifiques.getArrel(), serveiConfig.getArrelRespostaPath());
 
         if (nodeResposta == null) {
-            throw new ServeiRespostaNotFoundException("serveiCodi");
+            throw new ServeiRespostaNotFoundException(serveiCodi);
         }
         
         return toDadesEspecifiquesBasiques(nodeResposta);

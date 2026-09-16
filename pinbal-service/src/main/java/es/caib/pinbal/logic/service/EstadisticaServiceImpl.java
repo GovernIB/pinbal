@@ -163,7 +163,12 @@ public class EstadisticaServiceImpl implements EstadisticaService {
         if (fetsAcumulatInici != null && !fetsAcumulatInici.isEmpty()) {
             for (ExplotConsultaFets fet : fetsAcumulatInici) {
                 EstadisticaKey key = new EstadisticaKey(fet.getEntitatCodi(), fet.getProcedimentCodi(), fet.getServeiCodi(), fet.getUsuariCodi());
-                fetsMap.put(key, fetsMap.get(key).minus(fet));
+                ExplotConsultaFets fetFinal = fetsMap.get(key);
+                if (fetFinal == null) {
+                    log.warn("No s'han trobat dades finals per a la clau " + key + " en calcular les estadístiques, s'ignoren les dades inicials");
+                    continue;
+                }
+                fetsMap.put(key, fetFinal.minus(fet));
             }
         }
         return toRegistreEstadistic(fetsMap, data);
