@@ -33,8 +33,6 @@ public class AuthController {
 	private String authUrl;
 	@Value("${es.caib.pinbal.auth.realm:#{null}}")
 	private String authRealm;
-	@Value("${es.caib.pinbal.auth.clientid:#{null}}")
-	private String authClientId;
 
 	private static final String ORIGEN_REACT = "react";
 	private static final String REDIRECT = "redirect:";
@@ -51,9 +49,10 @@ public class AuthController {
 			return REDIRECT + WebSecurityConfig.LOGOUT_URL;
 		}
 
-		// Cal llegir l'id_token ABANS d'invalidar la sessió, perquè Keycloak >= 18 exigeix
-		// "id_token_hint" per fer el logout sense demanar confirmació a l'usuari.
-		String idTokenHint = getIdTokenHint(request);
+		// Cal llegir el KeycloakSecurityContext ABANS d'invalidar la sessió, perquè Keycloak >= 18
+		// exigeix "id_token_hint" per fer el logout sense demanar confirmació a l'usuari.
+		KeycloakSecurityContext keycloakSecurityContext = getKeycloakSecurityContext(request);
+		String idTokenHint = keycloakSecurityContext != null ? keycloakSecurityContext.getIdTokenString() : null;
 
 		// Destí on ha d'aterrar el navegador un cop Keycloak acaba el logout: l'arrel de la interfície
 		// JSP (comportament per defecte) o l'arrel de la SPA React si el logout s'ha iniciat des d'allà
@@ -105,11 +104,25 @@ public class AuthController {
 			StringBuilder logoutUrl = getLogoutUrl(issuerUrl, baseUrl);
 			// S'envien tots dos paràmetres (no és excloent): alguns IdP OIDC exigeixen "client_id" encara que
 			// hi hagi "id_token_hint", i l'especificació RP-Initiated Logout permet enviar-los junts.
+			//
+			// El "client_id" s'obté del claim "azp" del mateix id_token (amb quin client s'ha autenticat
+			// l'usuari), NO d'una propietat de configuració a part (com es feia abans amb
+			// "es.caib.pinbal.auth.clientid"): aquella propietat s'havia de mantenir sincronitzada a mà amb
+			// el "resource" del "pinbal-back.war" al subsistema keycloak de standalone-openshift.xml
+			// (JBOSS_AUTH_CLIENTID), i es va desincronitzar en un entorn (s'hi va posar el client REST
+			// "goib-ws" en lloc del client de navegador "goib-default-des"). Com que Keycloak/Soffid
+			// indexen la sessió SSO pel client que la va crear, un "client_id" que no és el propietari de
+			// la sessió identificada per "id_token_hint" fa que l'"end_session_endpoint" respongui "Session
+			// not active": no tanca la sessió SSO i l'usuari hi torna a entrar silenciosament. Llegint-lo
+			// sempre de l'"azp" del mateix token és impossible que quedi desincronitzat.
+			String clientId = keycloakSecurityContext != null && keycloakSecurityContext.getIdToken() != null
+					? keycloakSecurityContext.getIdToken().getIssuedFor()
+					: null;
 			if (idTokenHint != null) {
 				logoutUrl.append("&id_token_hint=").append(URLEncoder.encode(idTokenHint, StandardCharsets.UTF_8));
 			}
-			if (authClientId != null) {
-				logoutUrl.append("&client_id=").append(URLEncoder.encode(authClientId, StandardCharsets.UTF_8));
+			if (clientId != null) {
+				logoutUrl.append("&client_id=").append(URLEncoder.encode(clientId, StandardCharsets.UTF_8));
 			}
 			return REDIRECT + logoutUrl;
 		}
@@ -151,13 +164,11 @@ public class AuthController {
 	}
 
 	@Nullable
-	private static String getIdTokenHint(HttpServletRequest request) {
-		String idTokenHint = null;
+	private static KeycloakSecurityContext getKeycloakSecurityContext(HttpServletRequest request) {
 		Object keycloakSecurityContext = request.getAttribute(KeycloakSecurityContext.class.getName());
-		if (keycloakSecurityContext instanceof KeycloakSecurityContext) {
-			idTokenHint = ((KeycloakSecurityContext) keycloakSecurityContext).getIdTokenString();
-		}
-		return idTokenHint;
+		return keycloakSecurityContext instanceof KeycloakSecurityContext
+				? (KeycloakSecurityContext) keycloakSecurityContext
+				: null;
 	}
 
 }
