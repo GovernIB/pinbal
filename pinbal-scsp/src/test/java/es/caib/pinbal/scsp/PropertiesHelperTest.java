@@ -1,7 +1,12 @@
 package es.caib.pinbal.scsp;
 
+import es.caib.pinbal.logic.intf.base.config.BaseConfig;
 import org.junit.After;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -19,6 +24,8 @@ public class PropertiesHelperTest {
         System.clearProperty("pinbal.scsp.test.long");
         System.clearProperty("pinbal.scsp.test.float");
         System.clearProperty("pinbal.scsp.test.double");
+        System.clearProperty(BaseConfig.APP_PROPERTIES);
+        System.clearProperty(BaseConfig.APP_SYSTEM_PROPERTIES);
     }
 
     @Test
@@ -76,5 +83,22 @@ public class PropertiesHelperTest {
     public void getAsDoubleParsejaElValor() {
         System.setProperty("pinbal.scsp.test.double", "2.71828");
         assertEquals(2.71828d, PropertiesHelper.getProperties().getAsDouble("pinbal.scsp.test.double"), 0.00001d);
+    }
+
+    @Test
+    public void getPropertyCauAlFitxerExternDeAppPropertiesSiNoHiEsCapDefinidaComASistema() throws IOException {
+        File fitxer = File.createTempFile("pinbal-scsp-test", ".properties");
+        fitxer.deleteOnExit();
+        try (FileWriter writer = new FileWriter(fitxer)) {
+            writer.write("pinbal.scsp.test.fitxer.extern=valor-del-fitxer\n");
+        }
+        System.setProperty(BaseConfig.APP_PROPERTIES, fitxer.getAbsolutePath());
+        try {
+            assertEquals(
+                    "valor-del-fitxer",
+                    PropertiesHelper.getProperties().getProperty("pinbal.scsp.test.fitxer.extern"));
+        } finally {
+            fitxer.delete();
+        }
     }
 }
