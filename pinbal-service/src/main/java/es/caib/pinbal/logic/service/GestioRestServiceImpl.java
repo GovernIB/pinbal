@@ -476,7 +476,7 @@ public class GestioRestServiceImpl implements GestioRestService {
                 .nom(procedimentDto.getNom())
                 .departament(procedimentDto.getDepartament())
                 .entitatCodi(entitat.getCodi())
-                .organGestorDir3(procedimentDto.getOrganGestor().getCodi())
+                .organGestorDir3(procedimentDto.getOrganGestor() != null ? procedimentDto.getOrganGestor().getCodi() : null)
                 .codiSia(procedimentDto.getCodiSia())
                 .valorCampAutomatizado(procedimentDto.getValorCampAutomatizado())
                 .valorCampClaseTramite(procedimentDto.getValorCampClaseTramite() != null ? ClaseTramite.valueOf(procedimentDto.getValorCampClaseTramite().name()) : null)
