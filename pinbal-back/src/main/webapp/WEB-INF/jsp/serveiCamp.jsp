@@ -543,6 +543,9 @@ $(function() {
 						id="accio-expandir-all"><i class="fas fa-chevron-down"></i></a>
 				</div>
 				<br />
+				<div class="alert alert-info">
+					<i class="fas fa-info-circle"></i>&nbsp;<spring:message code="servei.camp.arbre.info"/>
+				</div>
 				<ul id="arbreNodes" style="list-style: none; margin: 0; padding: 0;">
 					<c:set var="nodeArbreActual" value="${arbreDadesEspecifiques.arrel}" scope="request" />
 					<jsp:include page="import/dadesEspecifiquesArbreNode.jsp" />
