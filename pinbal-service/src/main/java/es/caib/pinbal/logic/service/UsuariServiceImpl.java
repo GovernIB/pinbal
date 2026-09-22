@@ -754,6 +754,35 @@ public class UsuariServiceImpl implements UsuariService {
 		return entitatUsuari.canviActiu();
     }
 
+	@Transactional(rollbackFor = {EntitatNotFoundException.class, EntitatUsuariNotFoundException.class, UsuariExternNotFoundException.class})
+	@Override
+	public void actualitzarInformacio(Long entitatId, String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException, UsuariExternNotFoundException {
+		log.debug("Actualitzant la informació de l'usuari (codi=" + usuariCodi + ") a l'entitat (id=" + entitatId + ")");
+		Entitat entitat = entitatRepository.findById(entitatId).orElse(null);
+		if (entitat == null) {
+			log.debug("No s'ha trobat l'entitat (id=" + entitatId + ")");
+			throw new EntitatNotFoundException();
+		}
+		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(entitatId, usuariCodi);
+		if (entitatUsuari == null) {
+			log.debug("L'entitat (id=" + entitatId + ") no té configurat l'usuari (codi=" + usuariCodi + ")");
+			throw new EntitatUsuariNotFoundException();
+		}
+		DadesUsuari dadesUsuari;
+		try {
+			dadesUsuari = pluginHelper.dadesUsuariConsultarAmbUsuariCodi(usuariCodi);
+		} catch (SistemaExternException ex) {
+			log.warn("No s'han trobat les dades de l'usuari (codi=" + usuariCodi + ") al sistema extern");
+			throw new UsuariExternNotFoundException();
+		}
+		if (dadesUsuari == null) {
+			throw new UsuariExternNotFoundException();
+		}
+		entitatUsuari.getUsuari().update(
+				dadesUsuari.getNom(),
+				dadesUsuari.getNif());
+	}
+
     @Transactional(readOnly = true)
 	@Override
 	public List<InformeUsuariDto> informeUsuarisAgrupatsEntitatDepartament() {

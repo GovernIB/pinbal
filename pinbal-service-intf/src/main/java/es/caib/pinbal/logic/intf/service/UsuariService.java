@@ -218,6 +218,24 @@ public interface UsuariService {
 	boolean canviActiu(Long entitatId, String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException;
 
 	/**
+	 * Torna a consultar les dades de l'usuari al sistema extern definit al
+	 * plugin de dades d'usuari (pel seu codi) i actualitza les dades locals
+	 * (nom, nif) de l'usuari.
+	 *
+	 * @param entitatId Atribut id de l'entitat.
+	 * @param usuariCodi Codi de l'usuari.
+	 *
+	 * @throws EntitatNotFoundException
+	 *            Si no hi ha cap entitat amb l'id especificat.
+	 * @throws EntitatUsuariNotFoundException
+	 *            Si l'entitat no té aquest usuari afegit.
+	 * @throws UsuariExternNotFoundException
+	 *            Si l'usuari no existeix al sistema extern.
+	 */
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_REPRES')")
+	void actualitzarInformacio(Long entitatId, String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException, UsuariExternNotFoundException;
+
+	/**
 	 * Retorna les dades necessàries per a generar l'informe d'usuaris.
 	 * 
 	 * @return Les dades per a generar l'informe.

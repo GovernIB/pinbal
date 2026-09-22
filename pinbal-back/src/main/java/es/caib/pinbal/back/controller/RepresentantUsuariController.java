@@ -26,6 +26,7 @@ import es.caib.pinbal.logic.intf.service.ProcedimentService;
 import es.caib.pinbal.logic.intf.service.ServeiService;
 import es.caib.pinbal.logic.intf.service.UsuariService;
 import es.caib.pinbal.logic.intf.service.exception.EntitatNotFoundException;
+import es.caib.pinbal.logic.intf.service.exception.EntitatUsuariNotFoundException;
 import es.caib.pinbal.logic.intf.service.exception.UsuariExternNotFoundException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -372,6 +373,35 @@ public class RepresentantUsuariController extends BaseController {
 			return getModalControllerReturnValueError(request, "redirect:../usuari", "representant.controller.usuari.extern.no.existeix");
 		}
 
+	}
+
+	@PostMapping("/{usuariCodi}/actualitzar")
+	@ResponseBody
+	public String usuariActualitzarInformacio(
+			HttpServletRequest request,
+			@PathVariable String usuariCodi,
+			Model model) throws EntitatNotFoundException, EntitatUsuariNotFoundException {
+		EntitatDto entitat = EntitatHelper.getEntitatActual(request);
+		if (entitat == null) {
+			AlertHelper.error(request, getMessage(request, "representant.controller.entitat.no.existeix"));
+			return "KO";
+		}
+		try {
+			usuariService.actualitzarInformacio(entitat.getId(), usuariCodi);
+			AlertHelper.success(
+					request,
+					getMessage(
+							request,
+							"representant.controller.usuari.actualitzat.info", new Object[] {usuariCodi}));
+			return "OK";
+		} catch (UsuariExternNotFoundException ex) {
+			AlertHelper.error(
+					request,
+					getMessage(
+							request,
+							"representant.controller.usuari.extern.no.existeix"));
+			return "KO";
+		}
 	}
 
 //	@PostMapping("/save")

@@ -318,6 +318,16 @@ function canviActiu(usuariCodi) {
 		}
 	}).always(() => {webutilRefreshMissatges();});
 }
+function actualitzarInfo(usuariCodi) {
+	$.ajax({
+		type: "post",
+		url: '<c:url value="/representant/usuari/"/>' + usuariCodi + "/actualitzar",
+		async: false,
+		success: () => {
+			$("#table-users").DataTable().ajax.reload(null, false);
+		}
+	}).always(() => {webutilRefreshMissatges();});
+}
 </script>
 </head>
 <body>
@@ -421,6 +431,7 @@ function canviActiu(usuariCodi) {
 			{{^actiu}}
 				<li><a href="#" onclick="canviActiu('{{usuari.codi}}');"><i class="fa fa-check"></i>&nbsp;<spring:message code="comu.boto.activar"/></a></li>
 			{{/actiu}}
+			<li><a href="#" onclick="actualitzarInfo('{{usuari.codi}}');"><i class="fas fa-sync"></i>&nbsp;<spring:message code="comu.boto.actualitzar.informacio"/></a></li>
 		</ul>
 	</div>
 </script>
