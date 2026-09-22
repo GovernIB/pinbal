@@ -133,6 +133,26 @@ public class SuperauditorControllerTest {
     }
 
     @Test
+    public void datatableUsaLEntitatSeleccionadaPelSuperauditorINoLaDeLEntitatHelper() throws Exception {
+        // L'entitat que l'usuari té "activa" (EntitatHelper) és diferent de la que el
+        // superauditor ha seleccionat explícitament per auditar: ha de prevaler aquesta darrera.
+        EntitatDto entitatSeleccionadaAuditoria = new EntitatDto();
+        entitatSeleccionadaAuditoria.setId(2L);
+        when(session.getAttribute("SuperauditorController.session.entitat")).thenReturn(entitatSeleccionadaAuditoria);
+        EntitatDto entitatPropiaUsuari = new EntitatDto();
+        entitatPropiaUsuari.setId(99L);
+        when(session.getAttribute("EntitatHelper.entitats")).thenReturn(List.of(entitatPropiaUsuari));
+        when(session.getAttribute("EntitatHelper.entitat.actual.index")).thenReturn(0);
+        ControllerTestSupport.mockDatatableParams(request);
+        when(consultaService.findByFiltrePaginatPerAuditor(eq(2L), any(), any()))
+                .thenReturn(new PageImpl<>(List.of(new ConsultaDto())));
+
+        controller.datatable(request, new ExtendedModelMap());
+
+        verify(consultaService).findByFiltrePaginatPerAuditor(eq(2L), any(), any());
+    }
+
+    @Test
     public void excelRetornaVista() throws Exception {
         entitatSeleccionada();
         when(consultaService.findByFiltrePaginatPerAuditor(any(), any(), any()))

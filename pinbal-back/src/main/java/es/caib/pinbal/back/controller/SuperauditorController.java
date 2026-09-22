@@ -9,7 +9,6 @@ import es.caib.pinbal.back.datatables.ServerSideColumn;
 import es.caib.pinbal.back.datatables.ServerSideRequest;
 import es.caib.pinbal.back.datatables.ServerSideResponse;
 import es.caib.pinbal.back.helper.AlertHelper;
-import es.caib.pinbal.back.helper.EntitatHelper;
 import es.caib.pinbal.back.helper.RequestSessionHelper;
 import es.caib.pinbal.logic.intf.dto.CodiValor;
 import es.caib.pinbal.logic.intf.dto.ConsultaDto;
@@ -121,11 +120,13 @@ public class SuperauditorController extends BaseController {
 	      throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, NamingException,
 	      SQLException, EntitatNotFoundException {
 		ServerSideRequest serverSideRequest = new ServerSideRequest(request);
-		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
+		EntitatDto entitat = (EntitatDto)RequestSessionHelper.obtenirObjecteSessio(
+				request,
+				SESSION_ATTRIBUTE_ENTITAT);
 		if (entitat == null) {
 			throw new EntitatNotFoundException();
 		}
-		
+
 		ConsultaFiltreCommand command = (ConsultaFiltreCommand)RequestSessionHelper.obtenirObjecteSessio(
 				request,
 				SESSION_ATTRIBUTE_FILTRE);
@@ -176,8 +177,13 @@ public class SuperauditorController extends BaseController {
 			command.updateDefaultDataInici(isHistoric(request));
 		}
 		model.addAttribute(command);
-		EntitatDto entitat = EntitatHelper.getEntitatActual(request, entitatService);
-		
+		EntitatDto entitat = (EntitatDto)RequestSessionHelper.obtenirObjecteSessio(
+				request,
+				SESSION_ATTRIBUTE_ENTITAT);
+		if (entitat == null) {
+			throw new EntitatNotFoundException();
+		}
+
 		Page<ConsultaDto> page;
 		if (isHistoric(request)) {
 			page = historicConsultaService.findByFiltrePaginatPerAuditor(
