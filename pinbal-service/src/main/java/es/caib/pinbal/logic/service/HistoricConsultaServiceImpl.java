@@ -416,7 +416,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				entitat,
 				null,
 				filtre,
-				PageRequest.of(0, Integer.MAX_VALUE, Sort.by(new Sort.Order(Sort.Direction.DESC, "scspPeticionId"))),
+				PageRequest.of(0, Integer.MAX_VALUE, Sort.by(new Sort.Order(Sort.Direction.DESC, "peticioId"))),
 				false,
 				false,
 				false,
