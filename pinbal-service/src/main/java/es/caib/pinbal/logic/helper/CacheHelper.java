@@ -4,9 +4,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -20,6 +22,12 @@ import java.util.stream.StreamSupport;
 public class CacheHelper {
 
     private final CacheManager cacheManager;
+
+    // Injecció lazy per evitar el cicle PluginHelper -> IntegracioHelper -> UsuariHelper ->
+    // CacheHelper -> PluginHelper (el mateix motiu pel qual UsuariHelper ja injecta PluginHelper
+    // de forma lazy).
+    @Setter(onMethod_ = {@Autowired, @Lazy})
+    private PluginHelper pluginHelper;
 
     @Getter
     @Setter
@@ -70,6 +78,13 @@ public class CacheHelper {
         Cache cache = cacheManager.getCache(cacheName);
         if (cache != null) {
             cache.clear();
+        }
+        // Aquestes caches memoritzen consultes fetes al plugin de dades d'usuari (p.ex. Keycloak),
+        // el qual manté la seva pròpia instància i cache internes; si no es reinicialitza també el
+        // plugin, un usuari donat d'alta després que la seva cache interna es completàs quedaria
+        // invisible per a les cerques "per codi/NIF" fins al pròxim redeploy.
+        if ("usuariAmbCodi".equals(cacheName) || "usuariAmbNif".equals(cacheName)) {
+            pluginHelper.resetPlugins("USUARIS");
         }
     }
 

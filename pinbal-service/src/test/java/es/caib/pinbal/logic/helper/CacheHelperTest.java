@@ -21,8 +21,18 @@ public class CacheHelperTest {
     @Mock
     private CacheManager cacheManager;
 
+    @Mock
+    private PluginHelper pluginHelper;
+
     @InjectMocks
     private CacheHelper cacheHelper;
+
+    @BeforeEach
+    public void setUp() {
+        // pluginHelper s'injecta amb @Lazy (setter) per trencar un cicle de dependències, i
+        // @InjectMocks només fa injecció per constructor quan n'hi ha un de disponible.
+        cacheHelper.setPluginHelper(pluginHelper);
+    }
 
     @Test
     public void clearCache_cacheExisteix_neteja() {
@@ -32,6 +42,29 @@ public class CacheHelperTest {
         cacheHelper.clearCache("serveis");
 
         verify(cache).clear();
+        verify(pluginHelper, never()).resetPlugins(anyString());
+    }
+
+    @Test
+    public void clearCache_usuariAmbCodi_tambeReiniciaPluginDadesUsuari() {
+        Cache cache = mock(Cache.class);
+        when(cacheManager.getCache("usuariAmbCodi")).thenReturn(cache);
+
+        cacheHelper.clearCache("usuariAmbCodi");
+
+        verify(cache).clear();
+        verify(pluginHelper).resetPlugins("USUARIS");
+    }
+
+    @Test
+    public void clearCache_usuariAmbNif_tambeReiniciaPluginDadesUsuari() {
+        Cache cache = mock(Cache.class);
+        when(cacheManager.getCache("usuariAmbNif")).thenReturn(cache);
+
+        cacheHelper.clearCache("usuariAmbNif");
+
+        verify(cache).clear();
+        verify(pluginHelper).resetPlugins("USUARIS");
     }
 
     @Test
