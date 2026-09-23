@@ -1634,10 +1634,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				null,
 				filtre,
 				pageable,
-				false,
-				false);
-//				false,
-//				false);
+				filtre != null ? filtre.getMultiple() : Boolean.FALSE,
+				true);
 	}
 
 	@Transactional(readOnly = true)
@@ -1663,10 +1661,8 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				null,
 				filtre,
 				PageRequest.of(0, Integer.MAX_VALUE, Sort.by(new Sort.Order(Sort.Direction.DESC, "peticioId"))),
-				false,
-				false);
-//				false,
-//				false);
+				filtre != null ? filtre.getMultiple() : Boolean.FALSE,
+				true);
 
 		return page.getContent();
     }
@@ -3190,7 +3186,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 			String usuariCodi,
 			ConsultaFiltreDto filtre,
 			Pageable pageable,
-			boolean multiple,
+			Boolean multiple,
 			boolean nomesSensePare) {
 		copiarPropertiesToDb();
 		log.debug("Consulta de peticions findByEntitatIUsuariFiltrePaginat (" +
@@ -3256,6 +3252,7 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 					filtre.getFuncionari(),
 					filtre.getUsuari() == null || filtre.getUsuari().isEmpty(),
 					filtre.getUsuari(),
+					multiple == null,
 					multiple,
 					nomesSensePare,
 					pageable);

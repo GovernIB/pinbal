@@ -49,7 +49,7 @@ public interface LlistatHistoricConsultaRepository extends JpaRepository<Llistat
             "and (:esNullTitularDocument = true or lower(c.titularDocumentNum) like lower('%'||:titularDocument||'%')) " +
             "and (:esNullFuncionari = true or (lower(c.funcionariNif) like lower('%'||:funcionari||'%') or lower(c.funcionariNom) like lower('%'||:funcionari||'%'))) " +
             "and (:esNullUsuari = true or c.usuariCodi = :usuari) " +
-            "and (c.multiple = :multiple) " +
+            "and (:esNullMultiple = true or c.multiple = :multiple) " +
             "and (:nomesSensePare = false or c.pareId is null)")
     public Page<LlistatHistoricConsulta> findByCreatedByAndFiltrePaginat(
             @Param("entitatId") Long entitatId,
@@ -75,7 +75,8 @@ public interface LlistatHistoricConsultaRepository extends JpaRepository<Llistat
             @Param("funcionari") String funcionari,
             @Param("esNullUsuari") boolean esNullUsuari,
             @Param("usuari") String usuari,
-            @Param("multiple")boolean multiple,
+            @Param("esNullMultiple") boolean esNullMultiple,
+            @Param("multiple") Boolean multiple,
             @Param("nomesSensePare")boolean nomesSensePare,
             Pageable pageable);
 

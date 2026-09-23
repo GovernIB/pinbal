@@ -282,7 +282,7 @@
 	}
 </script>
 	<script id="template-details" type="x-tmpl-mustache">
-		<a href="consulta/{{ id }}" class="btn btn-default" data-toggle="modal"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>
+		<a href="auditor/{{ id }}" class="btn btn-default" data-toggle="modal"><i class="fas fa-search-plus"></i>&nbsp;<spring:message code="admin.consulta.list.taula.detalls"/></a>
 	</script>
 </body>
 </html>

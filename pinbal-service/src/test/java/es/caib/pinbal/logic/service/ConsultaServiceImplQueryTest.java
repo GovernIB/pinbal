@@ -141,7 +141,7 @@ public class ConsultaServiceImplQueryTest {
         when(llistatConsultaRepository.findByCreatedByAndFiltrePaginat(
                 any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(),
                 anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(),
-                anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), anyBoolean(), any()))
+                anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any()))
                 .thenReturn(page);
         return page;
     }

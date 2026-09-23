@@ -388,8 +388,8 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				null,
 				filtre,
 				pageable,
-				false,
-				false,
+				filtre != null ? filtre.getMultiple() : Boolean.FALSE,
+				true,
 				false,
 				false);
 	}
@@ -417,8 +417,8 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 				null,
 				filtre,
 				PageRequest.of(0, Integer.MAX_VALUE, Sort.by(new Sort.Order(Sort.Direction.DESC, "peticioId"))),
-				false,
-				false,
+				filtre != null ? filtre.getMultiple() : Boolean.FALSE,
+				true,
 				false,
 				false);
 		return page.getContent();
@@ -1063,7 +1063,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			String usuariCodi,
 			ConsultaFiltreDto filtre,
 			Pageable pageable,
-			boolean multiple,
+			Boolean multiple,
 			boolean nomesSensePare,
 			boolean consultaHihaPeticio,
 			boolean consultaTerData) throws EntitatNotFoundException {
@@ -1130,6 +1130,7 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 					filtre.getFuncionari(),
 					filtre.getUsuari() == null || filtre.getUsuari().isEmpty(),
 					filtre.getUsuari(),
+					multiple == null,
 					multiple,
 					nomesSensePare,
 					pageable);

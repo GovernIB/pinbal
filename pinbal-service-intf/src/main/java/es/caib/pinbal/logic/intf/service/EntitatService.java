@@ -60,10 +60,10 @@ public interface EntitatService {
 
 	/**
 	 * Llistat amb totes les entitats.
-	 * 
+	 *
 	 * @return Un llistat d'entitats.
 	 */
-	@PreAuthorize("hasRole('PBL_ADMIN')")
+	@PreAuthorize("hasRole('PBL_ADMIN') or hasRole('PBL_SUPERAUD')")
 	public List<EntitatDto> findAll();
 
 
