@@ -21,7 +21,7 @@
 			</div>
 			<div class="col-md-2" style="padding-top: 20px;">
 				<a href="<c:url value="/index"><c:param name="canviRol" value="tothom"/></c:url>" class="btn btn-primary"><spring:message code="comu.boto.inici"/></a>
-				<a href="<c:url value="/logout"/>" class="btn btn-default" style="margin-left: 10px;"><spring:message code="decorator.menu.accions.desconectar"/></a>
+				<a href="<c:url value="/usuari/logout"/>" class="btn btn-default" style="margin-left: 10px;"><spring:message code="decorator.menu.accions.desconectar"/></a>
 			</div>
 		</c:when>
 		<c:otherwise>
@@ -36,7 +36,7 @@
 				</div>
 				<div class="col-md-2" style="padding-top: 20px;">
 					<a href="<c:url value="/index"><c:param name="canviRol" value="tothom"/></c:url>" class="btn btn-primary"><spring:message code="comu.boto.inici"/></a>
-					<a id="mu_logout" href="<c:url value="/logout"/>" class="btn btn-default" style="margin-left: 10px;"><spring:message code="decorator.menu.accions.desconectar"/></a>
+					<a id="mu_logout" href="<c:url value="/usuari/logout"/>" class="btn btn-default" style="margin-left: 10px;"><spring:message code="decorator.menu.accions.desconectar"/></a>
 				</div>
 			</div>
 			<div class="panel panel-default" id="traca-panel">
