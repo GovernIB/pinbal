@@ -142,7 +142,14 @@ public class UsuariService extends AbstractService<es.caib.pinbal.logic.intf.ser
         return getDelegateService().canviActiu(entitatId, usuariCodi);
     }
 
-    @Override
+	@Override
+	@RolesAllowed({"PBL_ADMIN", "PBL_REPRES"})
+	public void actualitzarInformacio(Long entitatId,
+									  String usuariCodi) throws EntitatNotFoundException, EntitatUsuariNotFoundException, UsuariExternNotFoundException {
+		getDelegateService().actualitzarInformacio(entitatId, usuariCodi);
+	}
+
+	@Override
 	@RolesAllowed({"PBL_ADMIN", "PBL_REPORT"})
 	public List<InformeUsuariDto> informeUsuarisAgrupatsEntitatDepartament() {
 		return getDelegateService().informeUsuarisAgrupatsEntitatDepartament();
