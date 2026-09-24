@@ -74,6 +74,36 @@ public class AuthControllerTest {
     }
 
     @Test
+    public void logoutAmbIssuerDelTokenDiferentDeLAuthUrlConfiguratUsaLIssuerDelToken() {
+        // Reprodueix el bug de preproducció: "es.caib.pinbal.auth.url"/"es.caib.pinbal.auth.realm" apunten a
+        // un realm ("realm-configurat" a "http://127.0.0.1:1/auth-configurat") diferent del que ha emès
+        // realment l'id_token ("http://127.0.0.1:2/auth-token/realms/realm-token", vist al seu claim "iss").
+        // El redirect ha d'anar SEMPRE a l'"issuer" del token, no al configurat, perquè és l'únic realm on
+        // Keycloak/Soffid té la sessió SSO activa -- altrament respon "Session not active" (id_token_hint
+        // d'un realm, end_session_endpoint d'un altre).
+        ControllerTestSupport.setField(controller, "authUrl", "http://127.0.0.1:1/auth-configurat");
+        ControllerTestSupport.setField(controller, "authRealm", "realm-configurat");
+        when(request.getScheme()).thenReturn("https");
+        when(request.getServerName()).thenReturn("pinbal.example.org");
+        when(request.getServerPort()).thenReturn(443);
+        when(request.getContextPath()).thenReturn("/pinbalback");
+        KeycloakSecurityContext keycloakSecurityContext = mock(KeycloakSecurityContext.class);
+        IDToken idToken = mock(IDToken.class);
+        when(keycloakSecurityContext.getIdTokenString()).thenReturn("id-token-jwt");
+        when(keycloakSecurityContext.getIdToken()).thenReturn(idToken);
+        when(idToken.getIssuedFor()).thenReturn("pinbal-back");
+        when(idToken.getIssuer()).thenReturn("http://127.0.0.1:2/auth-token/realms/realm-token");
+        when(request.getAttribute(KeycloakSecurityContext.class.getName())).thenReturn(keycloakSecurityContext);
+
+        String redirect = controller.logout(request, null);
+
+        assertTrue(redirect.startsWith("redirect:http://127.0.0.1:2/auth-token/realms/realm-token/protocol/openid-connect/logout?"));
+        assertTrue(redirect.contains("id_token_hint=id-token-jwt"));
+        assertTrue(redirect.contains("client_id=pinbal-back"));
+        verify(session).invalidate();
+    }
+
+    @Test
     public void logoutSenseKeycloakSecurityContextRedirigeixSenseIdTokenHintNiClientId() {
         ControllerTestSupport.setField(controller, "authUrl", "http://127.0.0.1:1/auth");
         ControllerTestSupport.setField(controller, "authRealm", "pinbal");

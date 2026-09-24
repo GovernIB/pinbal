@@ -94,7 +94,22 @@ public class AuthController {
 		}
 		if (authUrl != null && authRealm != null) {
 			String baseUrl = getBaseUrl(request, postLogoutPath);
-			String issuerUrl = getIssuerUrl();
+			// L'"issuer" es llegeix del claim "iss" del mateix id_token (l'emissor real que ha creat la
+			// sessió SSO), NO de les propietats de configuració "es.caib.pinbal.auth.url"/"es.caib.pinbal.auth.realm"
+			// (com es feia abans): aquestes s'han de mantenir sincronitzades a mà amb l'"auth-server-url"/"realm"
+			// de l'adaptador Keycloak al subsistema keycloak de standalone-openshift.xml (JBOSS_AUTH_URL/
+			// JBOSS_AUTH_REALM), i es van desincronitzar en un entorn (JBOSS_AUTH_URL/JBOSS_AUTH_REALM apuntaven a
+			// "https://idp.caib.es/auth/realms/soffid" -- l'emissor real de la sessió, vist a l'"iss" de l'id_token
+			// -- mentre que "es.caib.pinbal.auth.url"/"es.caib.pinbal.auth.realm" apuntaven a
+			// "https://logindes.caib.es/auth/realms/webdes"). Com que Keycloak/Soffid indexen la sessió SSO pel
+			// realm que la va crear, cridar l'"end_session_endpoint" d'un realm diferent d'aquell fa que respongui
+			// "Session not active": no tanca la sessió SSO i l'usuari hi torna a entrar silenciosament. Llegint-lo
+			// sempre de l'"iss" del mateix token és impossible que quedi desincronitzat; les propietats de
+			// configuració només es fan servir de fallback si encara no hi ha KeycloakSecurityContext.
+			String issuerUrl = keycloakSecurityContext != null && keycloakSecurityContext.getIdToken() != null
+					&& keycloakSecurityContext.getIdToken().getIssuer() != null
+					? keycloakSecurityContext.getIdToken().getIssuer()
+					: getIssuerUrl();
 
 			// No es pot assumir que l'"end session endpoint" viu sempre a "/protocol/openid-connect/logout":
 			// és el path de Keycloak, però als entorns de producció l'IdP darrere de l'adaptador pot ser
