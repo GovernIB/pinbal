@@ -510,6 +510,33 @@ public class ConsultaServiceImplQueryTest {
         assertNotNull(resultat);
     }
 
+    @Test
+    public void findByFiltrePaginatPerSuperauditor_noFiltraPerDefecteLesConsultesMultiples() throws Exception {
+        // Regressio: findByFiltrePaginatPerSuperauditor forçava "multiple=false" (excloent totes les
+        // consultes múltiples de la llista) i "nomesSensePare=false" en lloc de deixar-ho segons el
+        // filtre (com fa findByFiltrePaginatPerAuditor), amagant-les sempre del llistat de superauditor.
+        // El controlador (SuperauditorController) sempre passa un ConsultaFiltreDto no nul (convertit
+        // amb ConsultaFiltreCommand.asDto), de manera que el camí real és sempre el de
+        // findByCreatedByAndFiltrePaginat, no el de filtre==null.
+        Entitat entitat = mock(Entitat.class);
+        when(entitat.getId()).thenReturn(5L);
+        when(entitatRepository.findById(5L)).thenReturn(Optional.of(entitat));
+        Page<LlistatConsulta> page = stubFindByCreatedByAndFiltrePaginat(new PageImpl<>(Collections.emptyList()));
+        Page<ConsultaDto> pageDto = new PageImpl<>(Collections.emptyList());
+        when(dtoMappingHelper.pageEntities2pageDto(eq(page), eq(ConsultaDto.class), any())).thenReturn(pageDto);
+        // Filtre real (com el que envia el JSP), sense el camp "multiple" fixat explícitament: és el cas
+        // normal d'ús del llistat, on l'usuari no ha triat cap valor per aquest camp inexistent al formulari.
+        ConsultaFiltreDto filtre = new ConsultaFiltreDto();
+
+        consultaService.findByFiltrePaginatPerSuperauditor(5L, filtre, PageRequest.of(0, 10));
+
+        verify(llistatConsultaRepository).findByCreatedByAndFiltrePaginat(
+                eq(5L), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(),
+                anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(),
+                anyBoolean(), any(), anyBoolean(), any(),
+                eq(true), isNull(), eq(true), any());
+    }
+
     // ---------- findByFiltrePaginatPerAdmin ----------
 
     @Test

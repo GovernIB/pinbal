@@ -437,13 +437,18 @@ public class HistoricConsultaServiceImpl implements HistoricConsultaService, App
 			throw new EntitatNotFoundException();
 		}
 		copiarPropertiesToDb();
+		// El llistat de superauditor (com el d'auditor) no té cap filtre a la interfície per triar si es
+		// volen veure només les consultes múltiples, només les simples o totes: sempre s'han de mostrar
+		// totes. "multiple" es llegeix igualment de filtre.getMultiple() (i no es fixa mai a "false") per
+		// coherència amb findByFiltrePaginatPerAuditor: com que cap formulari envia aquest camp, sempre és
+		// null i, per tant, mai filtra per aquest criteri.
 		return findByEntitatIUsuariFiltrePaginat(
 				entitat,
 				null,
 				filtre,
 				pageable,
-				false,
-				false,
+				filtre != null ? filtre.getMultiple() : Boolean.FALSE,
+				true,
 				false,
 				false);
 	}

@@ -734,6 +734,34 @@ public class HistoricConsultaServiceImplTest {
     }
 
     @Test
+    public void findByFiltrePaginatPerSuperauditor_noFiltraPerDefecteLesConsultesMultiples() throws Exception {
+        // Regressio: com a ConsultaServiceImpl, aquest mètode forçava "multiple=false" (excloent totes
+        // les consultes múltiples del llistat històric de superauditor) i "nomesSensePare=false". El
+        // controlador (SuperauditorController) sempre passa un ConsultaFiltreDto no nul, de manera que
+        // el camí real és sempre el de findByCreatedByAndFiltrePaginat.
+        Entitat entitat = crearEntitat(1L, "AJT001");
+        when(entitatRepository.findById(1L)).thenReturn(Optional.of(entitat));
+        Page<LlistatHistoricConsulta> pageEntitats = new PageImpl<>(Collections.emptyList());
+        when(llistatHistoricConsultaRepository.findByCreatedByAndFiltrePaginat(
+                any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(),
+                anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(),
+                anyBoolean(), any(), anyBoolean(), any(),
+                eq(true), isNull(), eq(true), any())).thenReturn(pageEntitats);
+        Page<ConsultaDto> pageDto = new PageImpl<>(Collections.emptyList());
+        when(dtoMappingHelper.pageEntities2pageDto(any(), eq(ConsultaDto.class), any())).thenReturn(pageDto);
+        // Filtre real (com el que envia el JSP), sense el camp "multiple" fixat explícitament.
+        ConsultaFiltreDto filtre = new ConsultaFiltreDto();
+
+        historicConsultaService.findByFiltrePaginatPerSuperauditor(1L, filtre, PageRequest.of(0, 10));
+
+        verify(llistatHistoricConsultaRepository).findByCreatedByAndFiltrePaginat(
+                eq(1L), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(),
+                anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(), anyBoolean(), any(),
+                anyBoolean(), any(), anyBoolean(), any(),
+                eq(true), isNull(), eq(true), any());
+    }
+
+    @Test
     public void findByFiltrePaginatPerAdmin_filtrePlé_ok() throws Exception {
         ConsultaFiltreDto filtre = new ConsultaFiltreDto();
         filtre.setEntitatId(1L);
