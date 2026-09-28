@@ -1,6 +1,6 @@
 server:
   servlet:
-    context-path: /pinbalapi/externa
+    context-path: "@pinbal.context.api@/externa"
 
 spring:
   mvc:

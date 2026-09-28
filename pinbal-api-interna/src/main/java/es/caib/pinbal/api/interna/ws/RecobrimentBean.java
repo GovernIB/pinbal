@@ -37,7 +37,7 @@ import java.security.Principal;
 		endpointInterface = "es.caib.pinbal.logic.intf.ws.Recobriment",
 		targetNamespace = "http://www.caib.es/pinbal/ws/recobriment")
 @WebContext(
-		contextRoot = "/pinbal/ws",
+		contextRoot = RecobrimentContext.CONTEXT_ROOT,
 		urlPattern = "/recobriment",
 		authMethod = "KEYCLOAK",
 		transportGuarantee = "NONE",

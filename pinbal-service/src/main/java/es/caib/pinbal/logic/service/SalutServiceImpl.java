@@ -37,6 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Implementació dels mètodes per a gestionar l'aplicació.
@@ -56,6 +59,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Service
 public class SalutServiceImpl implements SalutService {
+
+    private static final Properties CONTEXT_PROPERTIES = carregarContextProperties();
+    private static final String CONTEXT_BACK = CONTEXT_PROPERTIES.getProperty("context.back", "/pinbalback");
+    private static final String CONTEXT_API = CONTEXT_PROPERTIES.getProperty("context.api", "/pinbalapi");
 
     private final AvisRepository avisRepository;
     private final ServeiRepository serveiRepository;
@@ -105,18 +112,18 @@ public class SalutServiceImpl implements SalutService {
         contexts.add(new ContextInfo()
                 .codi("BACK")
                 .nom("Backoffice")
-                .path(baseUrl + "/pinbal")
+                .path(baseUrl + CONTEXT_BACK)
                 .manuals(manuals));
         contexts.add(new ContextInfo()
                 .codi("INT")
                 .nom("API interna")
-                .path(baseUrl + "/pinbalapi/interna")
-                .api(baseUrl + "/pinbalapi/interna/api/rest"));
+                .path(baseUrl + CONTEXT_API + "/interna")
+                .api(baseUrl + CONTEXT_API + "/interna/api/rest"));
         contexts.add(new ContextInfo()
                 .codi("EXT")
                 .nom("API externa")
-                .path(baseUrl + "/pinbalapi/externa")
-                .api(baseUrl + "/pinbalapi/externa/api/rest"));
+                .path(baseUrl + CONTEXT_API + "/externa")
+                .api(baseUrl + CONTEXT_API + "/externa/api/rest"));
         return contexts;
     }
 
@@ -279,6 +286,18 @@ public class SalutServiceImpl implements SalutService {
 
     private String getLogDir() {
         return configHelper.getConfig("es.caib.pinbal.log.dir");
+    }
+
+    private static Properties carregarContextProperties() {
+        Properties properties = new Properties();
+        try (InputStream is = SalutServiceImpl.class.getResourceAsStream("/es/caib/pinbal/logic/context.properties")) {
+            if (is != null) {
+                properties.load(is);
+            }
+        } catch (IOException ex) {
+            log.warn("No s'han pogut carregar els context paths de l'aplicació", ex);
+        }
+        return properties;
     }
 
 }

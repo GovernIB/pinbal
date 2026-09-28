@@ -1,6 +1,8 @@
 
 function webutilContextPath() {
-	return '/pinbalback';
+	// ctxPath el defineixen els decoradors (${pageContext.request.contextPath}); si no hi és
+	// s'agafa el primer segment de la URL actual, que és el context path de l'aplicació
+	return typeof ctxPath !== 'undefined' ? ctxPath : '/' + window.location.pathname.split('/')[1];
 }
 function webutilModalTancarPath() {
 	return webutilContextPath() + '/modal/tancar';

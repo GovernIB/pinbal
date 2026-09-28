@@ -167,6 +167,7 @@
 				<filtering>false</filtering>
 				<excludes>
 					<exclude>**/version.properties</exclude>
+					<exclude>es/caib/pinbal/logic/context.properties</exclude>
 				</excludes>
 			</resource>
 			<resource>
@@ -174,6 +175,7 @@
 				<filtering>true</filtering>
 				<includes>
 					<include>**/version.properties</include>
+					<include>es/caib/pinbal/logic/context.properties</include>
 				</includes>
 			</resource>
 		</resources>

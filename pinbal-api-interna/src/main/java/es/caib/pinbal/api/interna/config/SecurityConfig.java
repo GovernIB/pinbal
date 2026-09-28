@@ -1,5 +1,6 @@
 package es.caib.pinbal.api.interna.config;
 
+import es.caib.pinbal.api.interna.ws.RecobrimentContext;
 import es.caib.pinbal.logic.intf.base.config.BaseConfig;
 import es.caib.pinbal.logic.intf.keycloak.JwtClaimsHelper;
 import es.caib.pinbal.logic.intf.keycloak.KeycloakUserDetails;
@@ -82,8 +83,8 @@ public class SecurityConfig {
     private static final String[] WS_RECOBRIMENT_PATHS = {
             "/ws/recobriment",
             "/ws/recobriment/**",
-            "/pinbal/ws/recobriment",
-            "/pinbal/ws/recobriment/**"
+            RecobrimentContext.CONTEXT_ROOT + "/recobriment",
+            RecobrimentContext.CONTEXT_ROOT + "/recobriment/**"
     };
 
     @Bean

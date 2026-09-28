@@ -301,6 +301,7 @@
 							<skip>${frontend.skip}</skip>
 							<environmentVariables>
 								<VITE_APP_VERSION>${project.version}</VITE_APP_VERSION>
+								<VITE_CONTEXT_PATH>${pinbal.context.back}</VITE_CONTEXT_PATH>
 							</environmentVariables>
 						</configuration>
 						<executions>
@@ -339,11 +340,15 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
+				<excludes>
+					<exclude>application.properties</exclude>
+				</excludes>
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
 				<includes>
 					<include>banner.txt</include>
+					<include>application.properties</include>
 				</includes>
 				<filtering>true</filtering>
 			</resource>

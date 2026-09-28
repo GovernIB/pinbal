@@ -51,6 +51,13 @@
 		<jacoco.version>0.8.11</jacoco.version>
 		<jacoco.minimum.coverage>0.80</jacoco.minimum.coverage>
 		<jacoco.check.skip>false</jacoco.check.skip>
+		<!-- Prefix dels context paths de l'aplicació. Per defecte genera /pinbalback i /pinbalapi.
+		     Per desplegar en paral·lel amb una altra instal·lació: -Dpinbal.context.prefix=pinbal2
+		     (genera /pinbal2back, /pinbal2api i el servei SOAP de recobriment a /pinbal2/ws). -->
+		<pinbal.context.prefix>pinbal</pinbal.context.prefix>
+		<pinbal.context.back>/${pinbal.context.prefix}back</pinbal.context.back>
+		<pinbal.context.api>/${pinbal.context.prefix}api</pinbal.context.api>
+		<pinbal.context.ws>/${pinbal.context.prefix}/ws</pinbal.context.ws>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -121,11 +128,6 @@
 				<artifactId>commons-fileupload</artifactId>
 				<version>1.6.0</version>
 			</dependency>
-<!--			<dependency>-->
-<!--				<groupId>com.google.guava</groupId>-->
-<!--				<artifactId>guava</artifactId>-->
-<!--				<version>30.1.1-jre</version>-->
-<!--			</dependency>-->
 			<dependency>
 				<groupId>org.jboss.bom</groupId>
 				<artifactId>jboss-eap-javaee8</artifactId>
@@ -261,28 +263,6 @@
 					<ignoreEmptyScmUrl>true</ignoreEmptyScmUrl>
 				</configuration>
 			</plugin>
-<!--			<plugin>-->
-<!--				<groupId>io.github.git-commit-id</groupId>-->
-<!--				<artifactId>git-commit-id-maven-plugin</artifactId>-->
-<!--				<version>7.0.0</version>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<id>get-the-git-infos</id>-->
-<!--						<goals>-->
-<!--							<goal>revision</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--				<configuration>-->
-<!--					<generateGitPropertiesFile>true</generateGitPropertiesFile>-->
-<!--					<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>-->
-<!--					<includeOnlyProperties>-->
-<!--						<includeOnlyProperty>git.commit.id</includeOnlyProperty>-->
-<!--						<includeOnlyProperty>git.build.time</includeOnlyProperty>-->
-<!--						<includeOnlyProperty>git.build.version</includeOnlyProperty>-->
-<!--					</includeOnlyProperties>-->
-<!--				</configuration>-->
-<!--			</plugin>-->
 		</plugins>
 	</build>
 	<distributionManagement>

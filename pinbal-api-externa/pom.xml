@@ -86,11 +86,15 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
+                <excludes>
+                    <exclude>application.yaml</exclude>
+                </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>banner.txt</include>
+                    <include>application.yaml</include>
                 </includes>
                 <filtering>true</filtering>
             </resource>

@@ -94,7 +94,7 @@ public class PinbalController extends BaseController implements ErrorController 
 	public String error(HttpServletRequest request, Model model) {
 
 		var error = new ErrorObject(request);
-		if ("/pinbalback/usuari/logout".equals(error.getRequestUri())) {
+		if ((request.getContextPath() + "/usuari/logout").equals(error.getRequestUri())) {
 			return "redirect:/";
 		}
 		model.addAttribute("errorObject", error);

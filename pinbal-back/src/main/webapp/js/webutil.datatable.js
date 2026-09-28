@@ -1,7 +1,7 @@
 // Basat en http://stefangabos.ro/jquery/jquery-plugin-boilerplate-revisited/
 (function($) {
 	let length = 10;
-	let path = typeof ctxPath !== 'undefined' ? ctxPath : '/pinbal'
+	let path = typeof ctxPath !== 'undefined' ? ctxPath : '/' + window.location.pathname.split('/')[1]
 	$.ajax({
 		url: path + "/usuari/num/elements/pagina/defecte",
 		async: false,

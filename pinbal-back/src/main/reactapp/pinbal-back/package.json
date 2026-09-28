@@ -4,9 +4,9 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
-        "dev": "vite --base=/pinbalback/reactapp",
+        "dev": "vite",
         "build": "tsc -b && vite build",
-        "build-jboss": "tsc -b && vite build --base=/pinbalback/reactapp",
+        "build-jboss": "tsc -b && vite build --mode jboss",
         "lint": "eslint .",
         "preview": "vite preview",
         "postinstall": "patch-package",
