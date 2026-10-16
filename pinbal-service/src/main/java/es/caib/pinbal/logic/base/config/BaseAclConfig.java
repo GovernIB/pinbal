@@ -28,7 +28,7 @@ public abstract class BaseAclConfig {
 
 	private static final boolean CLASS_ID_SUPPORTED = true;
 
-	@Value("${spring.jpa.properties.hibernate.dialect}")
+	@Value("${es.caib.pinbal.hibernate.dialect:${spring.jpa.properties.hibernate.dialect:org.hibernate.dialect.Oracle9iDialect}}")
 	private String hibernateDialect;
 
 	@Autowired
@@ -97,13 +97,7 @@ public abstract class BaseAclConfig {
 		String tableOid = getDbTablePrefix() + "acl_object_identity";
 		String tableEntry = getDbTablePrefix() + "acl_entry";
 		mutableAclService.setAclClassIdSupported(CLASS_ID_SUPPORTED);
-		if (hibernateDialect.toLowerCase().contains("oracle") && isOracleSequenceLegacy()) {
-			mutableAclService.setClassIdentityQuery("select " + tableClass.toUpperCase() + getTableSequenceSuffix() + ".currval from dual");
-			mutableAclService.setSidIdentityQuery("select " + tableSid.toUpperCase() + getTableSequenceSuffix() + ".currval from dual");
-		} else if (hibernateDialect.toLowerCase().contains("oracle") && !isOracleSequenceLegacy()) {
-			mutableAclService.setClassIdentityQuery("select current_value('" + tableClass.toUpperCase() + "') from dual");
-			mutableAclService.setSidIdentityQuery("select current_value('" + tableSid.toUpperCase() + "') from dual");
-		} else if (hibernateDialect.toLowerCase().contains("postgres")) {
+		if (hibernateDialect.toLowerCase().contains("postgres")) {
 			mutableAclService.setClassIdentityQuery("select currval(pg_get_serial_sequence('" + tableClass + "', 'id'))");
 			mutableAclService.setSidIdentityQuery("select currval(pg_get_serial_sequence('" + tableSid + "', 'id'))");
 		} else if (hibernateDialect.toLowerCase().contains("h2")) {
@@ -115,6 +109,14 @@ public abstract class BaseAclConfig {
 		} else if (hibernateDialect.toLowerCase().contains("hsql")) {
 			mutableAclService.setClassIdentityQuery("call identity()");
 			mutableAclService.setSidIdentityQuery("call identity()");
+		} else {
+			if (isOracleSequenceLegacy()) {
+				mutableAclService.setClassIdentityQuery("select " + tableClass.toUpperCase() + getTableSequenceSuffix() + ".currval from dual");
+				mutableAclService.setSidIdentityQuery("select " + tableSid.toUpperCase() + getTableSequenceSuffix() + ".currval from dual");
+			} else {
+				mutableAclService.setClassIdentityQuery("select current_value('" + tableClass.toUpperCase() + "') from dual");
+				mutableAclService.setSidIdentityQuery("select current_value('" + tableSid.toUpperCase() + "') from dual");
+			}
 		}
 		mutableAclService.setFindChildrenQuery("select obj.object_id_identity as obj_id, class.class as class" +
 				(CLASS_ID_SUPPORTED ? ", class.class_id_type as class_id_type" : "") +
