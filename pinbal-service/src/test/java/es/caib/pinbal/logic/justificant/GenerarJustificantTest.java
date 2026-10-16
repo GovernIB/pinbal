@@ -48,7 +48,7 @@ public class GenerarJustificantTest {
         context.putMap(model);
         report.process(context, out);
 
-        try (OutputStream outputStream = Files.newOutputStream(Paths.get("/var/tmp/justificant-test.odt"))) {
+        try (OutputStream outputStream = Files.newOutputStream(Paths.get(System.getProperty("java.io.tmpdir"), "justificant-test.odt"))) {
             out.writeTo(outputStream);
         }
     }

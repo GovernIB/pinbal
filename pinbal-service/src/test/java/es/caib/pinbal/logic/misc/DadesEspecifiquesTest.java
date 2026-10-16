@@ -16,6 +16,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 import static org.springframework.test.util.AssertionErrors.assertTrue;
@@ -48,7 +49,7 @@ public class DadesEspecifiquesTest {
 		DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
 		domFactory.setNamespaceAware(true); 
 		DocumentBuilder builder = domFactory.newDocumentBuilder();
-		return builder.parse(new ByteArrayInputStream(xml.getBytes()));
+		return builder.parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
 	}
 
 	private void testNodesDadesEspecifiques(Node rootNode) throws Exception {
