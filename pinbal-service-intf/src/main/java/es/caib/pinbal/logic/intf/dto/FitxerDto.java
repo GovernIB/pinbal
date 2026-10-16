@@ -3,6 +3,8 @@
  */
 package es.caib.pinbal.logic.intf.dto;
 
+import es.caib.pinbal.logic.intf.helper.ToStringHelper;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +28,7 @@ public class FitxerDto implements Serializable {
 
 	private String nom;
 	private String contentType;
+	@ToString.Exclude
 	private byte[] contingut;
 
 	public long getLongitud() {
@@ -48,6 +51,11 @@ public class FitxerDto implements Serializable {
 		} else {
 			return nom;
 		}
+	}
+
+	@ToString.Include(name = "contingut.length")
+	private Integer contingutLongitud() {
+		return ToStringHelper.longitud(contingut);
 	}
 
 	private static final long serialVersionUID = -139254994389509932L;

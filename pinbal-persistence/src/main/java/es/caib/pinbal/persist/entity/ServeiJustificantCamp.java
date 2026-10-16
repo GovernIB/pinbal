@@ -6,6 +6,7 @@ package es.caib.pinbal.persist.entity;
 import es.caib.pinbal.persist.audit.PinbalAuditable;
 import lombok.Getter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -177,7 +178,16 @@ public class ServeiJustificantCamp extends PinbalAuditable<Long> {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				.append("id", getId())
+				.append("servei", servei)
+				.append("xpath", xpath)
+				.append("localeIdioma", localeIdioma)
+				.append("localeRegio", localeRegio)
+				.append("traduccio", traduccio)
+				.append("document", document)
+				.append("version", version)
+				.toString();
 	}
 
 }

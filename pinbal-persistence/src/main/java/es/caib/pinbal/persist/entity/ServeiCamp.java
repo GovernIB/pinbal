@@ -6,7 +6,9 @@ package es.caib.pinbal.persist.entity;
 import es.caib.pinbal.logic.intf.dto.ServeiCampDto.ServeiCampDtoValidacioDataTipus;
 import es.caib.pinbal.logic.intf.dto.ServeiCampDto.ServeiCampDtoValidacioOperacio;
 import es.caib.pinbal.persist.audit.PinbalAuditable;
+import es.caib.pinbal.persist.base.entity.EntityToStringHelper;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -466,7 +468,35 @@ public class ServeiCamp extends PinbalAuditable<Long> {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				.append("id", getId())
+				.append("servei", servei)
+				.append("path", path)
+				.append("tipus", tipus)
+				.append("etiqueta", etiqueta)
+				.append("valorPerDefecte", valorPerDefecte)
+				.append("comentari", comentari)
+				.append("enumDescripcions", enumDescripcions)
+				.append("dataFormat", dataFormat)
+				.append("campPare.id", EntityToStringHelper.identificador(campPare, ServeiCamp::getId))
+				.append("valorPare", valorPare)
+				.append("inicialitzar", inicialitzar)
+				.append("obligatori", obligatori)
+				.append("modificable", modificable)
+				.append("visible", visible)
+				.append("ordre", ordre)
+				.append("mida", mida)
+				.append("validacioRegexp", validacioRegexp)
+				.append("validacioMin", validacioMin)
+				.append("validacioMax", validacioMax)
+				.append("validacioDataCmpOperacio", validacioDataCmpOperacio)
+				.append("validacioDataCmpCamp2.id", EntityToStringHelper.identificador(validacioDataCmpCamp2, ServeiCamp::getId))
+				.append("validacioDataCmpNombre", validacioDataCmpNombre)
+				.append("validacioDataCmpTipus", validacioDataCmpTipus)
+				.append("grup.id", EntityToStringHelper.identificador(grup, ServeiCampGrup::getId))
+				.append("campsFills.size", EntityToStringHelper.mida(campsFills))
+				.append("version", version)
+				.toString();
 	}
 
 }

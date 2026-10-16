@@ -3,7 +3,10 @@ package es.caib.pinbal.persist.entity;
 import es.caib.pinbal.logic.intf.dto.regles.AccioEnum;
 import es.caib.pinbal.logic.intf.dto.regles.ModificatEnum;
 import es.caib.pinbal.persist.audit.PinbalAuditable;
+import es.caib.pinbal.persist.base.entity.EntityToStringHelper;
 import lombok.*;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -54,5 +57,19 @@ public class ServeiRegla extends PinbalAuditable<Long> {
     @NotNull
     @Column(name="ordre")
     private int ordre;
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", getId())
+                .append("nom", nom)
+                .append("servei.id", EntityToStringHelper.identificador(servei, Servei::getId))
+                .append("modificat", modificat)
+                .append("modificatValor.size", EntityToStringHelper.mida(modificatValor))
+                .append("afectatValor.size", EntityToStringHelper.mida(afectatValor))
+                .append("accio", accio)
+                .append("ordre", ordre)
+                .toString();
+    }
 
 }

@@ -4,9 +4,11 @@
 package es.caib.pinbal.persist.entity;
 
 import es.caib.pinbal.persist.audit.PinbalAuditable;
+import es.caib.pinbal.persist.base.entity.EntityToStringHelper;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -20,7 +22,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@ToString
 @Entity
 @Table(name = "pbl_entitat")
 @EntityListeners(AuditingEntityListener.class)
@@ -213,6 +214,25 @@ public class Entitat extends PinbalAuditable<Long> {
 		} else if (!codi.equals(other.codi))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				.append("id", getId())
+				.append("codi", codi)
+				.append("nom", nom)
+				.append("cif", cif)
+				.append("unitatArrel", unitatArrel)
+				.append("tipus", tipus)
+				.append("activa", activa)
+				.append("serveis.size", EntityToStringHelper.mida(serveis))
+				.append("serveisBus.size", EntityToStringHelper.mida(serveisBus))
+				.append("usuaris.size", EntityToStringHelper.mida(usuaris))
+				.append("procediments.size", EntityToStringHelper.mida(procediments))
+				.append("organGestors.size", EntityToStringHelper.mida(organGestors))
+				.append("version", version)
+				.toString();
 	}
 
 	@Deprecated

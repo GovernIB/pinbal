@@ -3,10 +3,13 @@
  */
 package es.caib.pinbal.logic.intf.dto;
 
+import es.caib.pinbal.logic.intf.helper.ToStringHelper;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,10 +30,12 @@ public class ArbreRespostaDto implements Serializable {
 	private String descripcio;
 	private String xpath;
 	private boolean document;
+	@ToString.Exclude
 	private String documentContingutBase64;
 	private String documentNom;
 	private String documentMimeType;
 	private boolean documentPdf;
+	@ToString.Exclude
 	private List<ArbreRespostaDto> fills;
 
 	public void addFill(ArbreRespostaDto fill) {
@@ -40,6 +45,16 @@ public class ArbreRespostaDto implements Serializable {
 		fills.add(fill);
 	}
 
+
+	@ToString.Include(name = "documentContingutBase64.length")
+	private Integer documentContingutBase64Longitud() {
+		return ToStringHelper.longitud(documentContingutBase64);
+	}
+
+	@ToString.Include(name = "fills.size")
+	private Integer fillsMida() {
+		return ToStringHelper.mida(fills);
+	}
 
 	private static final long serialVersionUID = 4533405911014688170L;
 

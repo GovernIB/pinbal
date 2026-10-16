@@ -6,9 +6,11 @@ package es.caib.pinbal.persist.entity;
 import es.caib.pinbal.logic.intf.dto.ProcedimentClaseTramiteEnumDto;
 import es.caib.pinbal.logic.intf.dto.ProcedimentServeiSimpleDto;
 import es.caib.pinbal.persist.audit.PinbalAuditable;
+import es.caib.pinbal.persist.base.entity.EntityToStringHelper;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -248,7 +250,21 @@ public class Procediment extends PinbalAuditable<Long> {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				.append("id", getId())
+				.append("codi", codi)
+				.append("nom", nom)
+				.append("departament", departament)
+				.append("actiu", actiu)
+				.append("organGestor.id", EntityToStringHelper.identificador(organGestor, OrganGestor::getId))
+				.append("codiSia", codiSia)
+				.append("codiSiaOrigen", codiSiaOrigen)
+				.append("valorCampAutomatizado", valorCampAutomatizado)
+				.append("valorCampClaseTramite", valorCampClaseTramite)
+				.append("entitat.id", EntityToStringHelper.identificador(entitat, Entitat::getId))
+				.append("serveis.size", EntityToStringHelper.mida(serveis))
+				.append("version", version)
+				.toString();
 	}
 
 }

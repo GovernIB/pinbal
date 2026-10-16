@@ -24,7 +24,13 @@ public class InformeUsuariDto implements Serializable {
 	private String departament;
 	private boolean actiu;
 
+	@ToString.Exclude
 	private EntitatDto entitat;
+
+	@ToString.Include(name = "entitat.id")
+	private Long entitatId() {
+		return entitat != null ? entitat.getId() : null;
+	}
 
 	private static final long serialVersionUID = 3986823331500016935L;
 

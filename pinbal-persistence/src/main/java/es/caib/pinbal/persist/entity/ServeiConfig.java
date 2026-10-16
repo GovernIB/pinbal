@@ -1,9 +1,11 @@
 package es.caib.pinbal.persist.entity;
 
 import es.caib.pinbal.persist.audit.PinbalAuditable;
+import es.caib.pinbal.persist.base.entity.EntityToStringHelper;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -346,7 +348,44 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				.append("id", getId())
+				.append("servei", servei)
+				.append("custodiaCodi", custodiaCodi)
+				.append("roleName", roleName)
+				.append("condicioBusClass", condicioBusClass)
+				.append("entitatTipus", entitatTipus)
+				.append("justificantTipus", justificantTipus)
+				.append("justificantXpath", justificantXpath)
+				.append("permesDocumentTipusDni", permesDocumentTipusDni)
+				.append("permesDocumentTipusNif", permesDocumentTipusNif)
+				.append("permesDocumentTipusCif", permesDocumentTipusCif)
+				.append("permesDocumentTipusNie", permesDocumentTipusNie)
+				.append("permesDocumentTipusPas", permesDocumentTipusPas)
+				.append("actiuCampNom", actiuCampNom)
+				.append("actiuCampLlinatge1", actiuCampLlinatge1)
+				.append("actiuCampLlinatge2", actiuCampLlinatge2)
+				.append("actiuCampNomComplet", actiuCampNomComplet)
+				.append("actiuCampDocument", actiuCampDocument)
+				.append("pinbalUnitatDir3FromEntitat", pinbalUnitatDir3FromEntitat)
+				.append("pinbalUnitatDir3", pinbalUnitatDir3)
+				.append("documentObligatori", documentObligatori)
+				.append("comprovarDocument", comprovarDocument)
+				.append("activaGestioXsd", activaGestioXsd)
+				.append("maxPeticionsMinut", maxPeticionsMinut)
+				.append("actiu", actiu)
+				.append("enviarSolicitant", enviarSolicitant)
+				.append("ajuda.length", EntityToStringHelper.longitud(ajuda))
+				.append("fitxerAjudaNom", fitxerAjudaNom)
+				.append("fitxerAjudaMimeType", fitxerAjudaMimeType)
+				.append("fitxerAjudaContingut.length", EntityToStringHelper.longitud(fitxerAjudaContingut))
+				.append("iniDadesEspecifiques", iniDadesEspecifiques)
+				.append("addDadesEspecifiques", addDadesEspecifiques)
+				.append("useAutoClasse", useAutoClasse)
+				.append("arrelRespostaPath", arrelRespostaPath)
+				.append("useCertificatEntitat", useCertificatEntitat)
+				.append("version", version)
+				.toString();
 	}
 
 }

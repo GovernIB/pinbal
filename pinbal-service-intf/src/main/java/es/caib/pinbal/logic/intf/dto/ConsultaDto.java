@@ -3,6 +3,8 @@
  */
 package es.caib.pinbal.logic.intf.dto;
 
+import es.caib.pinbal.logic.intf.helper.ToStringHelper;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -83,15 +85,19 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 	private String titularLlinatge2;
 	private String titularNomComplet;
 
+	@ToString.Exclude
 	private String[] campsPeticioMultiple;
+	@ToString.Exclude
 	private String[][] dadesPeticioMultiple;
 
+	@ToString.Exclude
 	private Map<String, Object> dadesEspecifiques;
 
 	private String serveiDescripcio;
 	private String procedimentNom;
 	private String procedimentCodi;
 	private Date creacioData;
+	@ToString.Exclude
 	private UsuariDto creacioUsuari;
 	private String estat;
 	private Date terData;
@@ -107,13 +113,16 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 
 	private boolean hiHaPeticio = false;
 	private boolean peticioGenerada = false;
+	@ToString.Exclude
 	private String peticioXml;
 
 	private boolean hiHaResposta = false;
 	private Date respostaData;
 	private String respostaEstadoCodigo;
 	private String respostaEstadoError;
+	@ToString.Exclude
 	private String respostaXml;
+	@ToString.Exclude
 	private RespostaAtributsDto respostaAtributs;
 
 	private String error;
@@ -250,6 +259,36 @@ public class ConsultaDto extends AbstractIdentificable<Long> implements Serializ
 
 
 
+
+	@ToString.Include(name = "campsPeticioMultiple.length")
+	private Integer campsPeticioMultipleLongitud() {
+		return ToStringHelper.longitud(campsPeticioMultiple);
+	}
+
+	@ToString.Include(name = "dadesPeticioMultiple.length")
+	private Integer dadesPeticioMultipleLongitud() {
+		return ToStringHelper.longitud(dadesPeticioMultiple);
+	}
+
+	@ToString.Include(name = "dadesEspecifiques.size")
+	private Integer dadesEspecifiquesMida() {
+		return ToStringHelper.mida(dadesEspecifiques);
+	}
+
+	@ToString.Include(name = "creacioUsuari.codi")
+	private String creacioUsuariCodi() {
+		return creacioUsuari != null ? creacioUsuari.getCodi() : null;
+	}
+
+	@ToString.Include(name = "peticioXml.length")
+	private Integer peticioXmlLongitud() {
+		return ToStringHelper.longitud(peticioXml);
+	}
+
+	@ToString.Include(name = "respostaXml.length")
+	private Integer respostaXmlLongitud() {
+		return ToStringHelper.longitud(respostaXml);
+	}
 
 	private static final long serialVersionUID = 2147586341949166824L;
 

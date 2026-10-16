@@ -4,8 +4,11 @@ import es.caib.pinbal.logic.intf.dto.ConsultaDto;
 import es.caib.pinbal.logic.intf.dto.EstatTipus;
 import es.caib.pinbal.logic.intf.dto.JustificantEstat;
 import es.caib.pinbal.persist.audit.PinbalAuditable;
+import es.caib.pinbal.persist.base.entity.EntityToStringHelper;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -208,5 +211,50 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
 
     public void updateArxiuDocumentUuid(String arxiuDocumentUuid) {
         this.arxiuDocumentUuid = arxiuDocumentUuid;
+    }
+
+    /**
+     * Crea el ToStringBuilder amb els atributs comuns de les consultes perquè
+     * les subclasses hi afegeixin els seus abans de generar el toString.
+     *
+     * @return el ToStringBuilder amb els atributs comuns.
+     */
+    protected ToStringBuilder crearToStringBuilder() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", getId())
+                .append("scspPeticionId", scspPeticionId)
+                .append("scspSolicitudId", scspSolicitudId)
+                .append("departamentNom", departamentNom)
+                .append("funcionariNom", funcionariNom)
+                .append("funcionariDocumentNum", funcionariDocumentNum)
+                .append("titularDocumentTipus", titularDocumentTipus)
+                .append("titularDocumentNum", titularDocumentNum)
+                .append("titularNom", titularNom)
+                .append("titularLlinatge1", titularLlinatge1)
+                .append("titularLlinatge2", titularLlinatge2)
+                .append("titularNomComplet", titularNomComplet)
+                .append("finalitat", finalitat)
+                .append("consentiment", consentiment)
+                .append("expedientId", expedientId)
+                .append("dadesEspecifiques.length", EntityToStringHelper.longitud(dadesEspecifiques))
+                .append("estat", estat)
+                .append("error", error)
+                .append("recobriment", recobriment)
+                .append("multiple", multiple)
+                .append("justificantEstat", justificantEstat)
+                .append("custodiat", custodiat)
+                .append("custodiaId", custodiaId)
+                .append("custodiaUrl", custodiaUrl)
+                .append("justificantError", justificantError)
+                .append("arxiuExpedientUuid", arxiuExpedientUuid)
+                .append("arxiuDocumentUuid", arxiuDocumentUuid)
+                .append("arxiuExpedientTancat", arxiuExpedientTancat)
+                .append("aplicacioGuardaJustificantArxiu", aplicacioGuardaJustificantArxiu)
+                .append("dataEsperadaResposta", dataEsperadaResposta)
+                .append("procedimentServei.id", EntityToStringHelper.identificador(procedimentServei, ProcedimentServei::getId))
+                .append("procediment.id", EntityToStringHelper.identificador(procediment, Procediment::getId))
+                .append("serveiCodi", serveiCodi)
+                .append("entitat.id", EntityToStringHelper.identificador(entitat, Entitat::getId))
+                .append("version", version);
     }
 }

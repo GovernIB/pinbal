@@ -3,6 +3,8 @@
  */
 package es.caib.pinbal.logic.intf.dto;
 
+import es.caib.pinbal.logic.intf.helper.ToStringHelper;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,6 +34,7 @@ public class PaginaDto<T> implements Iterable<T>, Serializable {
 	private boolean primera;
 	private boolean posteriors;
 	private boolean darrera;
+	@ToString.Exclude
 	private List<T> contingut = new ArrayList<T>();
 
 	public int getElementsNombre() {
@@ -49,6 +52,11 @@ public class PaginaDto<T> implements Iterable<T>, Serializable {
 			return getContingut().iterator();
 		else
 			return new ArrayList<T>().iterator();
+	}
+
+	@ToString.Include(name = "contingut.size")
+	private Integer contingutMida() {
+		return ToStringHelper.mida(contingut);
 	}
 
 	private static final long serialVersionUID = -139254994389509932L;

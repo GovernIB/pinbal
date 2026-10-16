@@ -5,8 +5,8 @@ package es.caib.pinbal.persist.entity;
 
 import es.caib.pinbal.logic.intf.dto.ConsultaDto.Consentiment;
 import es.caib.pinbal.logic.intf.dto.EstatTipus;
+import es.caib.pinbal.persist.base.entity.EntityToStringHelper;
 import lombok.Getter;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -270,7 +270,10 @@ public class Consulta extends SuperConsulta {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return crearToStringBuilder()
+				.append("pare.id", EntityToStringHelper.identificador(pare, Consulta::getId))
+				.append("fills.size", EntityToStringHelper.mida(fills))
+				.toString();
 	}
 
 }

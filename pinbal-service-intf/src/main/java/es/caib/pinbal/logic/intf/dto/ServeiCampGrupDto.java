@@ -3,6 +3,8 @@
  */
 package es.caib.pinbal.logic.intf.dto;
 
+import es.caib.pinbal.logic.intf.helper.ToStringHelper;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,8 +30,10 @@ public class ServeiCampGrupDto implements Serializable {
 	private String servei;
 	private String nom;
 	private Long pareId;
+	@ToString.Exclude
 	private String ajuda;
 	private int ordre;
+	@ToString.Exclude
 	private List<ServeiCampGrupDto> fills;
 
 	@Builder.Default
@@ -54,6 +58,16 @@ public class ServeiCampGrupDto implements Serializable {
 					.replace("\"", "&quot;");
 		}
 		return ajudaScaped;
+	}
+
+	@ToString.Include(name = "ajuda.length")
+	private Integer ajudaLongitud() {
+		return ToStringHelper.longitud(ajuda);
+	}
+
+	@ToString.Include(name = "fills.size")
+	private Integer fillsMida() {
+		return ToStringHelper.mida(fills);
 	}
 
 	private static final long serialVersionUID = -139254994389509932L;

@@ -4,6 +4,7 @@
 package es.caib.pinbal.persist.entity;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -136,7 +137,11 @@ public class ParamConf implements Serializable {
 	
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				.append("nom", nom)
+				.append("valor", valor)
+				.append("descripcio", descripcio)
+				.toString();
 	}
 	
 	

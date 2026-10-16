@@ -22,8 +22,14 @@ public class IntegracioFiltreDto implements Serializable {
 	private String idPeticio;	
 	private IntegracioAccioTipusEnumDto tipus;
 	private IntegracioAccioEstatEnumDto estat;
+	@ToString.Exclude
 	private EntitatDto entitat;	
 	
+	@ToString.Include(name = "entitat.id")
+	private Long entitatId() {
+		return entitat != null ? entitat.getId() : null;
+	}
+
 	private static final long serialVersionUID = -248365773192710830L;
 
 }

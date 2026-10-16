@@ -4,7 +4,9 @@
 package es.caib.pinbal.persist.entity;
 
 import es.caib.pinbal.persist.audit.PinbalAuditable;
+import es.caib.pinbal.persist.base.entity.EntityToStringHelper;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -134,7 +136,12 @@ public class EntitatServei extends PinbalAuditable<Long> {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				.append("id", getId())
+				.append("entitat.id", EntityToStringHelper.identificador(entitat, Entitat::getId))
+				.append("servei", servei)
+				.append("version", version)
+				.toString();
 	}
 
 }

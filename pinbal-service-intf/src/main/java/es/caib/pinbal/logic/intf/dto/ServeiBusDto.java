@@ -22,7 +22,13 @@ public class ServeiBusDto implements Serializable {
 	private Long id;
 	private String servei;
 	private String urlDesti;
+	@ToString.Exclude
 	private EntitatDto entitat;
+
+	@ToString.Include(name = "entitat.id")
+	private Long entitatId() {
+		return entitat != null ? entitat.getId() : null;
+	}
 
 	private static final long serialVersionUID = -139254994389509932L;
 

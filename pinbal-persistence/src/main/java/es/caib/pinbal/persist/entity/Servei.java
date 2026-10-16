@@ -1,6 +1,8 @@
 package es.caib.pinbal.persist.entity;
 
+import es.caib.pinbal.persist.base.entity.EntityToStringHelper;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -143,6 +145,15 @@ public class Servei implements Serializable {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				.append("id", id)
+				.append("codi", codi)
+				.append("descripcio", descripcio)
+				.append("scspEmisor.id", EntityToStringHelper.identificador(scspEmisor, EmissorCert::getId))
+				.append("scspFechaAlta", scspFechaAlta)
+				.append("scspFechaBaja", scspFechaBaja)
+				.append("caducitat", caducitat)
+				.append("scspVersionEsquema", scspVersionEsquema)
+				.toString();
 	}
 }

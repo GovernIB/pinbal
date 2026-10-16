@@ -1,5 +1,7 @@
 package es.caib.pinbal.logic.intf.dto;
 
+import es.caib.pinbal.logic.intf.helper.ToStringHelper;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,6 +41,7 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	private String descripcio;
 	private Long id;
 
+	@ToString.Exclude
 	private EmisorDto scspEmisor;
 	private Date scspFechaAlta;
 	private Date scspFechaBaja;
@@ -50,7 +53,9 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	private String scspActionSolicitud;
 	private String scspVersionEsquema;
 	private String scspTipoSeguridad;
+	@ToString.Exclude
 	private ClauPrivadaDto scspClaveFirma;
+	@ToString.Exclude
 	private ClauPublicaDto scspClaveCifrado;
 	private String scspXpathCifradoSincrono;
 	private String scspXpathCifradoAsincrono;
@@ -91,15 +96,18 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	private boolean activaGestioXsd;
 	private Integer maxPeticionsMinut;
 	
+	@ToString.Exclude
 	private String ajuda;
 	private String fitxerAjudaNom;
 	private String fitxerAjudaMimeType;
+	@ToString.Exclude
 	private byte[] fitxerAjudaContingut;
 	
 	private boolean pinbalIniDadesEspecifiques;
 	private boolean pinbalAddDadesEspecifiques;
 
 	
+	@ToString.Exclude
 	private List<ServeiXsdDto> fitxersXsd;
 	@Builder.Default
 	private boolean pinbalIniDadesExpecifiques = false;
@@ -156,6 +164,36 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 		return codi + " - " + descripcio;
 	}
 	
+
+	@ToString.Include(name = "scspEmisor.id")
+	private Long scspEmisorId() {
+		return scspEmisor != null ? scspEmisor.getId() : null;
+	}
+
+	@ToString.Include(name = "scspClaveFirma.id")
+	private Long scspClaveFirmaId() {
+		return scspClaveFirma != null ? scspClaveFirma.getId() : null;
+	}
+
+	@ToString.Include(name = "scspClaveCifrado.id")
+	private Long scspClaveCifradoId() {
+		return scspClaveCifrado != null ? scspClaveCifrado.getId() : null;
+	}
+
+	@ToString.Include(name = "ajuda.length")
+	private Integer ajudaLongitud() {
+		return ToStringHelper.longitud(ajuda);
+	}
+
+	@ToString.Include(name = "fitxerAjudaContingut.length")
+	private Integer fitxerAjudaContingutLongitud() {
+		return ToStringHelper.longitud(fitxerAjudaContingut);
+	}
+
+	@ToString.Include(name = "fitxersXsd.size")
+	private Integer fitxersXsdMida() {
+		return ToStringHelper.mida(fitxersXsd);
+	}
 
 	private static final long serialVersionUID = 5684791166191332426L;
 

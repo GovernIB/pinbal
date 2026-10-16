@@ -4,8 +4,10 @@
 package es.caib.pinbal.persist.entity;
 
 import es.caib.pinbal.logic.intf.dto.NumElementsPaginaEnum;
+import es.caib.pinbal.persist.base.entity.EntityToStringHelper;
 import lombok.Getter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -277,7 +279,22 @@ public class Usuari implements Serializable {
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+				.append("codi", codi)
+				.append("nom", nom)
+				.append("nif", nif)
+				.append("inicialitzat", inicialitzat)
+				.append("email", email)
+				.append("idioma", idioma)
+				.append("entitats.size", EntityToStringHelper.mida(entitats))
+				.append("procedimentId", procedimentId)
+				.append("serveiCodi", serveiCodi)
+				.append("entitatId", entitatId)
+				.append("departament", departament)
+				.append("finalitat", finalitat)
+				.append("numElementsPagina", numElementsPagina)
+				.append("version", version)
+				.toString();
 	}
 
 	private static final long serialVersionUID = -6657066865382086237L;
