@@ -3877,6 +3877,9 @@ public class ConsultaServiceImpl implements ConsultaService, ApplicationContextA
 				case "0302":
 					error = messageSource.getMessage("consulta.scsp.processar.error.0302", new Object[] {codi}, locale) + detall;
 					break;
+				case ScspHelper.CODI_ERROR_NAMESPACE_DADES_ESPECIFIQUES:
+					error = messageSource.getMessage("consulta.scsp.processar.error.namespace.dades.especifiques", new Object[] {codi}, locale) + detall;
+					break;
 				case "0303":
 					error = messageSource.getMessage("consulta.scsp.processar.error.0303", new Object[] {codi}, locale) + detall;
 					break;

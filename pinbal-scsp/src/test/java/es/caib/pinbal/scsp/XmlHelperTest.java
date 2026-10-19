@@ -10,8 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -435,6 +438,40 @@ public class XmlHelperTest {
 
         assertNotNull(getFillElement(resultat, "Solicitud"));
         assertNotNull(getFillElement(resultat, "Domicilio"));
+    }
+
+    private static final String NS_DATOS_ESPECIFICOS = "http://intermediacion.redsara.es/scsp/esquemas/datosespecificos";
+
+    /** Reprodueix la validació de ClienteUnico.verifyDatosEspecificosNS (SCSP 5.x). */
+    private static int comptarNodesAmbNamespaceDatosEspecificos(Element datosEspecificos) throws Exception {
+        NodeList nodes = (NodeList) XPathFactory.newInstance().newXPath().evaluate(
+                "//*[namespace-uri() = '" + NS_DATOS_ESPECIFICOS + "']",
+                datosEspecificos,
+                XPathConstants.NODESET);
+        return nodes.getLength();
+    }
+
+    @Test
+    public void crearDadesEspecifiquesAssignaElNamespaceAlsNodesDelDom() throws Exception {
+        Map<String, Object> dades = new HashMap<String, Object>();
+        dades.put("DatosEspecificos/Ejercicio", "2024");
+        dades.put("DatosEspecificos/Cabecera/CodRet", "0001");
+
+        Element resultat = helper.crearDadesEspecifiques(AEATIAE, dades, false, false, null, true);
+
+        assertEquals(NS_DATOS_ESPECIFICOS, resultat.getNamespaceURI());
+        assertEquals(NS_DATOS_ESPECIFICOS, getFillElement(resultat, "Cabecera").getNamespaceURI());
+        assertEquals(4, comptarNodesAmbNamespaceDatosEspecificos(resultat));
+    }
+
+    @Test
+    public void copiarDadesEspecifiquesRecobrimentAssignaElNamespaceAlsNodesDelDom() throws Exception {
+        Document rebut = parseDoc("<DatosEspecificos xmlns=\"" + NS_DATOS_ESPECIFICOS + "\"><Ejercicio>2025</Ejercicio></DatosEspecificos>");
+
+        Element resultat = helper.copiarDadesEspecifiquesRecobriment(AEATIAE, rebut.getDocumentElement(), false, false, null);
+
+        assertEquals(NS_DATOS_ESPECIFICOS, resultat.getNamespaceURI());
+        assertEquals(2, comptarNodesAmbNamespaceDatosEspecificos(resultat));
     }
 
     // ------------------------- copiarDadesEspecifiquesRecobriment -------------------------

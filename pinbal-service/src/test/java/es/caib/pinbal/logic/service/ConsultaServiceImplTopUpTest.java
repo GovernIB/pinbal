@@ -200,6 +200,19 @@ public class ConsultaServiceImplTopUpTest {
     }
 
     @Test
+    public void generateErrorMessage_errorNamespaceDadesEspecifiques_usaMissatgePropiAmbDetall() {
+        when(messageSource.getMessage(eq("consulta.scsp.processar.error.namespace.dades.especifiques"), any(), any(Locale.class)))
+                .thenReturn("[PBL_DE_NS] Missatge namespace");
+        ScspException scspException = new ScspException("Detall tècnic", ScspHelper.CODI_ERROR_NAMESPACE_DADES_ESPECIFIQUES);
+        Exception wrapper = new Exception("wrap", scspException);
+
+        String resultat = invokeGenerateErrorMessage(wrapper, new Locale("ca"));
+
+        assertTrue(resultat.startsWith("[PBL_DE_NS] Missatge namespace"));
+        assertTrue(resultat.endsWith("Detall tècnic"));
+    }
+
+    @Test
     public void generateErrorMessage_codiNoContemplat_retornaBranquaPerDefecte() {
         ScspException scspException = new ScspException("Missatge no classificat", "9999");
         Exception wrapper = new Exception("wrap", scspException);

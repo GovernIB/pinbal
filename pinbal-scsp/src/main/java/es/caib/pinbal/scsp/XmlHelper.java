@@ -144,6 +144,23 @@ public class XmlHelper {
 			boolean iniDadesEspecifiques,
 			List<String> pathCampsInicialitzar,
 			boolean addDadesEspecifiques) throws ConsultaScspGeneracioException {
+		return normalitzarNamespaces(
+				construirDadesEspecifiques(
+						servicio,
+						dadesEspecifiques,
+						gestioXsdActiva,
+						iniDadesEspecifiques,
+						pathCampsInicialitzar,
+						addDadesEspecifiques));
+	}
+
+	private Element construirDadesEspecifiques(
+			Servicio servicio,
+			Map<String, Object> dadesEspecifiques,
+			boolean gestioXsdActiva,
+			boolean iniDadesEspecifiques,
+			List<String> pathCampsInicialitzar,
+			boolean addDadesEspecifiques) throws ConsultaScspGeneracioException {
 		try {
 			DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
 			fac.setNamespaceAware(true);
@@ -240,9 +257,27 @@ public class XmlHelper {
 				return null;
 			}
 			doc.appendChild(datosEspecificos);
-			Element docElement = doc.getDocumentElement();
-			LOGGER.debug("Dades específiques generades: " + nodeToString(docElement));
-			return docElement;
+			return doc.getDocumentElement();
+		} catch (Exception ex) {
+			throw new ConsultaScspGeneracioException(ex);
+		}
+	}
+
+	/**
+	 * Els elements de les dades específiques es construeixen amb createElement i el namespace
+	 * s'afegeix com a atribut xmlns, de manera que només apareix en serialitzar l'XML: al DOM
+	 * els nodes no tenen namespace. ClienteUnico (SCSP 5.x) valida el namespace dels
+	 * DatosEspecificos amb un XPath sobre el DOM (namespace-uri()), per això es reparseja l'XML
+	 * amb un parser que té en compte els namespaces.
+	 */
+	private Element normalitzarNamespaces(Element datosEspecificos) throws ConsultaScspGeneracioException {
+		if (datosEspecificos == null)
+			return null;
+		try {
+			String xml = nodeToString(datosEspecificos);
+			LOGGER.debug("Dades específiques generades: " + xml);
+			return xmlToDocument(
+					new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))).getDocumentElement();
 		} catch (Exception ex) {
 			throw new ConsultaScspGeneracioException(ex);
 		}
@@ -330,7 +365,7 @@ public class XmlHelper {
 			boolean gestioXsdActiva,
 			boolean iniDadesEspecifiques,
 			List<String> pathCampsInicialitzar) throws ConsultaScspGeneracioException  {
-		Element datosEspecificos = crearDadesEspecifiques(servicio, null, gestioXsdActiva, iniDadesEspecifiques, pathCampsInicialitzar, true);
+		Element datosEspecificos = construirDadesEspecifiques(servicio, null, gestioXsdActiva, iniDadesEspecifiques, pathCampsInicialitzar, true);
 		NodeList nodes = datosEspecificosRebuts.getChildNodes();
 		for (int i = 0; i < nodes.getLength(); i++) {
 			datosEspecificos.appendChild(
@@ -338,7 +373,7 @@ public class XmlHelper {
 							nodes.item(i),
 							true));
 		}
-		return datosEspecificos;
+		return normalitzarNamespaces(datosEspecificos);
 	}
 
 	public String getXmlSolicitudTransmision(

@@ -27,6 +27,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -44,6 +48,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -186,6 +192,78 @@ public class ScspHelperClienteUnicoTest {
         } catch (ConsultaScspComunicacioException ex) {
             // esperat
         }
+    }
+
+    private Element dadesEspecifiques(boolean ambNamespaceAlDom) throws Exception {
+        DocumentBuilderFactory fac = DocumentBuilderFactory.newInstance();
+        fac.setNamespaceAware(true);
+        Document doc = fac.newDocumentBuilder().newDocument();
+        Element datosEspecificos;
+        Element consulta;
+        if (ambNamespaceAlDom) {
+            datosEspecificos = doc.createElementNS(ScspHelper.NAMESPACE_DATOS_ESPECIFICOS, "DatosEspecificos");
+            consulta = doc.createElementNS(ScspHelper.NAMESPACE_DATOS_ESPECIFICOS, "Consulta");
+        } else {
+            // Com ho feia XmlHelper.crearDadesEspecifiques: el namespace només com a atribut xmlns
+            datosEspecificos = doc.createElement("DatosEspecificos");
+            datosEspecificos.setAttribute("xmlns", ScspHelper.NAMESPACE_DATOS_ESPECIFICOS);
+            consulta = doc.createElement("Consulta");
+        }
+        consulta.setTextContent("07");
+        datosEspecificos.appendChild(consulta);
+        doc.appendChild(datosEspecificos);
+        return datosEspecificos;
+    }
+
+    @Test
+    public void enviarPeticionSincronaAmbDadesEspecifiquesSenseNamespaceNoEnviaILlancaErrorPropi() throws Exception {
+        preparaCreacioPeticio();
+        Solicitud solicitud = solicitud("SERV1");
+        solicitud.setDadesEspecifiquesElement(dadesEspecifiques(false));
+
+        try {
+            scspHelper.enviarPeticionSincrona(
+                    "PET1", List.of(solicitud), false, false, null, false);
+            fail("Hauria d'haver llançat ConsultaScspComunicacioException");
+        } catch (ConsultaScspComunicacioException ex) {
+            ScspException causa = (ScspException) ex.getCause();
+            assertEquals(ScspHelper.CODI_ERROR_NAMESPACE_DADES_ESPECIFIQUES, causa.getScspCode());
+            assertTrue(causa.getMessage().contains("SERV1"));
+            assertTrue(causa.getMessage().contains("namespace trobat: '" + ScspHelper.NAMESPACE_DATOS_ESPECIFICOS + "'"));
+        }
+        verify(clienteUnico, never()).realizaPeticionSincrona(any());
+    }
+
+    @Test
+    public void enviarPeticionSincronaAmbDadesEspecifiquesAmbNamespaceEnviaLaPeticio() throws Exception {
+        preparaCreacioPeticio();
+        PeticionRespuesta pr = new PeticionRespuesta();
+        pr.setEstado("0000");
+        when(peticionRespuestaDao.select("PET1")).thenReturn(pr);
+        when(transmisionDao.select(pr)).thenReturn(Collections.emptyList());
+        Solicitud solicitud = solicitud("SERV1");
+        solicitud.setDadesEspecifiquesElement(dadesEspecifiques(true));
+
+        scspHelper.enviarPeticionSincrona(
+                "PET1", List.of(solicitud), false, false, null, false);
+
+        verify(clienteUnico).realizaPeticionSincrona(any());
+    }
+
+    @Test
+    public void enviarPeticionAsincronaAmbDadesEspecifiquesSenseNamespaceNoEnvia() throws Exception {
+        preparaCreacioPeticio();
+        Solicitud solicitud = solicitud("SERV1");
+        solicitud.setDadesEspecifiquesElement(dadesEspecifiques(false));
+
+        try {
+            scspHelper.enviarPeticionAsincrona(
+                    "PET1", List.of(solicitud), false, false, null, false);
+            fail("Hauria d'haver llançat ConsultaScspComunicacioException");
+        } catch (ConsultaScspComunicacioException ex) {
+            assertEquals(ScspHelper.CODI_ERROR_NAMESPACE_DADES_ESPECIFIQUES, ((ScspException) ex.getCause()).getScspCode());
+        }
+        verify(clienteUnico, never()).realizaPeticionAsincrona(any());
     }
 
     // ------------------------- enviarPeticionAsincrona -------------------------

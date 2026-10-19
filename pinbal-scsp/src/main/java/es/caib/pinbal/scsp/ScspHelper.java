@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -37,6 +38,9 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.text.MessageFormat;
@@ -94,6 +98,7 @@ public class ScspHelper {
 			throw new ConsultaScspGeneracioException(idPeticion, ex);
 		}
 		try {
+			verificarNamespaceDadesEspecifiques(peticion);
 			getClienteUnico().realizaPeticionSincrona(peticion);
 			return getResultatEnviamentPeticio(idPeticion);
 		} catch (ScspException ex) {
@@ -122,6 +127,7 @@ public class ScspHelper {
 			throw new ConsultaScspGeneracioException(idPeticion, ex);
 		}
 		try {
+			verificarNamespaceDadesEspecifiques(peticion);
 			ConfirmacionPeticion confirmacionPeticion = getClienteUnico().realizaPeticionAsincrona(peticion);
 			ResultatEnviamentPeticio resultat =  getResultatEnviamentPeticio(idPeticion);
 			resultat.setConfirmacionPeticion(confirmacionPeticion);
@@ -895,6 +901,10 @@ public class ScspHelper {
 
 
 	private static final String PROP_PREFIX = "es.caib.pinbal.scsp.";
+
+	public static final String NAMESPACE_DATOS_ESPECIFICOS = "http://intermediacion.redsara.es/scsp/esquemas/datosespecificos";
+	/** Codi d'error propi de PINBAL (no pertany al catàleg SCSP) per a dades específiques sense el namespace requerit. */
+	public static final String CODI_ERROR_NAMESPACE_DADES_ESPECIFIQUES = "PBL_DE_NS";
 	public void copiarPropertiesToDb(Properties props) {
 		LOGGER.debug("Copiant les propietats cap a la taula core_parametro_configuracion");
 		for (Object key: props.keySet()) {
@@ -937,6 +947,42 @@ public class ScspHelper {
 	}
 
 
+
+	/**
+	 * ClienteUnico (SCSP 5.x) rebutja els DatosEspecificos que no tenen cap node amb el namespace
+	 * NAMESPACE_DATOS_ESPECIFICOS amb el codi d'error 0302, la descripció del qual és
+	 * "Certificado caducado". Es fa la mateixa comprovació abans d'enviar la petició per
+	 * poder retornar un missatge d'error que indiqui la causa real.
+	 */
+	void verificarNamespaceDadesEspecifiques(Peticion peticion) throws ScspException {
+		if (peticion.getSolicitudes() == null)
+			return;
+		for (SolicitudTransmision solicitud: peticion.getSolicitudes().getSolicitudTransmision()) {
+			if (!(solicitud.getDatosEspecificos() instanceof Element))
+				continue;
+			Element datosEspecificos = (Element)solicitud.getDatosEspecificos();
+			if (!datosEspecificos.hasChildNodes())
+				continue;
+			NodeList nodesAmbNamespace;
+			try {
+				nodesAmbNamespace = (NodeList)XPathFactory.newInstance().newXPath().evaluate(
+						"//*[namespace-uri() = '" + NAMESPACE_DATOS_ESPECIFICOS + "']",
+						datosEspecificos,
+						XPathConstants.NODESET);
+			} catch (XPathExpressionException ex) {
+				throw new ScspException("Error verificant el namespace de les dades específiques: " + ex.getMessage(), ex, CODI_ERROR_NAMESPACE_DADES_ESPECIFIQUES);
+			}
+			if (nodesAmbNamespace.getLength() == 0) {
+				String namespaceTrobat = datosEspecificos.getNamespaceURI() != null ? datosEspecificos.getNamespaceURI() : datosEspecificos.getAttribute("xmlns");
+				String codiServei = peticion.getAtributos() != null ? peticion.getAtributos().getCodigoCertificado() : null;
+				String missatge = "Les dades específiques del servei " + codiServei + " no tenen el namespace '" +
+						NAMESPACE_DATOS_ESPECIFICOS + "' requerit per la llibreria SCSP (namespace trobat: '" +
+						(namespaceTrobat == null || namespaceTrobat.isEmpty() ? "cap" : namespaceTrobat) + "')";
+				LOGGER.error(missatge);
+				throw new ScspException(missatge, CODI_ERROR_NAMESPACE_DADES_ESPECIFIQUES);
+			}
+		}
+	}
 
 	public Peticion crearPeticion(
 			String idPeticion,
