@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -82,9 +83,27 @@ public class JustificantArbreHelperTest {
     }
 
     @Test
-    public void getExpedienteSenseSeparadorRetornaLaFinalitatOriginal() throws Exception {
+    public void getExpedienteSenseSeparadorRetornaNull() throws Exception {
         String resultat = invoke("getExpediente", new Class<?>[]{String.class, String.class}, "finalitat-sense-separador", null);
-        assertEquals("finalitat-sense-separador", resultat);
+        assertNull(resultat);
+    }
+
+    @Test
+    public void getExpedienteAmbUnSolSeparadorExtreuElDarrerTram() throws Exception {
+        String resultat = invoke("getExpediente", new Class<?>[]{String.class, String.class}, "PROC#::#EXP3", null);
+        assertEquals("EXP3", resultat);
+    }
+
+    @Test
+    public void getExpedienteAmbExpedientBuitRetornaBuit() throws Exception {
+        String resultat = invoke("getExpediente", new Class<?>[]{String.class, String.class}, "PROC#::##::#Finalitat", null);
+        assertEquals("", resultat);
+    }
+
+    @Test
+    public void getExpedienteAmbFinalitatNullRetornaNull() throws Exception {
+        String resultat = invoke("getExpediente", new Class<?>[]{String.class, String.class}, null, null);
+        assertNull(resultat);
     }
 
     // ------------------------- getFinalidad -------------------------
@@ -366,6 +385,28 @@ public class JustificantArbreHelperTest {
         JustificantArbreHelper.ElementArbre solicitudDadesEspecifiques = arrel.getFills().get(1);
         assertEquals("Solicitud", solicitudDadesEspecifiques.getTitol());
         assertEquals("07", buscarDescripcio(solicitudDadesEspecifiques, "Provincia"));
+    }
+
+    @Test
+    public void generarArbreSenseExpedientNoMostraLaFinalitatComExpedient() throws Exception {
+        JustificantArbreHelper h = helperAmbMessageSourceDelValorPerDefecte();
+
+        TransmisionDatos transmisio = new TransmisionDatos();
+        DatosGenericos dg = new DatosGenericos();
+        dg.setTransmision(new Transmision());
+        Solicitante sol = new Solicitante();
+        sol.setIdentificadorSolicitante("B123");
+        sol.setNombreSolicitante("Nom Solicitant");
+        sol.setFinalidad("Finalitat actual sense separadors");
+        sol.setConsentimiento(Consentimiento.SI);
+        dg.setSolicitante(sol);
+        transmisio.setDatosGenericos(dg);
+
+        JustificantArbreHelper.ElementArbre arrel = h.generarArbre(transmisio, "PET4", Locale.forLanguageTag("ca"));
+
+        JustificantArbreHelper.ElementArbre solicitud = arrel.getFills().get(0);
+        assertEquals("Finalitat actual sense separadors", buscarDescripcio(solicitud, "Finalidad"));
+        assertNull(buscarDescripcio(solicitud, "Expediente"));
     }
 
     @Test

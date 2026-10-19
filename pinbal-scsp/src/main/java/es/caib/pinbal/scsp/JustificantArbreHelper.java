@@ -349,15 +349,14 @@ public class JustificantArbreHelper implements MessageSourceAware {
 	}
 	private String getExpediente(String finalidad, String idexpediente) {
 		if (idexpediente != null) return idexpediente;
-		int fin = finalidad.lastIndexOf("#::#");
+		// Per compatibilitat amb consultes antigues, l'expedient pot venir codificat dins la finalidad
+		// amb el format "PROC#::#EXP#::#FINALITAT" o "PROC#::#EXP"
+		if (finalidad == null) return null;
 		int ini = finalidad.indexOf("#::#");
-		try {
-			String expedienteProcesado = finalidad.substring(ini + "#::#".length(), fin);
-			return expedienteProcesado;
-		} catch (Exception e) {
-			LOGGER.error("El camp finalidad no té l'estructura esperada, no es pot recuperar l'expedient");
-		}
-		return finalidad;
+		if (ini == -1) return null;
+		int fin = finalidad.lastIndexOf("#::#");
+		if (ini == fin) return finalidad.substring(ini + "#::#".length());
+		return finalidad.substring(ini + "#::#".length(), fin);
 	}
 	private String getFinalidad(String finalidad) {
 		if (finalidad.contains("#::#")) {
@@ -458,7 +457,7 @@ public class JustificantArbreHelper implements MessageSourceAware {
 		}
 	}
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ScspHelper.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JustificantArbreHelper.class);
 
 
 
