@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -178,5 +179,31 @@ public class SecurityConfigTest {
 
         assertNotNull(details);
         assertTrue(details instanceof SecurityConfig.JwtAuthenticationDetails);
+    }
+
+    @Test
+    public void testWsRecobrimentWsdlMatcher_WsdlPublic() {
+        assertTrue(SecurityConfig.WS_RECOBRIMENT_WSDL_MATCHER.matches(wsRequest("GET", "/recobriment", "wsdl")));
+        assertTrue(SecurityConfig.WS_RECOBRIMENT_WSDL_MATCHER.matches(wsRequest("GET", "/recobriment", "WSDL")));
+        assertTrue(SecurityConfig.WS_RECOBRIMENT_WSDL_MATCHER.matches(wsRequest("GET", "/recobriment", "xsd=1")));
+        assertTrue(SecurityConfig.WS_RECOBRIMENT_WSDL_MATCHER.matches(wsRequest("GET", "/ws/recobriment", "wsdl")));
+    }
+
+    @Test
+    public void testWsRecobrimentWsdlMatcher_LaRestaProtegida() {
+        // Les crides SOAP (POST) i els GET sense ?wsdl segueixen requerint autenticació
+        assertFalse(SecurityConfig.WS_RECOBRIMENT_WSDL_MATCHER.matches(wsRequest("POST", "/recobriment", "wsdl")));
+        assertFalse(SecurityConfig.WS_RECOBRIMENT_WSDL_MATCHER.matches(wsRequest("POST", "/recobriment", null)));
+        assertFalse(SecurityConfig.WS_RECOBRIMENT_WSDL_MATCHER.matches(wsRequest("GET", "/recobriment", null)));
+        // L'API REST de recobriment no queda oberta encara que s'hi afegeixi ?wsdl
+        assertFalse(SecurityConfig.WS_RECOBRIMENT_WSDL_MATCHER.matches(wsRequest("GET", "/recobriment/v2/serveis", "wsdl")));
+        assertFalse(SecurityConfig.WS_RECOBRIMENT_WSDL_MATCHER.matches(wsRequest("GET", "/consulta", "wsdl")));
+    }
+
+    private MockHttpServletRequest wsRequest(String method, String servletPath, String queryString) {
+        MockHttpServletRequest request = new MockHttpServletRequest(method, servletPath);
+        request.setServletPath(servletPath);
+        request.setQueryString(queryString);
+        return request;
     }
 }

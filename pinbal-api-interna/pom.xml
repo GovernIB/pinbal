@@ -137,21 +137,6 @@
             </resource>
         </resources>
         <plugins>
-            <!-- Genera constants amb els context paths (src/main/java-templates) per poder-les
-                 fer servir a anotacions, com el @WebContext del servei SOAP de recobriment -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>templating-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <executions>
-                    <execution>
-                        <id>filter-src</id>
-                        <goals>
-                            <goal>filter-sources</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>

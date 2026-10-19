@@ -1,6 +1,5 @@
 package es.caib.pinbal.api.interna.config;
 
-import es.caib.pinbal.api.interna.ws.RecobrimentContext;
 import es.caib.pinbal.logic.intf.base.config.BaseConfig;
 import es.caib.pinbal.logic.intf.keycloak.JwtClaimsHelper;
 import es.caib.pinbal.logic.intf.keycloak.KeycloakUserDetails;
@@ -31,6 +30,7 @@ import org.springframework.security.web.authentication.preauth.j2ee.J2eeBasedPre
 import org.springframework.security.web.authentication.preauth.j2ee.J2eePreAuthenticatedProcessingFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -80,11 +80,26 @@ public class SecurityConfig {
             "/recobriment/test"
     };
 
+    // Servei SOAP de recobriment: sobre JBoss el publica JBossWS a /recobriment (dins el
+    // context del WAR) i amb Spring Boot el publica CXF a /ws/recobriment.
     private static final String[] WS_RECOBRIMENT_PATHS = {
+            "/recobriment",
             "/ws/recobriment",
-            "/ws/recobriment/**",
-            RecobrimentContext.CONTEXT_ROOT + "/recobriment",
-            RecobrimentContext.CONTEXT_ROOT + "/recobriment/**"
+            "/ws/recobriment/**"
+    };
+
+    // El WSDL (i els XSD que importa) del servei SOAP de recobriment es pot consultar sense autenticar.
+    static final RequestMatcher WS_RECOBRIMENT_WSDL_MATCHER = request -> {
+        String query = request.getQueryString();
+        if (query == null || !"GET".equals(request.getMethod())) {
+            return false;
+        }
+        String queryLower = query.toLowerCase();
+        if (!queryLower.startsWith("wsdl") && !queryLower.startsWith("xsd")) {
+            return false;
+        }
+        return Arrays.stream(WS_RECOBRIMENT_PATHS)
+                .anyMatch(path -> new AntPathRequestMatcher(path).matches(request));
     };
 
     @Bean
@@ -102,6 +117,7 @@ public class SecurityConfig {
                         .permitAll(false))
                 .authorizeRequests(authz -> authz.antMatchers(AUTH_WHITELIST)
                         .permitAll()
+                        .requestMatchers(WS_RECOBRIMENT_WSDL_MATCHER).permitAll()
                         .antMatchers(WS_RECOBRIMENT_PATHS).hasAnyAuthority("PBL_WS")
                         .anyRequest().authenticated())
                 .headers(hd -> hd.frameOptions().disable())

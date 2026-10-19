@@ -53,11 +53,11 @@
 		<jacoco.check.skip>false</jacoco.check.skip>
 		<!-- Prefix dels context paths de l'aplicació. Per defecte genera /pinbalback i /pinbalapi.
 		     Per desplegar en paral·lel amb una altra instal·lació: -Dpinbal.context.prefix=pinbal2
-		     (genera /pinbal2back, /pinbal2api i el servei SOAP de recobriment a /pinbal2/ws). -->
+		     (genera /pinbal2back i /pinbal2api; el servei SOAP de recobriment es publica a
+		     /pinbal2api/interna/recobriment). -->
 		<pinbal.context.prefix>pinbal</pinbal.context.prefix>
 		<pinbal.context.back>/${pinbal.context.prefix}back</pinbal.context.back>
 		<pinbal.context.api>/${pinbal.context.prefix}api</pinbal.context.api>
-		<pinbal.context.ws>/${pinbal.context.prefix}/ws</pinbal.context.ws>
 	</properties>
 	<dependencyManagement>
 		<dependencies>

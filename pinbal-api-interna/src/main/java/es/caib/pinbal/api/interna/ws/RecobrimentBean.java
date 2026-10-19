@@ -25,7 +25,8 @@ import java.security.Principal;
 /**
  * Implementacio dels metodes per al recobriment de les peticions SCSP exposats
  * per SOAP. El bean viu a l'API interna i delega en el mateix RecobrimentService
- * que els controladors REST.
+ * que els controladors REST. Com que es desplega dins el WAR, l'endpoint penja del
+ * seu context (per defecte /pinbalapi/interna/recobriment).
  *
  * @author Limit Tecnologies <limit@limit.es>
  */
@@ -37,7 +38,6 @@ import java.security.Principal;
 		endpointInterface = "es.caib.pinbal.logic.intf.ws.Recobriment",
 		targetNamespace = "http://www.caib.es/pinbal/ws/recobriment")
 @WebContext(
-		contextRoot = RecobrimentContext.CONTEXT_ROOT,
 		urlPattern = "/recobriment",
 		authMethod = "KEYCLOAK",
 		transportGuarantee = "NONE",
