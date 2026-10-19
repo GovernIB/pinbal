@@ -13,10 +13,11 @@
 -- son additius i el codi 1.4.44 no els consulta mai, per tant no li afecten:
 --   - Columna PBL_ACL_CLASS.CLASS_ID_TYPE (02)
 --   - Columnes JUSTIFICANTERROR a PBL_CONSULTA_LIST / PBL_CONSULTA_HIST_LIST (02)
---   - Noms nous de restriccions UNIQUE/FK, seqüències i triggers de les
---     taules ACL (02) -- Oracle manté triggers/FK/UK lligats a la taula per
---     referencia interna, no pel nom; renombrar nomes la TAULA (mes avall)
---     ja es suficient perque tot torni a funcionar.
+--   - Noms nous de les restriccions PK/UNIQUE/FK de les taules ACL (02) --
+--     Oracle les mante lligades a la taula per referencia interna, no pel
+--     nom, i 1.4.44 no les referencia mai pel nom.
+--     (Les SEQUENCIES i els TRIGGERS ACL, en canvi, SI que es reverteixen a
+--     l'apartat 1: 1.4.44 fa ACL_SID_SEQ.CURRVAL / ACL_CLASS_SEQ.CURRVAL.)
 --   - FK fk_clave_priv_reqcesionaris (04) -- es ON DELETE SET NULL, no bloqueja
 --     cap operacio que 1.4.44 faci normalment.
 --   - Files noves de configuracio dels plugins LDAP/Keycloak de dades
@@ -51,14 +52,88 @@
 -- ============================================================================
 
 -- ----------------------------------------------------------------------------
--- 1. ACL -- renomenar les taules a la nomenclatura de 1.4.44 (imprescindible:
---    el JdbcAclService/JdbcMutableAclService de 1.4.44 consulta aquests noms
---    de taula directament al codi)
+-- 1. ACL -- tornar a la nomenclatura de 1.4.44 les taules i les sequencies,
+--    i refer els triggers d'ID (imprescindible):
+--    - el JdbcAclService/JdbcMutableAclService de 1.4.44 consulta els noms de
+--      taula ACL_* directament al codi;
+--    - 1.4.44 obte l'ID inserit amb "SELECT ACL_SID_SEQ.CURRVAL" i
+--      "SELECT ACL_CLASS_SEQ.CURRVAL" (application-context-model.xml);
+--    - els INSERT de 1.4.44 no informen l'ID: l'assigna un trigger, que ha
+--      d'apuntar a les sequencies ACL_*_SEQ. Els triggers PBL_ACL_*_IDGEN
+--      apunten a PBL_ACL_*_SEQ i quedarien INVALID en renomenar-les.
+--    Bloc idempotent: comprova l'estat de cada objecte abans d'actuar.
 -- ----------------------------------------------------------------------------
-ALTER TABLE pbl_acl_sid RENAME TO acl_sid;
-ALTER TABLE pbl_acl_class RENAME TO acl_class;
-ALTER TABLE pbl_acl_object_identity RENAME TO acl_object_identity;
-ALTER TABLE pbl_acl_entry RENAME TO acl_entry;
+SET SERVEROUTPUT ON SIZE UNLIMITED
+DECLARE
+  PROCEDURE exec_ddl(p_sql VARCHAR2) IS
+  BEGIN
+    DBMS_OUTPUT.PUT_LINE('  -> ' || p_sql);
+    EXECUTE IMMEDIATE p_sql;
+  END;
+
+  PROCEDURE rename_table(p_old VARCHAR2, p_new VARCHAR2) IS
+    v_old NUMBER;
+    v_new NUMBER;
+  BEGIN
+    SELECT COUNT(*) INTO v_old FROM user_tables WHERE table_name = p_old;
+    SELECT COUNT(*) INTO v_new FROM user_tables WHERE table_name = p_new;
+    IF v_old > 0 AND v_new = 0 THEN
+      exec_ddl('ALTER TABLE ' || p_old || ' RENAME TO ' || p_new);
+    END IF;
+  END;
+
+  PROCEDURE rename_sequence(p_old VARCHAR2, p_new VARCHAR2) IS
+    v_old NUMBER;
+    v_new NUMBER;
+  BEGIN
+    SELECT COUNT(*) INTO v_old FROM user_sequences WHERE sequence_name = p_old;
+    SELECT COUNT(*) INTO v_new FROM user_sequences WHERE sequence_name = p_new;
+    IF v_old > 0 AND v_new = 0 THEN
+      exec_ddl('RENAME ' || p_old || ' TO ' || p_new);
+    END IF;
+  END;
+
+  PROCEDURE drop_trigger(p_trigger VARCHAR2) IS
+    v_n NUMBER;
+  BEGIN
+    SELECT COUNT(*) INTO v_n FROM user_triggers WHERE trigger_name = p_trigger;
+    IF v_n > 0 THEN
+      exec_ddl('DROP TRIGGER ' || p_trigger);
+    END IF;
+  END;
+
+  PROCEDURE create_idgen_trigger(p_trigger VARCHAR2, p_table VARCHAR2, p_sequence VARCHAR2) IS
+  BEGIN
+    exec_ddl('CREATE OR REPLACE TRIGGER ' || p_trigger || ' BEFORE INSERT ON ' || p_table
+             || ' FOR EACH ROW BEGIN SELECT ' || p_sequence || '.NEXTVAL INTO :NEW.ID FROM DUAL; END;');
+  END;
+BEGIN
+  rename_table('PBL_ACL_SID',             'ACL_SID');
+  rename_table('PBL_ACL_CLASS',           'ACL_CLASS');
+  rename_table('PBL_ACL_OBJECT_IDENTITY', 'ACL_OBJECT_IDENTITY');
+  rename_table('PBL_ACL_ENTRY',           'ACL_ENTRY');
+
+  rename_sequence('PBL_ACL_SID_SEQ',   'ACL_SID_SEQ');
+  rename_sequence('PBL_ACL_CLASS_SEQ', 'ACL_CLASS_SEQ');
+  rename_sequence('PBL_ACL_OID_SEQ',   'ACL_OID_SEQ');
+  rename_sequence('PBL_ACL_ENTRY_SEQ', 'ACL_ENTRY_SEQ');
+
+  -- Triggers de 2.0.1 i, si encara hi fossin (02c no executat), els antics ACL_*_TRG
+  drop_trigger('PBL_ACL_SID_IDGEN');
+  drop_trigger('PBL_ACL_CLASS_IDGEN');
+  drop_trigger('PBL_ACL_OID_IDGEN');
+  drop_trigger('PBL_ACL_ENTRY_IDGEN');
+  drop_trigger('ACL_SID_TRG');
+  drop_trigger('ACL_CLASS_TRG');
+  drop_trigger('ACL_OID_TRG');
+  drop_trigger('ACL_ENTRY_TRG');
+
+  create_idgen_trigger('ACL_SID_IDGEN',   'ACL_SID',             'ACL_SID_SEQ');
+  create_idgen_trigger('ACL_CLASS_IDGEN', 'ACL_CLASS',           'ACL_CLASS_SEQ');
+  create_idgen_trigger('ACL_OID_IDGEN',   'ACL_OBJECT_IDENTITY', 'ACL_OID_SEQ');
+  create_idgen_trigger('ACL_ENTRY_IDGEN', 'ACL_ENTRY',           'ACL_ENTRY_SEQ');
+END;
+/
 
 -- Desfer el canvi de nom de classe fet a 03 (imprescindible: 1.4.44 cerca les
 -- ACL de ProcedimentServei pel nom de classe antic)

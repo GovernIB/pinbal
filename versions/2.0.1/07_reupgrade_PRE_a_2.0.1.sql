@@ -21,13 +21,81 @@
 -- ============================================================================
 
 -- ----------------------------------------------------------------------------
--- 1. ACL -- tornar a renomenar les taules amb el prefix PBL_ (imprescindible:
---    el JdbcAclService/JdbcMutableAclService de 2.0.1 consulta aquests noms)
+-- 1. ACL -- tornar a posar el prefix PBL_ a taules i sequencies i refer els
+--    triggers d'ID (imprescindible: el JdbcAclService/JdbcMutableAclService de
+--    2.0.1 consulta les taules PBL_ACL_* i fa PBL_ACL_*_SEQ.CURRVAL).
+--    Invers exacte de l'apartat 1 de 06. Bloc idempotent.
 -- ----------------------------------------------------------------------------
-ALTER TABLE acl_sid RENAME TO pbl_acl_sid;
-ALTER TABLE acl_class RENAME TO pbl_acl_class;
-ALTER TABLE acl_object_identity RENAME TO pbl_acl_object_identity;
-ALTER TABLE acl_entry RENAME TO pbl_acl_entry;
+SET SERVEROUTPUT ON SIZE UNLIMITED
+DECLARE
+  PROCEDURE exec_ddl(p_sql VARCHAR2) IS
+  BEGIN
+    DBMS_OUTPUT.PUT_LINE('  -> ' || p_sql);
+    EXECUTE IMMEDIATE p_sql;
+  END;
+
+  PROCEDURE rename_table(p_old VARCHAR2, p_new VARCHAR2) IS
+    v_old NUMBER;
+    v_new NUMBER;
+  BEGIN
+    SELECT COUNT(*) INTO v_old FROM user_tables WHERE table_name = p_old;
+    SELECT COUNT(*) INTO v_new FROM user_tables WHERE table_name = p_new;
+    IF v_old > 0 AND v_new = 0 THEN
+      exec_ddl('ALTER TABLE ' || p_old || ' RENAME TO ' || p_new);
+    END IF;
+  END;
+
+  PROCEDURE rename_sequence(p_old VARCHAR2, p_new VARCHAR2) IS
+    v_old NUMBER;
+    v_new NUMBER;
+  BEGIN
+    SELECT COUNT(*) INTO v_old FROM user_sequences WHERE sequence_name = p_old;
+    SELECT COUNT(*) INTO v_new FROM user_sequences WHERE sequence_name = p_new;
+    IF v_old > 0 AND v_new = 0 THEN
+      exec_ddl('RENAME ' || p_old || ' TO ' || p_new);
+    END IF;
+  END;
+
+  PROCEDURE drop_trigger(p_trigger VARCHAR2) IS
+    v_n NUMBER;
+  BEGIN
+    SELECT COUNT(*) INTO v_n FROM user_triggers WHERE trigger_name = p_trigger;
+    IF v_n > 0 THEN
+      exec_ddl('DROP TRIGGER ' || p_trigger);
+    END IF;
+  END;
+
+  PROCEDURE create_idgen_trigger(p_trigger VARCHAR2, p_table VARCHAR2, p_sequence VARCHAR2) IS
+  BEGIN
+    exec_ddl('CREATE OR REPLACE TRIGGER ' || p_trigger || ' BEFORE INSERT ON ' || p_table
+             || ' FOR EACH ROW BEGIN SELECT ' || p_sequence || '.NEXTVAL INTO :NEW.ID FROM DUAL; END;');
+  END;
+BEGIN
+  rename_table('ACL_SID',             'PBL_ACL_SID');
+  rename_table('ACL_CLASS',           'PBL_ACL_CLASS');
+  rename_table('ACL_OBJECT_IDENTITY', 'PBL_ACL_OBJECT_IDENTITY');
+  rename_table('ACL_ENTRY',           'PBL_ACL_ENTRY');
+
+  rename_sequence('ACL_SID_SEQ',   'PBL_ACL_SID_SEQ');
+  rename_sequence('ACL_CLASS_SEQ', 'PBL_ACL_CLASS_SEQ');
+  rename_sequence('ACL_OID_SEQ',   'PBL_ACL_OID_SEQ');
+  rename_sequence('ACL_ENTRY_SEQ', 'PBL_ACL_ENTRY_SEQ');
+
+  drop_trigger('ACL_SID_IDGEN');
+  drop_trigger('ACL_CLASS_IDGEN');
+  drop_trigger('ACL_OID_IDGEN');
+  drop_trigger('ACL_ENTRY_IDGEN');
+  drop_trigger('ACL_SID_TRG');
+  drop_trigger('ACL_CLASS_TRG');
+  drop_trigger('ACL_OID_TRG');
+  drop_trigger('ACL_ENTRY_TRG');
+
+  create_idgen_trigger('PBL_ACL_SID_IDGEN',   'PBL_ACL_SID',             'PBL_ACL_SID_SEQ');
+  create_idgen_trigger('PBL_ACL_CLASS_IDGEN', 'PBL_ACL_CLASS',           'PBL_ACL_CLASS_SEQ');
+  create_idgen_trigger('PBL_ACL_OID_IDGEN',   'PBL_ACL_OBJECT_IDENTITY', 'PBL_ACL_OID_SEQ');
+  create_idgen_trigger('PBL_ACL_ENTRY_IDGEN', 'PBL_ACL_ENTRY',           'PBL_ACL_ENTRY_SEQ');
+END;
+/
 
 UPDATE pbl_acl_class SET class = 'es.caib.pinbal.persist.entity.ProcedimentServei' WHERE class = 'es.caib.pinbal.core.model.ProcedimentServei';
 
