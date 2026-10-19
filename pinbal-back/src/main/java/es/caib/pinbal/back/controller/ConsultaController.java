@@ -506,7 +506,7 @@ public class ConsultaController extends BaseController {
 			} catch (ConsultaNotFoundException ex) {
 				throw ex;
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				LOGGER.error("Error obtenint el justificant de la consulta (consultaId=" + consultaId + ")", ex);
 				AlertHelper.error(request, getMessage(request, "consulta.controller.justificant.error"));
 				return "redirect:../../consulta";
 			}
@@ -1021,13 +1021,13 @@ public class ConsultaController extends BaseController {
 		if (historic) {
 			try {
 				consulta = historicConsultaService.findOneDelegat(consultaId);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				consulta = consultaService.findOneDelegat(consultaId);
 			}
 		} else {
 			try {
 				consulta = consultaService.findOneDelegat(consultaId);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				consulta = historicConsultaService.findOneDelegat(consultaId);
 			}
 		}
@@ -1039,13 +1039,13 @@ public class ConsultaController extends BaseController {
 		if (historic) {
 			try {
 				justificant = historicConsultaService.obtenirJustificant(consultaId, false);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				justificant = consultaService.obtenirJustificant(consultaId, false);
 			}
 		} else {
 			try {
 				justificant = consultaService.obtenirJustificant(consultaId, false);
-			} catch (Exception nfe) {
+			} catch (ConsultaNotFoundException nfe) {
 				justificant = historicConsultaService.obtenirJustificant(consultaId, false);
 			}
 		}

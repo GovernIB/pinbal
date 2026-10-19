@@ -24,6 +24,8 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -451,6 +453,39 @@ public class ConsultaControllerTest {
         when(historicConsultaService.obtenirJustificant(1L, false)).thenThrow(new RuntimeException("error"));
 
         assertEquals("redirect:../../consulta", controller.justificant(request, mock(HttpServletResponse.class), 1L, new ExtendedModelMap()));
+    }
+
+    @Test
+    public void justificantAmbErrorDeGeneracioNoConsultaLHistoricINoEsConverteixEnNotFound() throws Exception {
+        entitatDelegat();
+        when(consultaService.obtenirJustificant(1L, false)).thenThrow(new RuntimeException("NoSuchMethodError embolcallat per l'EJB"));
+
+        assertEquals("redirect:../../consulta", controller.justificant(request, mock(HttpServletResponse.class), 1L, new ExtendedModelMap()));
+        verify(historicConsultaService, never()).obtenirJustificant(anyLong(), anyBoolean());
+    }
+
+    @Test
+    public void justificantAmbConsultaNomesALHistoricLaRecupera() throws Exception {
+        entitatDelegat();
+        JustificantDto justificant = JustificantDto.builder().nom("just.pdf").contingut(new byte[]{1}).error(false).build();
+        when(consultaService.obtenirJustificant(1L, false)).thenThrow(new ConsultaNotFoundException());
+        when(historicConsultaService.obtenirJustificant(1L, false)).thenReturn(justificant);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        when(response.getOutputStream()).thenReturn(new DelegatingServletOutputStream());
+
+        assertNull(controller.justificant(request, response, 1L, new ExtendedModelMap()));
+    }
+
+    @Test
+    public void justificantInlineAmbErrorDeGeneracioPropagaLErrorOriginal() throws Exception {
+        entitatDelegat();
+        RuntimeException errorOriginal = new RuntimeException("error generant justificant");
+        when(consultaService.obtenirJustificant(1L, false)).thenThrow(errorOriginal);
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> controller.justificantInline(request, mock(HttpServletResponse.class), 1L, new ExtendedModelMap()));
+        assertSame(errorOriginal, ex);
+        verify(historicConsultaService, never()).obtenirJustificant(anyLong(), anyBoolean());
     }
 
     // ------------------------- justificantInline -------------------------
