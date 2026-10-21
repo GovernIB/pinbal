@@ -22,6 +22,7 @@ import es.scsp.common.domain.core.PeticionRespuesta;
 import es.scsp.common.domain.core.Servicio;
 import es.scsp.common.domain.core.TipoMensaje;
 import es.scsp.common.domain.core.Token;
+import es.scsp.common.exceptions.ScspClientInterceptorException;
 import es.scsp.common.exceptions.ScspException;
 import org.junit.Before;
 import org.junit.Test;
@@ -264,6 +265,44 @@ public class ScspHelperClienteUnicoTest {
             assertEquals(ScspHelper.CODI_ERROR_NAMESPACE_DADES_ESPECIFIQUES, ((ScspException) ex.getCause()).getScspCode());
         }
         verify(clienteUnico, never()).realizaPeticionAsincrona(any());
+    }
+
+    @Test
+    public void enviarPeticionSincronaAmbErrorDInterceptorLlancaComunicacioExceptionAmbElCodi() throws Exception {
+        preparaCreacioPeticio();
+        ScspClientInterceptorException errorInterceptor = new ScspClientInterceptorException("Firma no válida PET1", "0311");
+        when(clienteUnico.realizaPeticionSincrona(any())).thenThrow(errorInterceptor);
+
+        try {
+            scspHelper.enviarPeticionSincrona(
+                    "PET1", List.of(solicitud("SERV1")), false, false, null, false);
+            fail("Hauria d'haver llançat ConsultaScspComunicacioException");
+        } catch (ConsultaScspComunicacioException ex) {
+            ScspException causa = (ScspException) ex.getCause();
+            assertEquals("0311", causa.getScspCode());
+            assertEquals("Firma no válida PET1", causa.getMessage());
+            assertSame(errorInterceptor, causa.getCause());
+        }
+    }
+
+    @Test
+    public void enviarPeticionAsincronaAmbErrorDInterceptorLlancaComunicacioException() throws Exception {
+        preparaCreacioPeticio();
+        when(clienteUnico.realizaPeticionAsincrona(any())).thenThrow(new ScspClientInterceptorException("Firma no válida PET1", "0311"));
+
+        try {
+            scspHelper.enviarPeticionAsincrona(
+                    "PET1", List.of(solicitud("SERV1")), false, false, null, false);
+            fail("Hauria d'haver llançat ConsultaScspComunicacioException");
+        } catch (ConsultaScspComunicacioException ex) {
+            assertEquals("0311", ((ScspException) ex.getCause()).getScspCode());
+        }
+    }
+
+    @Test
+    public void toScspExceptionSenseCodiUsaElCodiGeneric() {
+        ScspException resultat = ScspHelper.toScspException(new ScspClientInterceptorException("error", (String) null));
+        assertEquals("0904", resultat.getScspCode());
     }
 
     // ------------------------- enviarPeticionAsincrona -------------------------

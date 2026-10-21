@@ -18,6 +18,7 @@ import es.scsp.client.ClienteUnico;
 import es.scsp.common.dao.*;
 import es.scsp.common.domain.core.*;
 import es.scsp.common.domain.req.ServicioOrganismoCesionario;
+import es.scsp.common.exceptions.ScspClientInterceptorException;
 import es.scsp.common.exceptions.ScspException;
 import es.scsp.common.utils.DateUtils;
 import es.scsp.common.utils.StaticContextSupport;
@@ -103,6 +104,8 @@ public class ScspHelper {
 			return getResultatEnviamentPeticio(idPeticion);
 		} catch (ScspException ex) {
 			throw new ConsultaScspComunicacioException(idPeticion, ex);
+		} catch (ScspClientInterceptorException ex) {
+			throw new ConsultaScspComunicacioException(idPeticion, toScspException(ex));
 		}
 	}
 
@@ -134,7 +137,20 @@ public class ScspHelper {
 			return resultat;
 		} catch (ScspException ex) {
 			throw new ConsultaScspComunicacioException(idPeticion, ex);
+		} catch (ScspClientInterceptorException ex) {
+			throw new ConsultaScspComunicacioException(idPeticion, toScspException(ex));
 		}
+	}
+
+	/**
+	 * ClienteUnico (SCSP 5.x) propaga sense embolcallar els errors dels interceptors de la
+	 * resposta (p.ex. "Firma no válida"), que són RuntimeException. Es converteixen a
+	 * ScspException perquè es tractin com qualsevol altre error SCSP: la consulta queda en
+	 * error amb el codi i el missatge de la llibreria, i no es fa rollback a l'estat pendent
+	 * (que provocaria el reenviament de la mateixa petició).
+	 */
+	static ScspException toScspException(ScspClientInterceptorException ex) {
+		return new ScspException(ex.getMessage(), ex, ex.getScspCode() != null ? ex.getScspCode() : "0904");
 	}
 
 	public ByteArrayOutputStream generaJustificanteTransmision(
