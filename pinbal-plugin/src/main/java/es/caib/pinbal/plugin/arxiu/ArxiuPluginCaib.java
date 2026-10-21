@@ -43,11 +43,12 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
     public static final String ARXIU_BASE_PROP = "plugin.arxiu.";
 
     private static final String ARXIUCAIB_BASE_PROP = ARXIU_BASE_PROP + "caib.";
-    private static final String CONCSV_URL_PROP = ARXIUCAIB_BASE_PROP + "concsv.base.url";
-    private static final String CONCSV_USUARI_PROP = ARXIUCAIB_BASE_PROP + "concsv.usuari";
-    private static final String CONCSV_CONTRASENYA_PROP = ARXIUCAIB_BASE_PROP + "concsv.contrasenya";
-    private static final String TIMEOUT_CONNECT_PROP = ARXIUCAIB_BASE_PROP + "timeout.connect";
-    private static final String TIMEOUT_READ_PROP = ARXIUCAIB_BASE_PROP + "timeout.read";
+    private static final String PLUGINSIB_ARXIUCAIB_BASE_PROP = "pluginsib.arxiu.caib.";
+    private static final String CONCSV_URL_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "concsv.base.url";
+    private static final String CONCSV_USUARI_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "concsv.usuari";
+    private static final String CONCSV_CONTRASENYA_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "concsv.contrasenya";
+    private static final String TIMEOUT_CONNECT_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "timeout.connect";
+    private static final String TIMEOUT_READ_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "timeout.read";
     private static final String TIMEOUT_CONNECT = "10000";
     private static final String TIMEOUT_READ = "60000";
     private static final String ERROR_METADADES = "No ha estat possible obtenir les metadades del document amb UUID ";
@@ -68,8 +69,34 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
     }
 
     public ArxiuPluginCaib(String propertyKeyBase, Properties properties) {
-        super(propertyKeyBase, properties);
-        PluginMetricHelper.addEndpoint(IntegracioApp.ARX, this.getProperty("plugin.arxiu.caib.base.url"));
+        super(propertyKeyBase, ambPropietatsPluginsib(propertyKeyBase, properties));
+        PluginMetricHelper.addEndpoint(IntegracioApp.ARX, this.getProperty(PLUGINSIB_ARXIUCAIB_BASE_PROP + "base.url"));
+    }
+
+    /**
+     * La llibreria pluginsib-arxiu-caib 3.x llegeix les propietats amb el prefix "pluginsib.arxiu.caib."
+     * (a la 2.x era "plugin.arxiu.caib."). Per mantenir la configuració existent, es copia cada
+     * propietat "plugin.arxiu.caib.X" a "pluginsib.arxiu.caib.X" si aquesta no està definida.
+     */
+    static Properties ambPropietatsPluginsib(String propertyKeyBase, Properties properties) {
+        String base = propertyKeyBase != null ? propertyKeyBase : "";
+        String prefixAntic = base + ARXIUCAIB_BASE_PROP;
+        String prefixNou = base + PLUGINSIB_ARXIUCAIB_BASE_PROP;
+        Properties resultat = new Properties();
+        if (properties == null)
+            return resultat;
+        for (String clau: properties.stringPropertyNames()) {
+            resultat.setProperty(clau, properties.getProperty(clau));
+        }
+        for (String clau: properties.stringPropertyNames()) {
+            if (clau.startsWith(prefixAntic)) {
+                String clauNova = prefixNou + clau.substring(prefixAntic.length());
+                if (resultat.getProperty(clauNova) == null) {
+                    resultat.setProperty(clauNova, properties.getProperty(clau));
+                }
+            }
+        }
+        return resultat;
     }
 
     private <T> T tracked(ArxiuOp<T> op) throws ArxiuException {

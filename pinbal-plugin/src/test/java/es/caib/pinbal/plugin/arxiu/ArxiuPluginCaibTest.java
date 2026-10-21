@@ -39,11 +39,17 @@ class ArxiuPluginCaibTest {
     }
 
     private ArxiuPluginCaib crearPlugin() throws IOException {
+        return crearPlugin("plugin.arxiu.caib.");
+    }
+
+    private ArxiuPluginCaib crearPlugin(String prefix) throws IOException {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         Properties properties = new Properties();
-        properties.setProperty("plugin.arxiu.caib.concsv.base.url", "http://127.0.0.1:" + server.getAddress().getPort());
-        properties.setProperty("plugin.arxiu.caib.concsv.usuari", "usuariConcsv");
-        properties.setProperty("plugin.arxiu.caib.concsv.contrasenya", "contrasenyaConcsv");
+        properties.setProperty(prefix + "concsv.base.url", "http://127.0.0.1:" + server.getAddress().getPort());
+        properties.setProperty(prefix + "concsv.usuari", "usuariConcsv");
+        properties.setProperty(prefix + "concsv.contrasenya", "contrasenyaConcsv");
+        properties.setProperty(prefix + "timeout.connect", "1000");
+        properties.setProperty(prefix + "timeout.read", "1000");
         return new ArxiuPluginCaib("", properties);
     }
 
@@ -69,6 +75,40 @@ class ArxiuPluginCaibTest {
     @Test
     void constructorAmbNomesPropertyKeyBaseLlancaRuntimeException() {
         assertThatThrownBy(() -> new ArxiuPluginCaib("base")).isInstanceOf(RuntimeException.class);
+    }
+
+    // ------------------------- propietats pluginsib.arxiu.caib (llibreria 3.x) -------------------------
+
+    @Test
+    void constructorCopiaLesPropietatsAntiguesAlPrefixDeLaLlibreria3() {
+        Properties properties = new Properties();
+        properties.setProperty("es.caib.pinbal.plugin.arxiu.caib.base.url", "https://arxiu.test/");
+        properties.setProperty("es.caib.pinbal.plugin.arxiu.caib.usuari", "usuari");
+
+        ArxiuPluginCaib plugin = new ArxiuPluginCaib("es.caib.pinbal.", properties);
+
+        assertThat(plugin.getProperty("pluginsib.arxiu.caib.base.url")).isEqualTo("https://arxiu.test/");
+        assertThat(plugin.getProperty("pluginsib.arxiu.caib.usuari")).isEqualTo("usuari");
+        assertThat(plugin.getProperty("plugin.arxiu.caib.base.url")).isEqualTo("https://arxiu.test/");
+    }
+
+    @Test
+    void ambPropietatsPluginsibRespectaLesPropietatsNovesJaDefinides() {
+        Properties properties = new Properties();
+        properties.setProperty("es.caib.pinbal.plugin.arxiu.caib.base.url", "https://antiga/");
+        properties.setProperty("es.caib.pinbal.pluginsib.arxiu.caib.base.url", "https://nova/");
+        properties.setProperty("es.caib.pinbal.altra.propietat", "valor");
+
+        Properties resultat = ArxiuPluginCaib.ambPropietatsPluginsib("es.caib.pinbal.", properties);
+
+        assertThat(resultat.getProperty("es.caib.pinbal.pluginsib.arxiu.caib.base.url")).isEqualTo("https://nova/");
+        assertThat(resultat.getProperty("es.caib.pinbal.altra.propietat")).isEqualTo("valor");
+        assertThat(properties.size()).isEqualTo(3);
+    }
+
+    @Test
+    void ambPropietatsPluginsibAmbPropietatsNullRetornaBuides() {
+        assertThat(ArxiuPluginCaib.ambPropietatsPluginsib("es.caib.pinbal.", null)).isEmpty();
     }
 
     // ------------------------- toDocumentMetadades (privat estàtic, per reflexió) -------------------------
@@ -214,6 +254,17 @@ class ArxiuPluginCaibTest {
         // Una segona crida ha de reutilitzar el client Jersey ja creat (branca de cache).
         DocumentContingut segonaCrida = invocarDocumentOriginal(plugin, "ARX:abc123");
         assertThat(segonaCrida.getTipusMime()).isEqualTo("application/pdf");
+    }
+
+    @Test
+    void documentOriginalAmbPropietatsAmbPrefixPluginsibRecuperaContingut() throws Throwable {
+        ArxiuPluginCaib plugin = crearPlugin("pluginsib.arxiu.caib.");
+        respon("/original/uuid/abc123", 200, "%PDF-1.4\ncontingut", "application/pdf");
+        server.start();
+
+        DocumentContingut contingut = invocarDocumentOriginal(plugin, "ARX:abc123");
+
+        assertThat(contingut.getTipusMime()).isEqualTo("application/pdf");
     }
 
     @Test
