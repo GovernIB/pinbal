@@ -19,6 +19,7 @@ import es.caib.pluginsib.arxiu.api.DocumentMetadades;
 import es.caib.pluginsib.arxiu.api.DocumentTipus;
 import es.caib.pluginsib.arxiu.api.Expedient;
 import es.caib.pluginsib.arxiu.api.Firma;
+import es.caib.pluginsib.arxiu.api.FirmaTipus;
 import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MimeTypeException;
@@ -151,18 +152,15 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
         return tracked(() -> {
             try {
                 Document response = new Document();
+                response.setIdentificador(identificador);
                 if (ambContingut) {
-                    try {
-                        response.setContingut(documentImprimible(identificador));
-                    } catch (Exception ex) {
-                        logger.info("No s'ha pogut obtenir la versio imprimible. Obtenint versio original del document uuid " + identificador);
-                        response.setContingut(documentOriginal(identificador));
-                    }
+                    // Es retorna sempre el document original. La versió imprimible s'ha de demanar explícitament amb documentImprimible.
+                    response.setContingut(documentOriginal(identificador));
                 }
                 try {
                     var result = documentMetadades(identificador);
                     response.setMetadades(toDocumentMetadades(result));
-                    response.setFirmes(result.containsKey("eni:tipoFirma") ? Collections.singletonList(new Firma()) : null);
+                    response.setFirmes(result.containsKey("eni:tipoFirma") ? Collections.singletonList(toFirma(result.get("eni:tipoFirma"))) : null);
                 } catch(Exception e) {
                     logger.warn(ERROR_METADADES + identificador + ": " + e.getMessage());
                     response.setMetadades(null);
@@ -232,7 +230,8 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
             logger.info("[ConCSV] Recuperant versio original uuid. identificador " + identificador);
             String url = getPropertyConcsvUrlObligatoria();
             url += (url.endsWith("/") ? "" : "/") + "original/uuid/";
-            var webResource = getVersioImprimibleClientConcsv().resource(url + (!url.endsWith("/") ? "/" : "") + identificador.split(":")[1]);
+            var uuid = identificador.contains(":") ? identificador.substring(identificador.indexOf(':') + 1) : identificador;
+            var webResource = getVersioImprimibleClientConcsv().resource(url + uuid);
             var is = webResource.get(InputStream.class);
             var contingut = new DocumentContingut();
             contingut.setContingut(IOUtils.toByteArray(is));
@@ -273,6 +272,22 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
             logger.debug(msg, ex);
             throw new ArxiuException(msg, ex);
         }
+    }
+
+    /**
+     * Construeix la firma a partir del valor de la metadada "eni:tipoFirma" (TF01..TF09 o el nom del tipus).
+     * Si el valor no es reconeix, la firma es retorna sense tipus.
+     */
+    static Firma toFirma(Object tipoFirma) {
+        Firma firma = new Firma();
+        if (tipoFirma != null) {
+            try {
+                firma.setTipus(FirmaTipus.toEnum(tipoFirma.toString()));
+            } catch (Exception ex) {
+                logger.debug("Tipus de firma no reconegut: " + tipoFirma);
+            }
+        }
+        return firma;
     }
 
     private static DocumentMetadades toDocumentMetadades(Map<String,Object> metadatas) throws ArxiuException {

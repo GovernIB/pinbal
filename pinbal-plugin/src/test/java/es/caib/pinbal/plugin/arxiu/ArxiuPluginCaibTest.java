@@ -6,6 +6,7 @@ import es.caib.pluginsib.arxiu.api.ArxiuException;
 import es.caib.pluginsib.arxiu.api.Document;
 import es.caib.pluginsib.arxiu.api.DocumentContingut;
 import es.caib.pluginsib.arxiu.api.DocumentMetadades;
+import es.caib.pluginsib.arxiu.api.FirmaTipus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -269,12 +270,14 @@ class ArxiuPluginCaibTest {
     }
 
     @Test
-    void documentOriginalSenseDospuntsEnIdentificadorLlancaArxiuException() throws Throwable {
+    void documentOriginalSenseDospuntsEnIdentificadorUsaLIdentificadorSencer() throws Throwable {
         ArxiuPluginCaib plugin = crearPlugin();
+        respon("/original/uuid/abc123", 200, "%PDF-1.4\ncontingut", "application/pdf");
         server.start();
 
-        assertThatThrownBy(() -> invocarDocumentOriginal(plugin, "identificadorSenseDospunts"))
-                .isInstanceOf(ArxiuException.class);
+        DocumentContingut contingut = invocarDocumentOriginal(plugin, "abc123");
+
+        assertThat(contingut.getTipusMime()).isEqualTo("application/pdf");
     }
 
     @Test
@@ -356,6 +359,49 @@ class ArxiuPluginCaibTest {
         Document document = plugin.documentDetalls("abc123", null, false);
 
         assertThat(document.getMetadades()).isNull();
+    }
+
+    // ------------------------- documentDetalls (públic, amb ambContingut=true) -------------------------
+
+    @Test
+    void documentDetallsAmbContingutRetornaLaVersioOriginalINoLaImprimible() throws Exception {
+        ArxiuPluginCaib plugin = crearPlugin();
+        List<String> peticionsRebudes = new ArrayList<>();
+        server.createContext("/", exchange -> {
+            peticionsRebudes.add(exchange.getRequestURI().getPath());
+            exchange.sendResponseHeaders(500, -1);
+            exchange.close();
+        });
+        respon("/original/uuid/abc123", 200, "%PDF-1.4\noriginal", "application/pdf");
+        respon("/metadata/uuid/abc123", 200, "{\"eni:id\":\"ID1\",\"eni:tipoFirma\":\"TF06\"}", "application/json");
+        server.start();
+
+        Document document = plugin.documentDetalls("abc123", null, true);
+
+        assertThat(new String(document.getContingut().getContingut(), StandardCharsets.UTF_8)).isEqualTo("%PDF-1.4\noriginal");
+        assertThat(document.getContingut().getArxiuNom()).isEqualTo("versio_original.pdf");
+        assertThat(document.getIdentificador()).isEqualTo("abc123");
+        assertThat(document.getFirmes()).hasSize(1);
+        assertThat(document.getFirmes().get(0).getTipus()).isEqualTo(FirmaTipus.PADES);
+        // No s'ha demanat cap versió imprimible
+        assertThat(peticionsRebudes).isEmpty();
+    }
+
+    @Test
+    void documentDetallsAmbContingutIErrorDelOriginalLlancaArxiuException() throws Exception {
+        ArxiuPluginCaib plugin = crearPlugin();
+        respon("/original/uuid/abc123", 500, "error", "text/plain");
+        server.start();
+
+        assertThatThrownBy(() -> plugin.documentDetalls("abc123", null, true))
+                .isInstanceOf(ArxiuException.class);
+    }
+
+    @Test
+    void toFirmaAmbTipusNoReconegutRetornaFirmaSenseTipus() {
+        assertThat(ArxiuPluginCaib.toFirma("CADES").getTipus()).isNull();
+        assertThat(ArxiuPluginCaib.toFirma(null).getTipus()).isNull();
+        assertThat(ArxiuPluginCaib.toFirma("TF04").getTipus()).isEqualTo(FirmaTipus.CADES_DET);
     }
 
     // ------------------------- sense ConCSV configurat -------------------------

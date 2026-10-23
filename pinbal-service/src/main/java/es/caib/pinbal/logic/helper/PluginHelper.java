@@ -600,15 +600,26 @@ public class PluginHelper {
 				LOGGER.error("El plugin no ha retornat el contingut del document ({})", accioParams.toString());
 			}
 			boolean generarVersioImprimible = false;
-			if (ambVersioImprimible && ambContingut && documentDetalls.getFirmes() != null && !documentDetalls.getFirmes().isEmpty()) {
+			if (ambVersioImprimible && ambContingut && documentDetalls.getContingut() != null && documentDetalls.getFirmes() != null && !documentDetalls.getFirmes().isEmpty()) {
 				for (Firma firma : documentDetalls.getFirmes()) {
-					if (documentDetalls.getContingut().getTipusMime().equals("application/pdf") && (firma.getTipus() == FirmaTipus.PADES || firma.getTipus() == FirmaTipus.CADES_ATT || firma.getTipus() == FirmaTipus.CADES_DET)) {
+					// Una firma sense tipus indica que el document està firmat però no se'n coneix el tipus (ConCSV)
+					if ("application/pdf".equals(documentDetalls.getContingut().getTipusMime()) && (firma.getTipus() == null || firma.getTipus() == FirmaTipus.PADES || firma.getTipus() == FirmaTipus.CADES_ATT || firma.getTipus() == FirmaTipus.CADES_DET)) {
 						generarVersioImprimible = true;
 					}
 				}
 			}
+			// Si no s'han pogut obtenir les metadades (ConCSV) no se sap si el document està firmat:
+			// s'intenta obtenir la versió imprimible i, si falla, es retorna l'original.
+			boolean metadadesDesconegudes = ambVersioImprimible && ambContingut && documentDetalls.getContingut() != null
+					&& documentDetalls.getMetadades() == null && documentDetalls.getFirmes() == null;
 			if (generarVersioImprimible) {
 				documentDetalls.setContingut(getArxiuPlugin().documentImprimible(documentDetalls.getIdentificador()));
+			} else if (metadadesDesconegudes) {
+				try {
+					documentDetalls.setContingut(getArxiuPlugin().documentImprimible(documentDetalls.getIdentificador()));
+				} catch (Exception ex) {
+					LOGGER.warn("No s'ha pogut obtenir la versió imprimible del document; es retorna l'original ({})", accioParams.toString(), ex);
+				}
 			}
 			integracioHelper.addAccioOk(
 					peticioId,

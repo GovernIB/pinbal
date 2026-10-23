@@ -661,6 +661,100 @@ public class PluginHelperTest {
         assertEquals(unitatsOrganitzativesPlugin, ReflectionTestUtils.getField(pluginHelper, "unitatsOrganitzativesPlugin"));
     }
 
+    // ------------------------------------------------------------------
+    // arxiuDocumentConsultar
+    // ------------------------------------------------------------------
+
+    private Document documentPdfFirmat(FirmaTipus tipus) {
+        DocumentContingut original = new DocumentContingut();
+        original.setTipusMime("application/pdf");
+        original.setArxiuNom("versio_original.pdf");
+        Firma firma = new Firma();
+        firma.setTipus(tipus);
+        Document document = new Document();
+        document.setIdentificador("DOC-1");
+        document.setContingut(original);
+        document.setFirmes(Collections.singletonList(firma));
+        return document;
+    }
+
+    @Test
+    public void arxiuDocumentConsultar_senseVersioImprimible_retornaOriginal() throws Exception {
+        Document document = documentPdfFirmat(FirmaTipus.PADES);
+        when(arxiuPlugin.documentDetalls(eq("DOC-1"), isNull(), eq(true))).thenReturn(document);
+
+        Document result = pluginHelper.arxiuDocumentConsultar("PET-1", "DOC-1", null, true, false);
+
+        assertEquals("versio_original.pdf", result.getContingut().getArxiuNom());
+        verify(arxiuPlugin, never()).documentImprimible(anyString());
+    }
+
+    @Test
+    public void arxiuDocumentConsultar_ambVersioImprimible_retornaImprimible() throws Exception {
+        Document document = documentPdfFirmat(FirmaTipus.PADES);
+        DocumentContingut imprimible = new DocumentContingut();
+        imprimible.setArxiuNom("versio_imprimible.pdf");
+        when(arxiuPlugin.documentDetalls(eq("DOC-1"), isNull(), eq(true))).thenReturn(document);
+        when(arxiuPlugin.documentImprimible("DOC-1")).thenReturn(imprimible);
+
+        Document result = pluginHelper.arxiuDocumentConsultar("PET-1", "DOC-1", null, true, true);
+
+        assertEquals("versio_imprimible.pdf", result.getContingut().getArxiuNom());
+    }
+
+    @Test
+    public void arxiuDocumentConsultar_ambVersioImprimibleIFirmaSenseTipus_retornaImprimible() throws Exception {
+        Document document = documentPdfFirmat(null);
+        DocumentContingut imprimible = new DocumentContingut();
+        imprimible.setArxiuNom("versio_imprimible.pdf");
+        when(arxiuPlugin.documentDetalls(eq("DOC-1"), isNull(), eq(true))).thenReturn(document);
+        when(arxiuPlugin.documentImprimible("DOC-1")).thenReturn(imprimible);
+
+        Document result = pluginHelper.arxiuDocumentConsultar("PET-1", "DOC-1", null, true, true);
+
+        assertEquals("versio_imprimible.pdf", result.getContingut().getArxiuNom());
+    }
+
+    @Test
+    public void arxiuDocumentConsultar_ambVersioImprimibleISenseMetadades_retornaImprimible() throws Exception {
+        Document document = documentPdfFirmat(null);
+        document.setFirmes(null);
+        DocumentContingut imprimible = new DocumentContingut();
+        imprimible.setArxiuNom("versio_imprimible.pdf");
+        when(arxiuPlugin.documentDetalls(eq("DOC-1"), isNull(), eq(true))).thenReturn(document);
+        when(arxiuPlugin.documentImprimible("DOC-1")).thenReturn(imprimible);
+
+        Document result = pluginHelper.arxiuDocumentConsultar("PET-1", "DOC-1", null, true, true);
+
+        assertEquals("versio_imprimible.pdf", result.getContingut().getArxiuNom());
+    }
+
+    @Test
+    public void arxiuDocumentConsultar_ambVersioImprimibleISenseMetadadesIErrorImprimible_retornaOriginal() throws Exception {
+        Document document = documentPdfFirmat(null);
+        document.setFirmes(null);
+        when(arxiuPlugin.documentDetalls(eq("DOC-1"), isNull(), eq(true))).thenReturn(document);
+        when(arxiuPlugin.documentImprimible("DOC-1")).thenThrow(new ArxiuException("error imprimible"));
+
+        Document result = pluginHelper.arxiuDocumentConsultar("PET-1", "DOC-1", null, true, true);
+
+        assertEquals("versio_original.pdf", result.getContingut().getArxiuNom());
+        verify(integracioHelper).addAccioOk(eq("PET-1"), eq(IntegracioHelper.INTCODI_ARXIU), anyString(), any(), any(), anyLongCompat());
+    }
+
+    @Test
+    public void arxiuDocumentConsultar_ambVersioImprimibleIMetadadesSenseFirma_retornaOriginal() throws Exception {
+        Document document = documentPdfFirmat(null);
+        document.setFirmes(null);
+        document.setMetadades(new es.caib.pluginsib.arxiu.api.DocumentMetadades());
+        when(arxiuPlugin.documentDetalls(eq("DOC-1"), isNull(), eq(true))).thenReturn(document);
+
+        Document result = pluginHelper.arxiuDocumentConsultar("PET-1", "DOC-1", null, true, true);
+
+        assertEquals("versio_original.pdf", result.getContingut().getArxiuNom());
+        verify(arxiuPlugin, never()).documentImprimible(anyString());
+    }
+
     private static long anyLongCompat() {
         return org.mockito.ArgumentMatchers.anyLong();
     }
