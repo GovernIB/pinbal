@@ -143,6 +143,11 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
 
     @Override
     public Document documentDetalls(String identificador, String versio, boolean ambContingut) throws ArxiuException {
+        if (!isConcsvConfigurat()) {
+            // Sense ConCSV configurat, els detalls s'obtenen directament de l'arxiu (com a la versió 1.4.x)
+            logger.debug("[ARXIU] No s'ha configurat la propietat " + CONCSV_URL_PROP + ". Obtenint els detalls del document " + identificador + " directament de l'arxiu");
+            return tracked(() -> super.documentDetalls(identificador, versio, ambContingut));
+        }
         return tracked(() -> {
             try {
                 Document response = new Document();
@@ -159,7 +164,7 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
                     response.setMetadades(toDocumentMetadades(result));
                     response.setFirmes(result.containsKey("eni:tipoFirma") ? Collections.singletonList(new Firma()) : null);
                 } catch(Exception e) {
-                    logger.debug(ERROR_METADADES + identificador);
+                    logger.warn(ERROR_METADADES + identificador + ": " + e.getMessage());
                     response.setMetadades(null);
                 }
                 return response;
@@ -225,7 +230,7 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
 
         try {
             logger.info("[ConCSV] Recuperant versio original uuid. identificador " + identificador);
-            String url = getPropertyConcsvUrl();
+            String url = getPropertyConcsvUrlObligatoria();
             url += (url.endsWith("/") ? "" : "/") + "original/uuid/";
             var webResource = getVersioImprimibleClientConcsv().resource(url + (!url.endsWith("/") ? "/" : "") + identificador.split(":")[1]);
             var is = webResource.get(InputStream.class);
@@ -257,7 +262,7 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
 
     private Map<String,Object> documentMetadades(String identificador) {
         try {
-            String url = getPropertyConcsvUrl();
+            String url = getPropertyConcsvUrlObligatoria();
             url += (url.endsWith("/") ? "" : "/") + "metadata/uuid/";
             logger.info("[ARXIU] Obtinguent metadades uuid del document " + identificador + " url " + url);
             var webResource = getVersioImprimibleClientConcsv().resource(url + identificador);
@@ -345,6 +350,18 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
 
     private String getPropertyConcsvUrl() {
         return this.getProperty(CONCSV_URL_PROP);
+    }
+
+    private boolean isConcsvConfigurat() {
+        String url = getPropertyConcsvUrl();
+        return url != null && !url.isBlank();
+    }
+
+    private String getPropertyConcsvUrlObligatoria() throws ArxiuException {
+        if (!isConcsvConfigurat()) {
+            throw new ArxiuException("No s'ha configurat la propietat " + CONCSV_URL_PROP + " amb la URL base del servei ConCSV");
+        }
+        return getPropertyConcsvUrl();
     }
 
     private String getPropertyConcsvUsuari() {

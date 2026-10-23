@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -355,5 +356,59 @@ class ArxiuPluginCaibTest {
         Document document = plugin.documentDetalls("abc123", null, false);
 
         assertThat(document.getMetadades()).isNull();
+    }
+
+    // ------------------------- sense ConCSV configurat -------------------------
+
+    private ArxiuPluginCaib crearPluginSenseConcsv(List<String> peticionsRebudes) throws IOException {
+        server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/", exchange -> {
+            peticionsRebudes.add(exchange.getRequestURI().getPath());
+            byte[] bytes = "error".getBytes(StandardCharsets.UTF_8);
+            exchange.sendResponseHeaders(500, bytes.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(bytes);
+            }
+            exchange.close();
+        });
+        server.start();
+        Properties properties = new Properties();
+        properties.setProperty("es.caib.pinbal.plugin.arxiu.caib.base.url", "http://127.0.0.1:" + server.getAddress().getPort());
+        properties.setProperty("es.caib.pinbal.plugin.arxiu.caib.aplicacio.codi", "PINBAL");
+        properties.setProperty("es.caib.pinbal.plugin.arxiu.caib.usuari", "usuari");
+        properties.setProperty("es.caib.pinbal.plugin.arxiu.caib.contrasenya", "contrasenya");
+        properties.setProperty("es.caib.pinbal.plugin.arxiu.caib.timeout.connect", "1000");
+        properties.setProperty("es.caib.pinbal.plugin.arxiu.caib.timeout.read", "1000");
+        return new ArxiuPluginCaib("es.caib.pinbal.", properties);
+    }
+
+    @Test
+    void documentDetallsSenseConcsvConsultaDirectamentLArxiu() throws Exception {
+        List<String> peticionsRebudes = new ArrayList<>();
+        ArxiuPluginCaib plugin = crearPluginSenseConcsv(peticionsRebudes);
+
+        assertThatThrownBy(() -> plugin.documentDetalls("abc123", null, false))
+                .isInstanceOf(ArxiuException.class);
+
+        assertThat(peticionsRebudes).contains("/services/getDocument");
+        assertThat(peticionsRebudes).noneMatch(path -> path.contains("/metadata/uuid/"));
+    }
+
+    @Test
+    void documentMetadadesSenseConcsvLlancaErrorClar() throws Exception {
+        ArxiuPluginCaib plugin = crearPluginSenseConcsv(new ArrayList<>());
+
+        assertThatThrownBy(() -> invocarDocumentMetadades(plugin, "abc123"))
+                .isInstanceOf(ArxiuException.class)
+                .hasRootCauseMessage("No s'ha configurat la propietat pluginsib.arxiu.caib.concsv.base.url amb la URL base del servei ConCSV");
+    }
+
+    @Test
+    void documentOriginalSenseConcsvLlancaErrorClar() throws Exception {
+        ArxiuPluginCaib plugin = crearPluginSenseConcsv(new ArrayList<>());
+
+        assertThatThrownBy(() -> invocarDocumentOriginal(plugin, "ARX:abc123"))
+                .isInstanceOf(ArxiuException.class)
+                .hasRootCauseMessage("No s'ha configurat la propietat pluginsib.arxiu.caib.concsv.base.url amb la URL base del servei ConCSV");
     }
 }
