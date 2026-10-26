@@ -595,6 +595,8 @@ public class PluginHelper {
 		try {
 			String arxiuUuidConsulta = arxiuUuid; //(document != null && document instanceof DocumentEntity) ? document.getArxiuUuid() : arxiuUuid;
 			accioParams.put("arxiuUuidConsulta", arxiuUuidConsulta);
+			// El plugin retorna sempre el contingut original del document. A partir d'aquí només es substitueix
+			// per la versió imprimible si es demana i es pot obtenir; en cas contrari es retorna l'original.
 			Document documentDetalls = getArxiuPlugin().documentDetalls(arxiuUuidConsulta, versio, ambContingut);
 			if (ambContingut && documentDetalls.getContingut() == null) {
 				LOGGER.error("El plugin no ha retornat el contingut del document ({})", accioParams.toString());
@@ -608,7 +610,8 @@ public class PluginHelper {
 					}
 				}
 			}
-			// Si no s'han pogut obtenir les metadades (ConCSV) no se sap si el document està firmat:
+			// Si el plugin no ha retornat metadades no se sap si el document està firmat (el nostre ArxiuPluginCaib
+			// ja no ho fa, perquè si ConCSV falla consulta l'arxiu, però es manté per a altres implementacions):
 			// s'intenta obtenir la versió imprimible i, si falla, es retorna l'original.
 			boolean metadadesDesconegudes = ambVersioImprimible && ambContingut && documentDetalls.getContingut() != null
 					&& documentDetalls.getMetadades() == null && documentDetalls.getFirmes() == null;
@@ -618,6 +621,8 @@ public class PluginHelper {
 				try {
 					documentDetalls.setContingut(getArxiuPlugin().documentImprimible(documentDetalls.getIdentificador()));
 				} catch (Exception ex) {
+					// No es substitueix el contingut: documentDetalls conserva el document original que ha
+					// retornat el plugin, i és el que es retorna més avall.
 					LOGGER.warn("No s'ha pogut obtenir la versió imprimible del document; es retorna l'original ({})", accioParams.toString(), ex);
 				}
 			}
@@ -628,6 +633,7 @@ public class PluginHelper {
 					accioParams,
 					IntegracioAccioTipusEnumDto.ENVIAMENT,
 					System.currentTimeMillis() - t0);
+			// Conté la versió imprimible si s'ha obtingut; si no, el document original
 			return documentDetalls;
 		} catch (Exception ex) {
 			String msg = "";

@@ -45,9 +45,12 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
 
     private static final String ARXIUCAIB_BASE_PROP = ARXIU_BASE_PROP + "caib.";
     private static final String PLUGINSIB_ARXIUCAIB_BASE_PROP = "pluginsib.arxiu.caib.";
-    private static final String CONCSV_URL_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "concsv.base.url";
-    private static final String CONCSV_USUARI_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "concsv.usuari";
-    private static final String CONCSV_CONTRASENYA_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "concsv.contrasenya";
+    // El servei ConCSV s'accedeix amb les mateixes propietats que la llibreria usa per a la versió imprimible
+    // (.../printable/uuid). La URL base de ConCSV s'obté traient aquest sufix.
+    private static final String CONCSV_URL_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "conversio.imprimible.url";
+    private static final String CONCSV_SUFIX_IMPRIMIBLE = "/printable/uuid";
+    private static final String CONCSV_USUARI_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "conversio.imprimible.usuari";
+    private static final String CONCSV_CONTRASENYA_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "conversio.imprimible.contrasenya";
     private static final String TIMEOUT_CONNECT_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "timeout.connect";
     private static final String TIMEOUT_READ_PROP = PLUGINSIB_ARXIUCAIB_BASE_PROP + "timeout.read";
     private static final String TIMEOUT_CONNECT = "10000";
@@ -146,30 +149,31 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
     public Document documentDetalls(String identificador, String versio, boolean ambContingut) throws ArxiuException {
         if (!isConcsvConfigurat()) {
             // Sense ConCSV configurat, els detalls s'obtenen directament de l'arxiu (com a la versió 1.4.x)
-            logger.debug("[ARXIU] No s'ha configurat la propietat " + CONCSV_URL_PROP + ". Obtenint els detalls del document " + identificador + " directament de l'arxiu");
+            logger.debug("[ARXIU] No s'ha configurat la propietat " + CONCSV_URL_PROP + " acabada en " + CONCSV_SUFIX_IMPRIMIBLE + ". Obtenint els detalls del document " + identificador + " directament de l'arxiu");
             return tracked(() -> super.documentDetalls(identificador, versio, ambContingut));
         }
         return tracked(() -> {
             try {
-                Document response = new Document();
-                response.setIdentificador(identificador);
-                if (ambContingut) {
-                    // Es retorna sempre el document original. La versió imprimible s'ha de demanar explícitament amb documentImprimible.
-                    response.setContingut(documentOriginal(identificador));
-                }
-                try {
-                    var result = documentMetadades(identificador);
-                    response.setMetadades(toDocumentMetadades(result));
-                    response.setFirmes(result.containsKey("eni:tipoFirma") ? Collections.singletonList(toFirma(result.get("eni:tipoFirma"))) : null);
-                } catch(Exception e) {
-                    logger.warn(ERROR_METADADES + identificador + ": " + e.getMessage());
-                    response.setMetadades(null);
-                }
-                return response;
-            } catch (Exception var12) {
-                throw new ArxiuException("S'ha produit un error obtenent els detalls del document: " + identificador, var12);
+                return documentDetallsConcsv(identificador, ambContingut);
+            } catch (Exception ex) {
+                // Si ConCSV dona error (contingut original o metadades), els detalls s'obtenen directament de l'arxiu
+                logger.warn("[ConCSV] No s'han pogut obtenir els detalls del document " + identificador + " de ConCSV. Obtenint-los directament de l'arxiu: " + ex.getMessage());
+                return super.documentDetalls(identificador, versio, ambContingut);
             }
         });
+    }
+
+    private Document documentDetallsConcsv(String identificador, boolean ambContingut) throws ArxiuException {
+        Document response = new Document();
+        response.setIdentificador(identificador);
+        if (ambContingut) {
+            // Es retorna sempre el document original. La versió imprimible s'ha de demanar explícitament amb documentImprimible.
+            response.setContingut(documentOriginal(identificador));
+        }
+        var result = documentMetadades(identificador);
+        response.setMetadades(toDocumentMetadades(result));
+        response.setFirmes(result.containsKey("eni:tipoFirma") ? Collections.singletonList(toFirma(result.get("eni:tipoFirma"))) : null);
+        return response;
     }
 
 //    @Override
@@ -363,20 +367,37 @@ public class ArxiuPluginCaib extends es.caib.pluginsib.arxiu.caib.ArxiuPluginCai
         return versioImprimibleClient;
     }
 
+    /**
+     * URL base de ConCSV, obtinguda de la URL de la versió imprimible traient-ne el sufix "/printable/uuid"
+     * (p. ex. https://servidor/concsvapi/interna/printable/uuid -> https://servidor/concsvapi/interna).
+     * Retorna null si la propietat no està definida o no acaba amb aquest sufix.
+     */
     private String getPropertyConcsvUrl() {
-        return this.getProperty(CONCSV_URL_PROP);
+        String url = this.getProperty(CONCSV_URL_PROP);
+        if (url == null || url.isBlank()) {
+            return null;
+        }
+        url = url.trim();
+        while (url.endsWith("/")) {
+            url = url.substring(0, url.length() - 1);
+        }
+        if (!url.endsWith(CONCSV_SUFIX_IMPRIMIBLE)) {
+            logger.warn("[ConCSV] La propietat " + CONCSV_URL_PROP + " no acaba en " + CONCSV_SUFIX_IMPRIMIBLE + ": no es pot deduir la URL base de ConCSV (" + url + ")");
+            return null;
+        }
+        return url.substring(0, url.length() - CONCSV_SUFIX_IMPRIMIBLE.length());
     }
 
     private boolean isConcsvConfigurat() {
-        String url = getPropertyConcsvUrl();
-        return url != null && !url.isBlank();
+        return getPropertyConcsvUrl() != null;
     }
 
     private String getPropertyConcsvUrlObligatoria() throws ArxiuException {
-        if (!isConcsvConfigurat()) {
-            throw new ArxiuException("No s'ha configurat la propietat " + CONCSV_URL_PROP + " amb la URL base del servei ConCSV");
+        String url = getPropertyConcsvUrl();
+        if (url == null) {
+            throw new ArxiuException("No s'ha configurat la propietat " + CONCSV_URL_PROP + " amb la URL del servei ConCSV acabada en " + CONCSV_SUFIX_IMPRIMIBLE);
         }
-        return getPropertyConcsvUrl();
+        return url;
     }
 
     private String getPropertyConcsvUsuari() {

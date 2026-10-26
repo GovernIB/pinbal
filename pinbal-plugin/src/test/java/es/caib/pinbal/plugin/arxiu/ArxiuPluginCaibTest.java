@@ -47,12 +47,28 @@ class ArxiuPluginCaibTest {
     private ArxiuPluginCaib crearPlugin(String prefix) throws IOException {
         server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         Properties properties = new Properties();
-        properties.setProperty(prefix + "concsv.base.url", "http://127.0.0.1:" + server.getAddress().getPort());
-        properties.setProperty(prefix + "concsv.usuari", "usuariConcsv");
-        properties.setProperty(prefix + "concsv.contrasenya", "contrasenyaConcsv");
+        String urlServidor = "http://127.0.0.1:" + server.getAddress().getPort();
+        properties.setProperty(prefix + "base.url", urlServidor);
+        properties.setProperty(prefix + "aplicacio.codi", "PINBAL");
+        properties.setProperty(prefix + "usuari", "usuari");
+        properties.setProperty(prefix + "contrasenya", "contrasenya");
+        properties.setProperty(prefix + "conversio.imprimible.url", urlServidor + "/printable/uuid");
+        properties.setProperty(prefix + "conversio.imprimible.usuari", "usuariConcsv");
+        properties.setProperty(prefix + "conversio.imprimible.contrasenya", "contrasenyaConcsv");
         properties.setProperty(prefix + "timeout.connect", "1000");
         properties.setProperty(prefix + "timeout.read", "1000");
         return new ArxiuPluginCaib("", properties);
+    }
+
+    /** Registra les peticions que no atén cap altre context (p. ex. les de l'arxiu) i hi respon amb un error. */
+    private List<String> registrarPeticionsNoAteses() {
+        List<String> peticionsRebudes = new ArrayList<>();
+        server.createContext("/", exchange -> {
+            peticionsRebudes.add(exchange.getRequestURI().getPath());
+            exchange.sendResponseHeaders(500, -1);
+            exchange.close();
+        });
+        return peticionsRebudes;
     }
 
     private void respon(String path, int status, String cos, String contentType) {
@@ -351,14 +367,17 @@ class ArxiuPluginCaibTest {
     }
 
     @Test
-    void documentDetallsSenseContingutAmbErrorDeMetadadesNoLlancaExcepcio() throws Exception {
+    void documentDetallsSenseContingutAmbErrorDeMetadadesConsultaDirectamentLArxiu() throws Exception {
         ArxiuPluginCaib plugin = crearPlugin();
+        List<String> peticionsRebudes = registrarPeticionsNoAteses();
         respon("/metadata/uuid/abc123", 500, "error", "text/plain");
         server.start();
 
-        Document document = plugin.documentDetalls("abc123", null, false);
+        // L'arxiu del servidor de proves també respon amb error
+        assertThatThrownBy(() -> plugin.documentDetalls("abc123", null, false))
+                .isInstanceOf(ArxiuException.class);
 
-        assertThat(document.getMetadades()).isNull();
+        assertThat(peticionsRebudes).contains("/services/getDocument");
     }
 
     // ------------------------- documentDetalls (públic, amb ambContingut=true) -------------------------
@@ -366,12 +385,7 @@ class ArxiuPluginCaibTest {
     @Test
     void documentDetallsAmbContingutRetornaLaVersioOriginalINoLaImprimible() throws Exception {
         ArxiuPluginCaib plugin = crearPlugin();
-        List<String> peticionsRebudes = new ArrayList<>();
-        server.createContext("/", exchange -> {
-            peticionsRebudes.add(exchange.getRequestURI().getPath());
-            exchange.sendResponseHeaders(500, -1);
-            exchange.close();
-        });
+        List<String> peticionsRebudes = registrarPeticionsNoAteses();
         respon("/original/uuid/abc123", 200, "%PDF-1.4\noriginal", "application/pdf");
         respon("/metadata/uuid/abc123", 200, "{\"eni:id\":\"ID1\",\"eni:tipoFirma\":\"TF06\"}", "application/json");
         server.start();
@@ -383,18 +397,52 @@ class ArxiuPluginCaibTest {
         assertThat(document.getIdentificador()).isEqualTo("abc123");
         assertThat(document.getFirmes()).hasSize(1);
         assertThat(document.getFirmes().get(0).getTipus()).isEqualTo(FirmaTipus.PADES);
-        // No s'ha demanat cap versió imprimible
+        // No s'ha demanat cap versió imprimible ni s'ha consultat l'arxiu
         assertThat(peticionsRebudes).isEmpty();
     }
 
     @Test
-    void documentDetallsAmbContingutIErrorDelOriginalLlancaArxiuException() throws Exception {
+    void documentDetallsAmbContingutIErrorDelOriginalConsultaDirectamentLArxiu() throws Exception {
         ArxiuPluginCaib plugin = crearPlugin();
+        List<String> peticionsRebudes = registrarPeticionsNoAteses();
         respon("/original/uuid/abc123", 500, "error", "text/plain");
         server.start();
 
+        // L'arxiu del servidor de proves també respon amb error
         assertThatThrownBy(() -> plugin.documentDetalls("abc123", null, true))
                 .isInstanceOf(ArxiuException.class);
+
+        assertThat(peticionsRebudes).contains("/services/getDocument");
+    }
+
+    @Test
+    void documentDetallsAmbUrlImprimibleSenseSufixConsultaDirectamentLArxiu() throws Exception {
+        server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        List<String> peticionsRebudes = registrarPeticionsNoAteses();
+        server.start();
+        String urlServidor = "http://127.0.0.1:" + server.getAddress().getPort();
+        Properties properties = new Properties();
+        properties.setProperty("plugin.arxiu.caib.base.url", urlServidor);
+        properties.setProperty("plugin.arxiu.caib.aplicacio.codi", "PINBAL");
+        properties.setProperty("plugin.arxiu.caib.usuari", "usuari");
+        properties.setProperty("plugin.arxiu.caib.contrasenya", "contrasenya");
+        properties.setProperty("plugin.arxiu.caib.conversio.imprimible.url", urlServidor + "/una/altra/ruta");
+        ArxiuPluginCaib plugin = new ArxiuPluginCaib("", properties);
+
+        assertThatThrownBy(() -> plugin.documentDetalls("abc123", null, true))
+                .isInstanceOf(ArxiuException.class);
+
+        assertThat(peticionsRebudes).contains("/services/getDocument");
+        assertThat(peticionsRebudes).noneMatch(path -> path.contains("/original/uuid/") || path.contains("/metadata/uuid/"));
+    }
+
+    @Test
+    void getPropertyConcsvUrlTreuElSufixDeLaUrlImprimible() throws Throwable {
+        ArxiuPluginCaib plugin = crearPlugin();
+        Method method = ArxiuPluginCaib.class.getDeclaredMethod("getPropertyConcsvUrl");
+        method.setAccessible(true);
+
+        assertThat((String) method.invoke(plugin)).isEqualTo("http://127.0.0.1:" + server.getAddress().getPort());
     }
 
     @Test
@@ -446,7 +494,7 @@ class ArxiuPluginCaibTest {
 
         assertThatThrownBy(() -> invocarDocumentMetadades(plugin, "abc123"))
                 .isInstanceOf(ArxiuException.class)
-                .hasRootCauseMessage("No s'ha configurat la propietat pluginsib.arxiu.caib.concsv.base.url amb la URL base del servei ConCSV");
+                .hasRootCauseMessage("No s'ha configurat la propietat pluginsib.arxiu.caib.conversio.imprimible.url amb la URL del servei ConCSV acabada en /printable/uuid");
     }
 
     @Test
@@ -455,6 +503,6 @@ class ArxiuPluginCaibTest {
 
         assertThatThrownBy(() -> invocarDocumentOriginal(plugin, "ARX:abc123"))
                 .isInstanceOf(ArxiuException.class)
-                .hasRootCauseMessage("No s'ha configurat la propietat pluginsib.arxiu.caib.concsv.base.url amb la URL base del servei ConCSV");
+                .hasRootCauseMessage("No s'ha configurat la propietat pluginsib.arxiu.caib.conversio.imprimible.url amb la URL del servei ConCSV acabada en /printable/uuid");
     }
 }
