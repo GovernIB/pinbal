@@ -368,7 +368,7 @@ public class JustificantHelperTopUpTest {
         Consulta consulta = mockConsulta("PET-13", "SOL-13");
         when(consulta.getJustificantEstat()).thenReturn(JustificantEstat.OK);
         when(consulta.getArxiuDocumentUuid()).thenReturn(null);
-        when(consulta.isAplicacioGuardaJustificantArxiu()).thenReturn(true);
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(true);
         when(consulta.isRecobriment()).thenReturn(false);
         when(consulta.getArxiuExpedientUuid()).thenReturn(null);
         when(consulta.getTitularDocumentNum()).thenReturn("12345678A");
@@ -402,7 +402,7 @@ public class JustificantHelperTopUpTest {
         Consulta consulta = mockConsulta("PET-14", "SOL-14");
         when(consulta.getJustificantEstat()).thenReturn(JustificantEstat.OK);
         when(consulta.getArxiuDocumentUuid()).thenReturn(null);
-        when(consulta.isAplicacioGuardaJustificantArxiu()).thenReturn(true);
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(true);
         when(consulta.isRecobriment()).thenReturn(true);
 
         FitxerDto fitxerGenerat = FitxerDto.builder().nom("justificant.pdf").contingut(new byte[]{1, 2, 3}).build();
@@ -429,7 +429,7 @@ public class JustificantHelperTopUpTest {
         Consulta consulta = mockConsulta("PET-15", "SOL-15");
         when(consulta.getJustificantEstat()).thenReturn(JustificantEstat.OK);
         when(consulta.getArxiuDocumentUuid()).thenReturn(null);
-        when(consulta.isAplicacioGuardaJustificantArxiu()).thenReturn(false);
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(false);
         when(consulta.getCustodiaId()).thenReturn("CUST-1");
 
         byte[] contingutCustodia = "custodia".getBytes();
@@ -445,7 +445,7 @@ public class JustificantHelperTopUpTest {
         Consulta consulta = mockConsulta("PET-16", "SOL-16");
         when(consulta.getJustificantEstat()).thenReturn(JustificantEstat.OK);
         when(consulta.getArxiuDocumentUuid()).thenReturn(null);
-        when(consulta.isAplicacioGuardaJustificantArxiu()).thenReturn(false);
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(false);
         when(consulta.getCustodiaId()).thenReturn(null);
         when(consulta.isCustodiat()).thenReturn(true);
 
@@ -462,7 +462,7 @@ public class JustificantHelperTopUpTest {
         Consulta consulta = mockConsulta("PET-17", "SOL-17");
         when(consulta.getJustificantEstat()).thenReturn(JustificantEstat.OK);
         when(consulta.getArxiuDocumentUuid()).thenReturn(null);
-        when(consulta.isAplicacioGuardaJustificantArxiu()).thenReturn(false);
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(false);
         when(consulta.getCustodiaId()).thenReturn(null);
         when(consulta.isCustodiat()).thenReturn(false);
 
@@ -552,13 +552,13 @@ public class JustificantHelperTopUpTest {
     }
 
     @Test
-    public void generarCustodiarJustificantPendent_aplicacioGuardaJustificantArxiu_noGeneraNiFirma() throws Exception {
+    public void generarCustodiarJustificantPendent_justificantGestionatPerAplicacio_noGeneraNiFirma() throws Exception {
         Consulta consulta = mockConsulta("PET-32", "SOL-32");
         when(scspHelper.recuperarResultatEnviamentPeticio("PET-32")).thenReturn(new ResultatEnviamentPeticio());
         when(serveiConfigRepository.findByServei("SERVEI")).thenReturn(serveiConfig);
         when(configHelper.getConfigAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar", false)).thenReturn(true);
         when(consulta.isCustodiat()).thenReturn(false);
-        when(consulta.isAplicacioGuardaJustificantArxiu()).thenReturn(true);
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(true);
         when(consulta.getCustodiaUrl()).thenReturn(null);
         when(consulta.getArxiuExpedientUuid()).thenReturn(null);
         when(consulta.getArxiuDocumentUuid()).thenReturn(null);
@@ -577,7 +577,7 @@ public class JustificantHelperTopUpTest {
         when(serveiConfigRepository.findByServei("SERVEI")).thenReturn(serveiConfig);
         when(configHelper.getConfigAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar", false)).thenReturn(true);
         when(consulta.isCustodiat()).thenReturn(false);
-        when(consulta.isAplicacioGuardaJustificantArxiu()).thenReturn(false);
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(false);
         when(consulta.getCustodiaUrl()).thenReturn(null);
         when(consulta.getArxiuExpedientUuid()).thenReturn(null);
         when(consulta.getArxiuDocumentUuid()).thenReturn(null);
@@ -599,7 +599,7 @@ public class JustificantHelperTopUpTest {
         when(serveiConfigRepository.findByServei("SERVEI")).thenReturn(serveiConfig);
         when(configHelper.getConfigAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar", false)).thenReturn(true);
         when(consulta.isCustodiat()).thenReturn(false);
-        when(consulta.isAplicacioGuardaJustificantArxiu()).thenReturn(false);
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(false);
         when(consulta.getCustodiaUrl()).thenReturn(null);
         when(consulta.getArxiuExpedientUuid()).thenReturn("EXP-JA-EXISTENT");
         when(consulta.getArxiuDocumentUuid()).thenReturn("DOC-JA-EXISTENT");
@@ -639,7 +639,7 @@ public class JustificantHelperTopUpTest {
         when(serveiConfigRepository.findByServei("SERVEI")).thenReturn(serveiConfig);
         when(configHelper.getConfigAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar", false)).thenReturn(true);
         when(consulta.isCustodiat()).thenReturn(false);
-        when(consulta.isAplicacioGuardaJustificantArxiu()).thenReturn(false);
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(false);
         when(consulta.getCustodiaUrl()).thenReturn(null);
         when(consulta.getArxiuExpedientUuid()).thenReturn(null);
         when(consulta.getArxiuDocumentUuid()).thenReturn(null);
@@ -677,7 +677,7 @@ public class JustificantHelperTopUpTest {
         when(serveiConfigRepository.findByServei("SERVEI")).thenReturn(serveiConfig);
         when(configHelper.getConfigAsBoolean("es.caib.pinbal.justificant.signar.i.custodiar", false)).thenReturn(true);
         when(consulta.isCustodiat()).thenReturn(false);
-        when(consulta.isAplicacioGuardaJustificantArxiu()).thenReturn(false);
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(false);
         when(consulta.getCustodiaUrl()).thenReturn(null);
         when(consulta.getArxiuExpedientUuid()).thenReturn(null);
         when(consulta.getArxiuDocumentUuid()).thenReturn(null);

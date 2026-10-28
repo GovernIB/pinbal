@@ -20,5 +20,22 @@ public class DadaEspecifica extends DadaEspecificaBasic {
     private String valorCondicionant;
     private Validacio validacio;
     private String grup;
+    /**
+     * Quan el tipus és ENUM, indica el tipus d'enumerat. És el valor que s'ha
+     * d'emprar com a codi d'enumerat a l'obtenció dels seus valors
+     * (/serveis/{serveiCodi}/camps/{campCodi}/enumerat/{enumCodi}).
+     */
+    private EnumTipus enumTipus;
+    private boolean visible;
+    /** Ordre del camp dins el seu grup. */
+    private int ordre;
+
+    public enum EnumTipus {
+        ENUM,
+        PAIS,
+        PROVINCIA,
+        MUNICIPI_3,
+        MUNICIPI_5
+    }
 
 }

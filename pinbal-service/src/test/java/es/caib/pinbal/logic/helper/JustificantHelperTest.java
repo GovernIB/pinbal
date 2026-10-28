@@ -192,7 +192,7 @@ public class JustificantHelperTest {
         when(consulta.getArxiuExpedientUuid()).thenReturn(null);
         when(consulta.getArxiuDocumentUuid()).thenReturn(null);
         when(consulta.getTitularDocumentNum()).thenReturn("12345678A");
-        when(consulta.isAplicacioGuardaJustificantArxiu()).thenReturn(false);
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(false);
         when(consulta.isCustodiat()).thenReturn(false);
         when(consulta.getCustodiaUrl()).thenReturn(null);
         return consulta;

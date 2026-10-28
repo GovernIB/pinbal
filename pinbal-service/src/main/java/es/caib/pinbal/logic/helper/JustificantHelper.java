@@ -132,7 +132,7 @@ public class JustificantHelper implements MessageSourceAware {
                     String arxiuExpedientUuid = consulta.getArxiuExpedientUuid();
                     String arxiuDocumentUuid = consulta.getArxiuDocumentUuid();
                     try {
-						if (consulta.isAplicacioGuardaJustificantArxiu()) {
+						if (consulta.isJustificantGestionatPerAplicacio()) {
 							// El justificant no es desa ni a l'arxiu ni a custòdia: es genera i
 							// firma sota demanda quan es consulta, per tant no cal generar-lo ni
 							// firmar-lo ara (estalviem la generació del PDF i la crida de firma
@@ -371,7 +371,7 @@ public class JustificantHelper implements MessageSourceAware {
 						true,
 						versioImprimible);
 				fitxerDto.setContingut(documentArxiu.getContingut().getContingut());
-			} else if (consulta.isAplicacioGuardaJustificantArxiu()) {
+			} else if (consulta.isJustificantGestionatPerAplicacio()) {
 				// El justificant no s'ha desat a l'arxiu. Es genera i firma sota
 				// demanda (l'aplicació que el consulta l'espera firmat).
 				FitxerDto justificantFirmat = generarIFirmarJustificant(consulta, scspHelper);
@@ -380,7 +380,7 @@ public class JustificantHelper implements MessageSourceAware {
 				if (!consulta.isRecobriment()) {
 					// CORRECCIÓ d'una errada pròpia: el canvi de valor per defecte
 					// introduït a #357 va deixar consultes que NO són de recobriment
-					// amb aplicacioGuardaJustificantArxiu=true, de manera que el
+					// amb justificantGestionatPerAplicacio=true, de manera que el
 					// justificant no es va arribar a desar a l'arxiu. En consultar-les,
 					// a més de generar-lo i firmar-lo, el desem a l'arxiu i
 					// actualitzem la consulta perquè quedi persistit i les properes

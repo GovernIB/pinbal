@@ -118,6 +118,18 @@ public class RecobrimentService extends AbstractService<es.caib.pinbal.logic.int
 		return getDelegateService().getDadesEspecifiquesByServei(serveiCodi);
 	}
 
+	@Override
+	@RolesAllowed("PBL_WS")
+	public List<GrupDadesEspecifiques> getGrupsByServei(String serveiCodi) throws ServeiNotFoundException {
+		return getDelegateService().getGrupsByServei(serveiCodi);
+	}
+
+	@Override
+	@RolesAllowed("PBL_WS")
+	public List<Regla> getReglesByServei(String serveiCodi) throws ServeiNotFoundException {
+		return getDelegateService().getReglesByServei(serveiCodi);
+	}
+
     @Override
     @RolesAllowed("PBL_WS")
     public List<DadaEspecificaBasic> getDadesEspecifiquesByServeiResposta(String serveiCodi) throws Exception {

@@ -202,12 +202,12 @@ public class ConsultaTest {
     }
 
     @Test
-    public void testUpdateAplicacioGuardaJustificantArxiu() {
+    public void testUpdateJustificantGestionatPerAplicacio() {
         Consulta consulta = crearConsulta();
 
-        consulta.updateAplicacioGuardaJustificantArxiu(true);
+        consulta.updateJustificantGestionatPerAplicacio(true);
 
-        assertTrue(consulta.isAplicacioGuardaJustificantArxiu());
+        assertTrue(consulta.isJustificantGestionatPerAplicacio());
     }
 
     @Test

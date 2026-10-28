@@ -38,7 +38,18 @@ import es.caib.pinbal.persist.repository.ConsultaRepository;
 import es.caib.pinbal.persist.repository.EntitatRepository;
 import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
 import es.caib.pinbal.persist.repository.ProcedimentRepository;
+import es.caib.pinbal.persist.repository.ServeiCampGrupRepository;
 import es.caib.pinbal.persist.repository.ServeiCampRepository;
+import es.caib.pinbal.persist.repository.ServeiReglaRepository;
+import es.caib.pinbal.persist.repository.ServeiRepository;
+import es.caib.pinbal.persist.entity.Servei;
+import es.caib.pinbal.persist.entity.ServeiCampGrup;
+import es.caib.pinbal.persist.entity.ServeiRegla;
+import es.caib.pinbal.logic.intf.dto.regles.AccioEnum;
+import es.caib.pinbal.logic.intf.dto.regles.ModificatEnum;
+import es.caib.pinbal.client.recobriment.v2.DadaTipusEnum;
+import es.caib.pinbal.client.recobriment.v2.GrupDadesEspecifiques;
+import es.caib.pinbal.client.recobriment.v2.Regla;
 import es.caib.pinbal.persist.repository.ServeiConfigRepository;
 import es.caib.pinbal.plugin.dadescomuns.Municipi;
 import es.caib.pinbal.plugin.dadescomuns.Pais;
@@ -76,6 +87,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -103,6 +115,15 @@ public class RecobrimentServiceImplTest {
 
     @Mock
     private ServeiCampRepository serveiCampRepository;
+
+    @Mock
+    private ServeiCampGrupRepository serveiCampGrupRepository;
+
+    @Mock
+    private ServeiReglaRepository serveiReglaRepository;
+
+    @Mock
+    private ServeiRepository serveiRepository;
 
     @Mock
     private ConsultaRepository consultaRepository;
@@ -233,6 +254,7 @@ public class RecobrimentServiceImplTest {
         procediment1.setNom("Procediment 123");
         procediment1.setActiu(true);
         procediment1.setOrganGestor(mockOrganGestor);
+        procediment1.setCodiSia("123456");
 
         Procediment procediment2 = new Procediment();
         procediment2.setCodi("PRO456");
@@ -258,6 +280,7 @@ public class RecobrimentServiceImplTest {
         Assertions.assertEquals("PRO123", procediments.get(0).getCodi());
         Assertions.assertEquals("Procediment 123", procediments.get(0).getNom());
         Assertions.assertTrue(procediments.get(0).isActiu());
+        Assertions.assertEquals("123456", procediments.get(0).getCodiSia());
 
         Assertions.assertEquals("PRO456", procediments.get(1).getCodi());
         Assertions.assertEquals("Procediment 456", procediments.get(1).getNom());
@@ -463,6 +486,47 @@ public class RecobrimentServiceImplTest {
     }
 
     @Test
+    public void testGetServeisByEntitat_ProcedimentsCodiSia() throws EntitatNotFoundException {
+        String entitatCodi = "ENT001";
+        Entitat entitat = new Entitat();
+        ReflectionTestUtils.setField(entitat, "id", 1L);
+        List<ServeiBasic> mockServeis = Arrays.asList(
+                new ServeiBasic("SERV001", "Servei 1", true),
+                new ServeiBasic("SERV002", "Servei 2", true));
+        Map<String, List<String>> codisSia = new HashMap<>();
+        codisSia.put("SERV001", Arrays.asList("100001", "200002"));
+
+        Authentication authentication = mockAuthenticationAmbUsuari("aplicacioIntegracio");
+        when(entitatRepository.findByCodi(entitatCodi)).thenReturn(entitat);
+        when(serveiHelper.findServeisClientPerEntitat(entitatCodi)).thenReturn(mockServeis);
+        when(serveiHelper.findCodisSiaPermesosPerServei(1L, authentication)).thenReturn(codisSia);
+
+        // Els codis SIA s'informen encara que no es demanin els permisos
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi, false);
+
+        Assertions.assertEquals(Arrays.asList("100001", "200002"), serveis.get(0).getProcedimentsCodiSia());
+        // Servei sense cap procediment permès amb codi SIA: llista buida
+        Assertions.assertTrue(serveis.get(1).getProcedimentsCodiSia().isEmpty());
+        Assertions.assertNull(serveis.get(0).getPermis());
+        // Els objectes de la cache no es modifiquen
+        Assertions.assertNull(mockServeis.get(0).getProcedimentsCodiSia());
+    }
+
+    @Test
+    public void testGetServeisByEntitat_SenseUsuariAutenticat_ProcedimentsCodiSiaBuits() throws EntitatNotFoundException {
+        String entitatCodi = "ENT001";
+        SecurityContextHolder.clearContext();
+        when(entitatRepository.findByCodi(entitatCodi)).thenReturn(new Entitat());
+        when(serveiHelper.findServeisClientPerEntitat(entitatCodi)).thenReturn(
+                Collections.singletonList(new ServeiBasic("SERV001", "Servei 1", true)));
+
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi, false);
+
+        Assertions.assertTrue(serveis.get(0).getProcedimentsCodiSia().isEmpty());
+        verify(serveiHelper, Mockito.never()).findCodisSiaPermesosPerServei(any(), any());
+    }
+
+    @Test
     public void testGetServeisByEntitat_PermisIDocumentsTipusPermesos() throws EntitatNotFoundException {
         // Mock data
         String entitatCodi = "ENT001";
@@ -628,6 +692,30 @@ public class RecobrimentServiceImplTest {
     }
 
     @Test
+    public void testGetDadesEspecifiquesByServei_EnumTipusVisibleIOrdre() throws ServeiNotFoundException {
+        String serveiCodi = "SERV001";
+
+        ServeiCamp campText = ServeiCamp.getBuilder(serveiCodi, "path/text", ServeiCamp.ServeiCampTipus.TEXT, "Text", null, 3, 6).build();
+        ServeiCamp campEnum = ServeiCamp.getBuilder(serveiCodi, "path/enum", ServeiCamp.ServeiCampTipus.ENUM, "Enum", null, 1, 6).build();
+        campEnum.setVisible(false);
+        ServeiCamp campMunicipi = ServeiCamp.getBuilder(serveiCodi, "path/municipi", ServeiCamp.ServeiCampTipus.MUNICIPI_5, "Municipi", null, 2, 6).build();
+
+        when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(new ServeiConfig());
+        when(serveiCampRepository.findByServeiOrderByGrupOrdreAsc(serveiCodi)).thenReturn(Arrays.asList(campText, campEnum, campMunicipi));
+
+        List<DadaEspecifica> dades = recobrimentServiceImpl.getDadesEspecifiquesByServei(serveiCodi);
+
+        Assertions.assertNull(dades.get(0).getEnumTipus());
+        Assertions.assertTrue(dades.get(0).isVisible());
+        Assertions.assertEquals(3, dades.get(0).getOrdre());
+        Assertions.assertEquals(DadaEspecifica.EnumTipus.ENUM, dades.get(1).getEnumTipus());
+        Assertions.assertFalse(dades.get(1).isVisible());
+        Assertions.assertEquals(1, dades.get(1).getOrdre());
+        Assertions.assertEquals(DadaTipusEnum.ENUM, dades.get(2).getTipus());
+        Assertions.assertEquals(DadaEspecifica.EnumTipus.MUNICIPI_5, dades.get(2).getEnumTipus());
+    }
+
+    @Test
     public void testGetDadesEspecifiquesByServei_NoDataFound() throws ServeiNotFoundException {
         // Mock data
         String serveiCodi = "SERV002";
@@ -656,6 +744,110 @@ public class RecobrimentServiceImplTest {
         assertThrows(ServeiNotFoundException.class, () ->
                 recobrimentServiceImpl.getDadesEspecifiquesByServei(serveiCodi)
         );
+    }
+
+    // TESTS getGrups
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void testGetGrupsByServei_Arbre() throws ServeiNotFoundException {
+        String serveiCodi = "SERV001";
+        ServeiCampGrup grup1 = ServeiCampGrup.getBuilder(serveiCodi, null, "Grup 1", "Ajuda 1", 1).build();
+        ServeiCampGrup subgrup11 = ServeiCampGrup.getBuilder(serveiCodi, grup1, "Subgrup 1.1", null, 1).build();
+        ServeiCampGrup subgrup12 = ServeiCampGrup.getBuilder(serveiCodi, grup1, "Subgrup 1.2", null, 2).build();
+        grup1.getFills().add(subgrup11);
+        grup1.getFills().add(subgrup12);
+        ServeiCampGrup grup2 = ServeiCampGrup.getBuilder(serveiCodi, null, "Grup 2", null, 2).build();
+
+        when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(new ServeiConfig());
+        when(serveiCampGrupRepository.findByServeiAndPareIsNullOrderByOrdreAsc(serveiCodi)).thenReturn(Arrays.asList(grup1, grup2));
+
+        List<GrupDadesEspecifiques> grups = recobrimentServiceImpl.getGrupsByServei(serveiCodi);
+
+        Assertions.assertEquals(2, grups.size());
+        Assertions.assertEquals("Grup 1", grups.get(0).getCodi());
+        Assertions.assertEquals("Ajuda 1", grups.get(0).getAjuda());
+        Assertions.assertEquals(1, grups.get(0).getOrdre());
+        Assertions.assertEquals(2, grups.get(0).getSubgrups().size());
+        Assertions.assertEquals("Grup 1/Subgrup 1.2", grups.get(0).getSubgrups().get(1).getCodi());
+        Assertions.assertEquals("Subgrup 1.2", grups.get(0).getSubgrups().get(1).getNom());
+        Assertions.assertEquals(2, grups.get(0).getSubgrups().get(1).getOrdre());
+        Assertions.assertEquals("Grup 2", grups.get(1).getCodi());
+        Assertions.assertTrue(grups.get(1).getSubgrups().isEmpty());
+    }
+
+    @Test
+    public void testGetGrupsByServei_ServeiNotFoundException() {
+        when(serveiConfigRepository.findByServei("SERV003")).thenReturn(null);
+
+        assertThrows(ServeiNotFoundException.class, () -> recobrimentServiceImpl.getGrupsByServei("SERV003"));
+    }
+
+    // TESTS getRegles
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void testGetReglesByServei_CampsIGrups() throws ServeiNotFoundException {
+        String serveiCodi = "SERV001";
+        Servei servei = new Servei();
+        servei.setCodi(serveiCodi);
+        ServeiRegla reglaCamps = ServeiRegla.builder()
+                .nom("Regla camps")
+                .servei(servei)
+                .modificat(ModificatEnum.ALGUN_CAMP)
+                .modificatValor(new LinkedHashSet<>(Arrays.asList("10 | path/campA")))
+                .accio(AccioEnum.OBLIGATORI)
+                .afectatValor(new LinkedHashSet<>(Arrays.asList("11 | path/campB", "12 | path/campC")))
+                .ordre(1)
+                .build();
+        ServeiRegla reglaGrups = ServeiRegla.builder()
+                .nom("Regla grups")
+                .servei(servei)
+                .modificat(ModificatEnum.GRUPS)
+                .modificatValor(new LinkedHashSet<>(Arrays.asList("Subgrup")))
+                .accio(AccioEnum.OCULTAR)
+                .afectatValor(new LinkedHashSet<>(Arrays.asList("Grup 2")))
+                .ordre(2)
+                .build();
+        ServeiCampGrup grup1 = ServeiCampGrup.getBuilder(serveiCodi, null, "Grup 1", null, 1).build();
+        ServeiCampGrup subgrup = ServeiCampGrup.getBuilder(serveiCodi, grup1, "Subgrup", null, 1).build();
+        ServeiCampGrup grup2 = ServeiCampGrup.getBuilder(serveiCodi, null, "Grup 2", null, 2).build();
+
+        when(serveiRepository.findByCode(serveiCodi)).thenReturn(Collections.singletonList(servei));
+        when(serveiReglaRepository.findByServeiOrderByOrdreAsc(servei)).thenReturn(Arrays.asList(reglaCamps, reglaGrups));
+        when(serveiCampGrupRepository.findByServei(serveiCodi)).thenReturn(Arrays.asList(grup1, subgrup, grup2));
+
+        List<Regla> regles = recobrimentServiceImpl.getReglesByServei(serveiCodi);
+
+        Assertions.assertEquals(2, regles.size());
+        Regla regla1 = regles.get(0);
+        Assertions.assertEquals("Regla camps", regla1.getNom());
+        Assertions.assertEquals(1, regla1.getOrdre());
+        Assertions.assertEquals(Regla.ReglaModificat.ALGUN_CAMP, regla1.getModificat());
+        Assertions.assertEquals(Collections.singletonList("path/campA"), regla1.getModificatValors());
+        Assertions.assertEquals(Regla.ReglaAccio.OBLIGATORI, regla1.getAccio());
+        Assertions.assertEquals(Arrays.asList("path/campB", "path/campC"), regla1.getAfectatValors());
+        Regla regla2 = regles.get(1);
+        Assertions.assertEquals(Regla.ReglaModificat.GRUPS, regla2.getModificat());
+        Assertions.assertEquals(Collections.singletonList("Grup 1/Subgrup"), regla2.getModificatValors());
+        Assertions.assertEquals(Regla.ReglaAccio.OCULTAR, regla2.getAccio());
+        Assertions.assertEquals(Collections.singletonList("Grup 2"), regla2.getAfectatValors());
+    }
+
+    @Test
+    public void testGetReglesByServei_SenseRegles() throws ServeiNotFoundException {
+        Servei servei = new Servei();
+        when(serveiRepository.findByCode("SERV001")).thenReturn(Collections.singletonList(servei));
+        when(serveiReglaRepository.findByServeiOrderByOrdreAsc(servei)).thenReturn(new ArrayList<ServeiRegla>());
+
+        Assertions.assertTrue(recobrimentServiceImpl.getReglesByServei("SERV001").isEmpty());
+    }
+
+    @Test
+    public void testGetReglesByServei_ServeiNotFoundException() {
+        when(serveiRepository.findByCode("SERV003")).thenReturn(new ArrayList<Servei>());
+
+        assertThrows(ServeiNotFoundException.class, () -> recobrimentServiceImpl.getReglesByServei("SERV003"));
     }
 
     // TESTS getValorsEnum
@@ -1041,7 +1233,7 @@ public class RecobrimentServiceImplTest {
     }
 
     @Test
-    public void testPeticionSincrona_AplicacioGuardaJustificantArxiu() throws Exception {
+    public void testPeticionSincrona_JustificantGestionatPerAplicacio() throws Exception {
         PeticioSincrona mockPeticio = PeticioSincrona.builder().build();
         Respuesta mockRespuesta = new Respuesta();
         es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
@@ -1057,7 +1249,19 @@ public class RecobrimentServiceImplTest {
         PeticioRespostaSincrona response = recobrimentServiceImpl.peticionSincrona(mockPeticio);
 
         Assertions.assertNotNull(response);
-        verify(recobrimentHelper).peticionSincrona(any(Peticion.class), eq(false));
+        // El justificant de les peticions de recobriment el gestiona l'aplicació (#357)
+        verify(recobrimentHelper).peticionSincrona(any(Peticion.class), eq(true));
+    }
+
+    @Test
+    public void testPeticionAsincrona_JustificantGestionatPerAplicacio() throws Exception {
+        PeticioAsincrona mockPeticio = PeticioAsincrona.builder().build();
+        when(recobrimentV2Helper.toPeticion(any(PeticioAsincrona.class))).thenReturn(new Peticion());
+        when(recobrimentHelper.peticionAsincrona(any(Peticion.class), anyBoolean())).thenReturn(mock(ConfirmacionPeticion.class));
+
+        recobrimentServiceImpl.peticionAsincrona(mockPeticio);
+
+        verify(recobrimentHelper).peticionAsincrona(any(Peticion.class), eq(true));
     }
 
 
@@ -1434,6 +1638,22 @@ public class RecobrimentServiceImplTest {
     }
 
 
+    @Test
+    public void testGetJustificantCsv_JustificantGestionatPerAplicacio_RetornaNull() throws Exception {
+        String idPeticion = "12345";
+        String idSolicitud = "54321";
+        Consulta consulta = mockConsulta();
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(true);
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(consulta);
+
+        String result = recobrimentServiceImpl.getJustificantCsv(idPeticion, idSolicitud);
+
+        Assertions.assertNull(result);
+        // No s'ha de generar el justificant per obtenir el CSV
+        verify(recobrimentHelper, Mockito.never()).getJustificante(anyString(), anyString(), Mockito.anyBoolean(), Mockito.anyBoolean());
+    }
+
+
     // TESTS getJustificantUuid
     // /////////////////////////////////////////////////////////
 
@@ -1497,6 +1717,35 @@ public class RecobrimentServiceImplTest {
         } catch (Exception e) {
             Assertions.fail("Unexpected exception thrown: " + e.getMessage());
         }
+    }
+
+    @Test
+    public void testGetJustificantUuid_JustificantGestionatPerAplicacio_RetornaNull() throws Exception {
+        String idPeticion = "12345";
+        String idSolicitud = "54321";
+        Consulta consulta = mockConsulta();
+        when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(true);
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(consulta);
+
+        String result = recobrimentServiceImpl.getJustificantUuid(idPeticion, idSolicitud);
+
+        Assertions.assertNull(result);
+        verify(recobrimentHelper, Mockito.never()).getJustificante(anyString(), anyString(), Mockito.anyBoolean(), Mockito.anyBoolean());
+    }
+
+    @Test
+    public void testGetJustificantUuid_JustificantDesatArxiu_RetornaUuid() throws Exception {
+        // Consultes anteriors al canvi, amb el justificant ja desat a l'arxiu
+        String idPeticion = "12345";
+        String idSolicitud = "54321";
+        Consulta consulta = mockConsulta();
+        when(consulta.getArxiuDocumentUuid()).thenReturn("DOC-UUID");
+        when(consultaRepository.findByScspPeticionIdAndScspSolicitudId(idPeticion, idSolicitud)).thenReturn(consulta);
+
+        String result = recobrimentServiceImpl.getJustificantUuid(idPeticion, idSolicitud);
+
+        Assertions.assertEquals("DOC-UUID", result);
+        verify(recobrimentHelper, Mockito.never()).getJustificante(anyString(), anyString(), Mockito.anyBoolean(), Mockito.anyBoolean());
     }
 
 }

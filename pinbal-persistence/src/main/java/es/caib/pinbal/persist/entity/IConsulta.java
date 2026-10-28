@@ -16,7 +16,7 @@ public interface IConsulta {
     String getCustodiaUrl();
     String getArxiuExpedientUuid();
     String getTitularDocumentNum();
-    boolean isAplicacioGuardaJustificantArxiu();
+    boolean isJustificantGestionatPerAplicacio();
     boolean isRecobriment();
 
     void updateJustificantEstat(

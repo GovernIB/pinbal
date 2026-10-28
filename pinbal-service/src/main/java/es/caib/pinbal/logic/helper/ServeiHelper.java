@@ -109,89 +109,158 @@ public class ServeiHelper {
 			Long entitatId,
 			String procedimentCodi,
 			Authentication auth) {
+		List<ProcedimentServei> pss = findProcedimentServeisPermesos(entitatId, procedimentCodi, auth);
+		if (pss == null) {
+			return new ArrayList<String>();
+		}
+		return filtrarServeisPermesos(entitatId, pss, auth);
+	}
+
+	/**
+	 * Obté, per a cada servei sobre el que l'usuari té permís dins l'entitat,
+	 * els codis SIA dels procediments amb els que el pot consultar (permís
+	 * sobre la combinació procediment-servei). Els procediments sense codi SIA
+	 * no s'inclouen.
+	 *
+	 * @param entitatId
+	 *            id de l'entitat.
+	 * @param auth
+	 *            usuari autenticat.
+	 * @return mapa amb el codi del servei com a clau i els codis SIA (ordenats
+	 *         i sense duplicats) com a valor. Els serveis sense cap procediment
+	 *         amb codi SIA no hi apareixen.
+	 */
+	public Map<String, List<String>> findCodisSiaPermesosPerServei(
+			Long entitatId,
+			Authentication auth) {
+		Map<String, List<String>> resposta = new HashMap<String, List<String>>();
+		List<ProcedimentServei> pss = findProcedimentServeisPermesos(entitatId, null, auth);
+		if (pss == null) {
+			return resposta;
+		}
+		Set<String> serveisPermesos = new HashSet<String>(filtrarServeisPermesos(entitatId, pss, auth));
+		Map<String, Set<String>> codisSia = new HashMap<String, Set<String>>();
+		for (ProcedimentServei ps: pss) {
+			String codiSia = ps.getProcediment().getCodiSia();
+			if (codiSia == null || codiSia.trim().isEmpty() || !serveisPermesos.contains(ps.getServei())) {
+				continue;
+			}
+			Set<String> codis = codisSia.get(ps.getServei());
+			if (codis == null) {
+				codis = new TreeSet<String>();
+				codisSia.put(ps.getServei(), codis);
+			}
+			codis.add(codiSia.trim());
+		}
+		for (Map.Entry<String, Set<String>> entry: codisSia.entrySet()) {
+			resposta.put(entry.getKey(), new ArrayList<String>(entry.getValue()));
+		}
+		return resposta;
+	}
+
+	/**
+	 * @return les combinacions procediment-servei actives de l'entitat sobre
+	 *         les que l'usuari té permís, o null si l'usuari no és delegat o
+	 *         aplicació actiu de l'entitat.
+	 */
+	private List<ProcedimentServei> findProcedimentServeisPermesos(
+			Long entitatId,
+			String procedimentCodi,
+			Authentication auth) {
 		// Valida si l'usuari és delegat o aplicació i si està actiu per l'entitat.
 		EntitatUsuari entitatUsuari = entitatUsuariRepository.findByEntitatIdAndUsuariCodi(
 				entitatId,
 				auth.getName());
-		if (entitatUsuari != null && (entitatUsuari.isDelegat() || entitatUsuari.isAplicacio()) && entitatUsuari.isActiu()) {
-			List<ProcedimentServei> pss = procedimentServeiRepository.findActiusByEntitatId(entitatId);
-			// Si hi ha un procedimentCodi es filtren els ProcedimentServei
-			// amb aquest codi de procediment
-			if (procedimentCodi != null) {
-				Iterator<ProcedimentServei> it = pss.iterator();
-				while (it.hasNext()) {
-					ProcedimentServei ps = it.next();
-					if (!ps.getProcediment().getCodi().equals(procedimentCodi))
-						it.remove();
-				}
-			}
-			// Filtra les combinacions Procediment-Servei a les quals 
-			// l'usuari te permisos per accedir.
-			PermisosHelper.filterGrantedAll(
-					pss,
-					new ObjectIdentifierExtractor<ProcedimentServei>() {
-						public Long getObjectIdentifier(ProcedimentServei object) {
-							return object.getId();
-						}
-					},
-					ProcedimentServei.class,
-					new Permission[] {BasePermission.READ},
-					aclService,
-					auth);
-			// Obté tots els serveis permesos evitant duplicats.
-			List<EntitatServei> serveisDisponiblesEntitat = entitatServeiRepository.findByEntitatId(entitatId);
-			Set<String> serveis = new HashSet<String>();
-			for (ProcedimentServei ps: pss) {
-				for (EntitatServei entitatServei: serveisDisponiblesEntitat) {
-					if (entitatServei.getServei().equals(ps.getServei())) {
-						serveis.add(ps.getServei());
-						break;
-					}
-				}
-			}
-			// Dels serveis resultants es filtren els serveis als quals
-			// l'usuari te accés segons el rol configurat al ServeiConfig.
-			List<ServeiConfig> serveiConfigs = new ArrayList<ServeiConfig>();
-			for (String servei: serveis) {
-				ServeiConfig serveiConfig = serveiConfigRepository.findByServei(servei);
-				if (serveiConfig != null && serveiConfig.isActiu())
-					serveiConfigs.add(serveiConfig);
-			}
-			PermisosHelper.filterGrantedAll(
-					serveiConfigs,
-					new ObjectIdentifierExtractor<ServeiConfig>() {
-						public Long getObjectIdentifier(ServeiConfig object) {
-							return object.getId();
-						}
-					},
-					ServeiConfig.class,
-					new Permission[] {BasePermission.READ},
-					aclService,
-					auth);
-			// Omple la resposta amb els serveis resultants.
-			List<String> resposta = new ArrayList<String>();
-			for (ServeiConfig serveiConfig: serveiConfigs) {
-				resposta.add(serveiConfig.getServei());
-			}
-			// Afegeix els serveis que no tenen restringit l'accés
-			// per Rol al ServeiConfig
-			for (String servei: serveis) {
-				ServeiConfig serveiConfig = serveiConfigRepository.findByServei(servei);
-				if ((serveiConfig == null || serveiConfig.getRoleName() == null || serveiConfig.getRoleName().isEmpty())) {
-					boolean serveiActive = true;
-					if (serveiConfig != null && !serveiConfig.isActiu()) {
-						serveiActive = false;
-					}
-					if (serveiActive) {
-						resposta.add(servei);
-					}
-				}
-					
-			}
-			return resposta;
-		} else {
-			return new ArrayList<String>();
+		if (entitatUsuari == null || !(entitatUsuari.isDelegat() || entitatUsuari.isAplicacio()) || !entitatUsuari.isActiu()) {
+			return null;
 		}
+		List<ProcedimentServei> pss = procedimentServeiRepository.findActiusByEntitatId(entitatId);
+		// Si hi ha un procedimentCodi es filtren els ProcedimentServei
+		// amb aquest codi de procediment
+		if (procedimentCodi != null) {
+			Iterator<ProcedimentServei> it = pss.iterator();
+			while (it.hasNext()) {
+				ProcedimentServei ps = it.next();
+				if (!ps.getProcediment().getCodi().equals(procedimentCodi))
+					it.remove();
+			}
+		}
+		// Filtra les combinacions Procediment-Servei a les quals
+		// l'usuari te permisos per accedir.
+		PermisosHelper.filterGrantedAll(
+				pss,
+				new ObjectIdentifierExtractor<ProcedimentServei>() {
+					public Long getObjectIdentifier(ProcedimentServei object) {
+						return object.getId();
+					}
+				},
+				ProcedimentServei.class,
+				new Permission[] {BasePermission.READ},
+				aclService,
+				auth);
+		return pss;
+	}
+
+	/**
+	 * @return els codis dels serveis de les combinacions procediment-servei
+	 *         indicades que estan disponibles per a l'entitat, actius i als que
+	 *         l'usuari té accés segons el rol configurat al ServeiConfig.
+	 */
+	private List<String> filtrarServeisPermesos(
+			Long entitatId,
+			List<ProcedimentServei> pss,
+			Authentication auth) {
+		// Obté tots els serveis permesos evitant duplicats.
+		List<EntitatServei> serveisDisponiblesEntitat = entitatServeiRepository.findByEntitatId(entitatId);
+		Set<String> serveis = new HashSet<String>();
+		for (ProcedimentServei ps: pss) {
+			for (EntitatServei entitatServei: serveisDisponiblesEntitat) {
+				if (entitatServei.getServei().equals(ps.getServei())) {
+					serveis.add(ps.getServei());
+					break;
+				}
+			}
+		}
+		// Dels serveis resultants es filtren els serveis als quals
+		// l'usuari te accés segons el rol configurat al ServeiConfig.
+		List<ServeiConfig> serveiConfigs = new ArrayList<ServeiConfig>();
+		for (String servei: serveis) {
+			ServeiConfig serveiConfig = serveiConfigRepository.findByServei(servei);
+			if (serveiConfig != null && serveiConfig.isActiu())
+				serveiConfigs.add(serveiConfig);
+		}
+		PermisosHelper.filterGrantedAll(
+				serveiConfigs,
+				new ObjectIdentifierExtractor<ServeiConfig>() {
+					public Long getObjectIdentifier(ServeiConfig object) {
+						return object.getId();
+					}
+				},
+				ServeiConfig.class,
+				new Permission[] {BasePermission.READ},
+				aclService,
+				auth);
+		// Omple la resposta amb els serveis resultants.
+		List<String> resposta = new ArrayList<String>();
+		for (ServeiConfig serveiConfig: serveiConfigs) {
+			resposta.add(serveiConfig.getServei());
+		}
+		// Afegeix els serveis que no tenen restringit l'accés
+		// per Rol al ServeiConfig
+		for (String servei: serveis) {
+			ServeiConfig serveiConfig = serveiConfigRepository.findByServei(servei);
+			if ((serveiConfig == null || serveiConfig.getRoleName() == null || serveiConfig.getRoleName().isEmpty())) {
+				boolean serveiActive = true;
+				if (serveiConfig != null && !serveiConfig.isActiu()) {
+					serveiActive = false;
+				}
+				if (serveiActive) {
+					resposta.add(servei);
+				}
+			}
+				
+		}
+		return resposta;
 	}
 
 }

@@ -134,7 +134,7 @@ services:
       # e2e/BUGS_APLICACIO.md.
       - es.caib.pinbal.plugin.firmaservidor.class=es.caib.pinbal.plugin.firmaservidor.FirmaServidorPluginMock
       # Arxiu digital (JustificantHelper.desarJustificantArxiu, cridat després
-      # de firmar el justificant quan aplicacioGuardaJustificantArxiu=true):
+      # de firmar el justificant quan justificantGestionatPerAplicacio=true):
       # sense cap classe configurada aquí, PluginHelper.getArxiuPlugin()
       # llança SistemaExternException ("No està configurada la classe...").
       # La implementació real (ArxiuPluginCaib, a pinbal-plugin) truca el

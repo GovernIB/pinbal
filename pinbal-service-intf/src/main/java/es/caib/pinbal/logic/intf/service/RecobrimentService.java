@@ -11,11 +11,13 @@ import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecificaBasic;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
+import es.caib.pinbal.client.recobriment.v2.GrupDadesEspecifiques;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
+import es.caib.pinbal.client.recobriment.v2.Regla;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.logic.intf.service.exception.ConsultaNotFoundException;
@@ -105,7 +107,7 @@ public interface RecobrimentService {
 	 *            id de la petició SCSP enviada.
 	 * @param idSolicitud
 	 *            id de la sol·licitud dins la petició SCSP.
-	 * @return el CSV del justificant.
+	 * @return el CSV del justificant, o null si el justificant no està desat a l'arxiu.
 	 * @throws RecobrimentScspException
 	 *            Si hi s'han produit excepcions SCSP al fer la petició.
 	 */
@@ -119,7 +121,7 @@ public interface RecobrimentService {
 	 *            id de la petició SCSP enviada.
 	 * @param idSolicitud
 	 *            id de la sol·licitud dins la petició SCSP.
-	 * @return l'UUID del justificant.
+	 * @return l'UUID del justificant a l'arxiu, o null si el justificant no hi està desat.
 	 * @throws RecobrimentScspException
 	 *            Si hi s'han produit excepcions SCSP al fer la petició.
 	 */
@@ -160,7 +162,9 @@ public interface RecobrimentService {
 	 * @param ambPermisos si s'ha d'informar, per a cada servei, dels tipus de
 	 *        document admesos i de si l'usuari autenticat hi té permís dins
 	 *        l'entitat
-	 * @return lista de tots els elements de tipus Servei d’una entitat
+	 * @return lista de tots els elements de tipus Servei d’una entitat. Per a
+	 *         cada servei s'informen sempre els codis SIA dels procediments amb
+	 *         els que l'usuari autenticat el pot consultar.
 	 * @throws EntitatNotFoundException
 	 */
 	@PreAuthorize("hasRole('PBL_WS')")
@@ -183,6 +187,20 @@ public interface RecobrimentService {
      */
 	@PreAuthorize("hasRole('PBL_WS')")
 	List<DadaEspecifica> getDadesEspecifiquesByServei(String serveiCodi) throws ServeiNotFoundException;
+
+	/**
+	 * @param serveiCodi codi del servei
+	 * @return arbre de grups i subgrups de les dades específiques del servei, ordenats pel seu ordre
+	 */
+	@PreAuthorize("hasRole('PBL_WS')")
+	List<GrupDadesEspecifiques> getGrupsByServei(String serveiCodi) throws ServeiNotFoundException;
+
+	/**
+	 * @param serveiCodi codi del servei
+	 * @return regles del formulari de dades específiques del servei, ordenades pel seu ordre
+	 */
+	@PreAuthorize("hasRole('PBL_WS')")
+	List<Regla> getReglesByServei(String serveiCodi) throws ServeiNotFoundException;
 
     /**
      * @param serveiCodi codi del servei
@@ -292,7 +310,7 @@ public interface RecobrimentService {
 	 *            id de la petició SCSP enviada.
 	 * @param idSolicitud
 	 *            id de la sol·licitud dins la petició SCSP.
-	 * @return el CSV del justificant.
+	 * @return el CSV del justificant, o null si el justificant no està desat a l'arxiu.
 	 * @throws RecobrimentScspException
 	 *            Si hi s'han produit excepcions SCSP al fer la petició.
 	 */
@@ -307,7 +325,7 @@ public interface RecobrimentService {
 	 *            id de la petició SCSP enviada.
 	 * @param idSolicitud
 	 *            id de la sol·licitud dins la petició SCSP.
-	 * @return l'UUID del justificant.
+	 * @return l'UUID del justificant a l'arxiu, o null si el justificant no hi està desat.
 	 * @throws RecobrimentScspException
 	 *            Si hi s'han produit excepcions SCSP al fer la petició.
 	 */

@@ -76,9 +76,16 @@ import java.util.List;
 public class RecobrimentHelper implements ApplicationContextAware, MessageSourceAware {
 
 	public static final String ERROR_CODE_SCSP_VALIDATION = "0226";
-	// Les peticions de recobriment provenen d'aplicacions de tramitació, que
-	// gestionen el justificant a l'arxiu. PINBAL no el desa a l'arxiu;
-	private static final boolean APLICACIO_GUARDA_JUSTIFICANT_ARXIU = true;
+	/**
+	 * Les peticions de recobriment (REST i SOAP) provenen d'aplicacions de
+	 * tramitació, que desen el justificant dins el seu propi expedient. Per
+	 * evitar duplicar-lo (#357), PINBAL no el desa a l'arxiu (sèrie de PINBAL):
+	 * es genera i es firma sota demanda cada vegada que es consulta.
+	 * <p>
+	 * Les consultes fetes des del frontal web no passen per aquí i continuen
+	 * desant el justificant a l'arxiu.
+	 */
+	public static final boolean JUSTIFICANT_GESTIONAT_PER_APLICACIO = true;
 
 	private final ConsultaRepository consultaRepository;
 	private final HistoricConsultaRepository historicConsultaRepository;
@@ -90,16 +97,12 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
 
-	public Respuesta peticionSincrona(Peticion peticion) throws ScspException {
-		return peticionSincrona(peticion, APLICACIO_GUARDA_JUSTIFICANT_ARXIU);
-	}
-
-	public Respuesta peticionSincrona(Peticion peticion, boolean aplicacioGuardaJustificantArxiu) throws ScspException {
+	public Respuesta peticionSincrona(Peticion peticion, boolean justificantGestionatPerAplicacio) throws ScspException {
 		String codigoCertificado = peticion.getAtributos().getCodigoCertificado();
 		log.debug("Processant petició síncrona al servei web del recobriment (codCertificado=" + codigoCertificado + ")");
         long startTime = System.currentTimeMillis();
 		List<RecobrimentSolicitudDto> solicituds = validarIObtenirSolicituds(peticion, 1);
-		aplicarGestioJustificantArxiu(solicituds, aplicacioGuardaJustificantArxiu);
+		marcarJustificantGestionatPerAplicacio(solicituds, justificantGestionatPerAplicacio);
 		try {
 			ConsultaDto consulta = novaConsultaRecobriment(
 					codigoCertificado,
@@ -155,17 +158,12 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 	}
 
 	public ConfirmacionPeticion peticionAsincrona(
-			Peticion peticion) throws ScspException {
-		return peticionAsincrona(peticion, APLICACIO_GUARDA_JUSTIFICANT_ARXIU);
-	}
-
-	public ConfirmacionPeticion peticionAsincrona(
 			Peticion peticion,
-			boolean aplicacioGuardaJustificantArxiu) throws ScspException {
+			boolean justificantGestionatPerAplicacio) throws ScspException {
 		log.debug("Processant petició asíncrona al servei web del recobriment");
         long startTime = System.currentTimeMillis();
 		List<RecobrimentSolicitudDto> solicituds = validarIObtenirSolicituds(peticion, -1);
-		aplicarGestioJustificantArxiu(solicituds, aplicacioGuardaJustificantArxiu);
+		marcarJustificantGestionatPerAplicacio(solicituds, justificantGestionatPerAplicacio);
 		String codigoCertificado = peticion.getAtributos().getCodigoCertificado();
 		try {
 			ConsultaDto consulta = consultaService.novaConsultaRecobrimentMultiple(
@@ -619,11 +617,11 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 		return configHelper.getConfigAsBoolean("es.caib.pinbal.recobriment.datos.especificos.incloure.ns", false);
 	}
 
-	private void aplicarGestioJustificantArxiu(
+	private void marcarJustificantGestionatPerAplicacio(
 			List<RecobrimentSolicitudDto> solicituds,
-			boolean aplicacioGuardaJustificantArxiu) {
+			boolean justificantGestionatPerAplicacio) {
 		for (RecobrimentSolicitudDto solicitud : solicituds) {
-			solicitud.setAplicacioGuardaJustificantArxiu(aplicacioGuardaJustificantArxiu);
+			solicitud.setJustificantGestionatPerAplicacio(justificantGestionatPerAplicacio);
 		}
 	}
 }

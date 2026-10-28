@@ -4,12 +4,15 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.caib.pinbal</groupId>
 	<artifactId>pinbal-client</artifactId>
-	<version>2.0.1</version>
+	<!-- Versió del client, independent de la versió de l'aplicació PINBAL -->
+	<version>2.0.2</version>
 
 	<properties>
 		<resteasy.version>4.7.9.Final</resteasy.version>
 		<jackson.version>2.14.1</jackson.version>
 		<slf4j.version>1.7.36</slf4j.version>
+		<!-- Versió de l'aplicació PINBAL de la que s'agafen els DTOs compartits amb el servidor -->
+		<pinbal-client-intf.version>2.0.1</pinbal-client-intf.version>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 	</properties>
@@ -69,7 +72,7 @@
 		<dependency>
 			<groupId>es.caib.pinbal</groupId>
 			<artifactId>pinbal-client-intf</artifactId>
-			<version>${project.version}</version>
+			<version>${pinbal-client-intf.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -116,9 +119,15 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12.4</version>
+				<version>3.5.5</version>
 				<configuration>
-					<skip>true</skip>
+					<!--
+						Només s'executen els tests unitaris. La resta de tests necessiten una instància de PINBAL
+						en marxa i s'han d'executar explícitament (-Dtest=...).
+					-->
+					<includes>
+						<include>**/*UnitTest.java</include>
+					</includes>
 				</configuration>
 			</plugin>
 			<plugin>

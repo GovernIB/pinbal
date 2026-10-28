@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
+import es.caib.pinbal.client.recobriment.v2.GrupDadesEspecifiques;
+import es.caib.pinbal.client.recobriment.v2.Regla;
 import es.caib.pinbal.client.recobriment.v2.DadesComunesResposta;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
@@ -127,7 +129,7 @@ public class RecobrimentRestV2ControllerTest {
     @Test
     public void testGetProcediments_ReturnsOkWithProcediments() throws Exception {
         List<ProcedimentBasic> procediments = Arrays.asList(
-                ProcedimentBasic.builder().codi("PROC_001").nom("Procediment 1").build(),
+                ProcedimentBasic.builder().codi("PROC_001").nom("Procediment 1").codiSia("123456").build(),
                 ProcedimentBasic.builder().codi("PROC_002").nom("Procediment 2").build()
         );
 
@@ -138,6 +140,7 @@ public class RecobrimentRestV2ControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].codi").value("PROC_001"))
                 .andExpect(jsonPath("$.[0].nom").value("Procediment 1"))
+                .andExpect(jsonPath("$.[0].codiSia").value("123456"))
                 .andExpect(jsonPath("$.[1].codi").value("PROC_002"))
                 .andExpect(jsonPath("$.[1].nom").value("Procediment 2"));
     }
@@ -390,7 +393,8 @@ public class RecobrimentRestV2ControllerTest {
     @Test
     public void testGetDadesEspecifiques() throws Exception {
         List<DadaEspecifica> dadesEspecifiques = Arrays.asList(
-                DadaEspecifica.builder().codi("DADA_001").etiqueta("Dada 1").build(),
+                DadaEspecifica.builder().codi("DADA_001").etiqueta("Dada 1").grup("Grup 1")
+                        .enumTipus(DadaEspecifica.EnumTipus.PAIS).visible(true).ordre(3).build(),
                 DadaEspecifica.builder().codi("DADA_002").etiqueta("Dada 2").build()
         );
 
@@ -401,6 +405,10 @@ public class RecobrimentRestV2ControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].codi").value("DADA_001"))
                 .andExpect(jsonPath("$.[0].etiqueta").value("Dada 1"))
+                .andExpect(jsonPath("$.[0].grup").value("Grup 1"))
+                .andExpect(jsonPath("$.[0].enumTipus").value("PAIS"))
+                .andExpect(jsonPath("$.[0].visible").value(true))
+                .andExpect(jsonPath("$.[0].ordre").value(3))
                 .andExpect(jsonPath("$.[1].codi").value("DADA_002"))
                 .andExpect(jsonPath("$.[1].etiqueta").value("Dada 2"));
     }
@@ -437,6 +445,128 @@ public class RecobrimentRestV2ControllerTest {
         when(recobrimentService.getDadesEspecifiquesByServei("SERVEI001")).thenThrow(new ServiceExecutionException("Error occurred"));
 
         mockMvc.perform(get("/recobriment/v2/serveis/SERVEI001/dadesEspecifiques")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+    }
+
+    // TESTS getGrups
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void testGetGrups_ReturnsOkWithGrups() throws Exception {
+        GrupDadesEspecifiques subgrup = GrupDadesEspecifiques.builder().codi("Grup 1/Subgrup").nom("Subgrup").ordre(1).build();
+        List<GrupDadesEspecifiques> grups = Arrays.asList(
+                GrupDadesEspecifiques.builder().codi("Grup 1").nom("Grup 1").ordre(1).ajuda("Ajuda")
+                        .subgrups(Arrays.asList(subgrup)).build());
+
+        when(recobrimentService.getGrupsByServei("SERVEI001")).thenReturn(grups);
+
+        mockMvc.perform(get("/recobriment/v2/serveis/SERVEI001/grups")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].codi").value("Grup 1"))
+                .andExpect(jsonPath("$.[0].ordre").value(1))
+                .andExpect(jsonPath("$.[0].ajuda").value("Ajuda"))
+                .andExpect(jsonPath("$.[0].subgrups[0].codi").value("Grup 1/Subgrup"))
+                .andExpect(jsonPath("$.[0].subgrups[0].nom").value("Subgrup"));
+    }
+
+    @Test
+    public void testGetGrups_ReturnsNoContentWhenEmpty() throws Exception {
+        when(recobrimentService.getGrupsByServei("SERVEI001")).thenReturn(new ArrayList<GrupDadesEspecifiques>());
+
+        mockMvc.perform(get("/recobriment/v2/serveis/SERVEI001/grups")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testGetGrups_ReturnsNotFoundWhenServeiNotFound() throws Exception {
+        when(recobrimentService.getGrupsByServei("SERVEI001")).thenThrow(new ServeiNotFoundException("Servei not found"));
+
+        mockMvc.perform(get("/recobriment/v2/serveis/SERVEI001/grups")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetGrups_ReturnsAccessDenied() throws Exception {
+        when(recobrimentService.getGrupsByServei("SERVEI001")).thenThrow(new AccessDenegatException(Arrays.asList("PBL_WS")));
+
+        mockMvc.perform(get("/recobriment/v2/serveis/SERVEI001/grups")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testGetGrups_ReturnsInternalServerErrorWhenServiceException() throws Exception {
+        when(recobrimentService.getGrupsByServei("SERVEI001")).thenThrow(new ServiceExecutionException("Error occurred"));
+
+        mockMvc.perform(get("/recobriment/v2/serveis/SERVEI001/grups")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+    }
+
+    // TESTS getRegles
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void testGetRegles_ReturnsOkWithRegles() throws Exception {
+        List<Regla> regles = Arrays.asList(
+                Regla.builder()
+                        .nom("Regla 1")
+                        .ordre(1)
+                        .modificat(Regla.ReglaModificat.ALGUN_CAMP)
+                        .modificatValors(Arrays.asList("path/campA"))
+                        .accio(Regla.ReglaAccio.OBLIGATORI)
+                        .afectatValors(Arrays.asList("path/campB"))
+                        .build());
+
+        when(recobrimentService.getReglesByServei("SERVEI001")).thenReturn(regles);
+
+        mockMvc.perform(get("/recobriment/v2/serveis/SERVEI001/regles")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].nom").value("Regla 1"))
+                .andExpect(jsonPath("$.[0].ordre").value(1))
+                .andExpect(jsonPath("$.[0].modificat").value("ALGUN_CAMP"))
+                .andExpect(jsonPath("$.[0].modificatValors[0]").value("path/campA"))
+                .andExpect(jsonPath("$.[0].accio").value("OBLIGATORI"))
+                .andExpect(jsonPath("$.[0].afectatValors[0]").value("path/campB"));
+    }
+
+    @Test
+    public void testGetRegles_ReturnsNoContentWhenEmpty() throws Exception {
+        when(recobrimentService.getReglesByServei("SERVEI001")).thenReturn(new ArrayList<Regla>());
+
+        mockMvc.perform(get("/recobriment/v2/serveis/SERVEI001/regles")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testGetRegles_ReturnsNotFoundWhenServeiNotFound() throws Exception {
+        when(recobrimentService.getReglesByServei("SERVEI001")).thenThrow(new ServeiNotFoundException("Servei not found"));
+
+        mockMvc.perform(get("/recobriment/v2/serveis/SERVEI001/regles")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetRegles_ReturnsAccessDenied() throws Exception {
+        when(recobrimentService.getReglesByServei("SERVEI001")).thenThrow(new AccessDenegatException(Arrays.asList("PBL_WS")));
+
+        mockMvc.perform(get("/recobriment/v2/serveis/SERVEI001/regles")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testGetRegles_ReturnsInternalServerErrorWhenServiceException() throws Exception {
+        when(recobrimentService.getReglesByServei("SERVEI001")).thenThrow(new ServiceExecutionException("Error occurred"));
+
+        mockMvc.perform(get("/recobriment/v2/serveis/SERVEI001/regles")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
     }

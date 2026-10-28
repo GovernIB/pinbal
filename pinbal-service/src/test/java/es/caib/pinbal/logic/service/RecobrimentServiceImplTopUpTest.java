@@ -312,7 +312,7 @@ public class RecobrimentServiceImplTopUpTest {
         transmisionesOut.getTransmisionDatos().add(t2);
         respuesta.setTransmisiones(transmisionesOut);
 
-        when(recobrimentHelper.peticionSincrona(any(Peticion.class), eq(false))).thenReturn(respuesta);
+        when(recobrimentHelper.peticionSincrona(any(Peticion.class), eq(true))).thenReturn(respuesta);
 
         ScspRespuesta result = recobrimentServiceImpl.peticionSincrona(peticio);
 
@@ -335,7 +335,7 @@ public class RecobrimentServiceImplTopUpTest {
         Assertions.assertNull(result.getTransmisiones().get(1).getDatosGenericos().getSolicitante().getConsentimiento());
         Assertions.assertNull(result.getTransmisiones().get(1).getDatosEspecificos());
 
-        verify(recobrimentHelper, times(1)).peticionSincrona(any(Peticion.class), eq(false));
+        verify(recobrimentHelper, times(1)).peticionSincrona(any(Peticion.class), eq(true));
     }
 
     @Test
@@ -376,7 +376,7 @@ public class RecobrimentServiceImplTopUpTest {
 
     @Test
     public void testOldPeticionSincrona_NullPeticion_ReturnsNull() throws Exception {
-        when(recobrimentHelper.peticionSincrona(nullable(Peticion.class), eq(false))).thenReturn(null);
+        when(recobrimentHelper.peticionSincrona(nullable(Peticion.class), eq(true))).thenReturn(null);
 
         ScspRespuesta result = recobrimentServiceImpl.peticionSincrona((ScspPeticion) null);
 
@@ -419,7 +419,7 @@ public class RecobrimentServiceImplTopUpTest {
         atrOut.setEstado(estadoOut);
         confirmacio.setAtributos(atrOut);
 
-        when(recobrimentHelper.peticionAsincrona(any(Peticion.class), eq(false))).thenReturn(confirmacio);
+        when(recobrimentHelper.peticionAsincrona(any(Peticion.class), eq(true))).thenReturn(confirmacio);
 
         ScspConfirmacionPeticion result = recobrimentServiceImpl.peticionAsincrona(peticio);
 
@@ -430,7 +430,7 @@ public class RecobrimentServiceImplTopUpTest {
         Assertions.assertEquals("00", result.getAtributos().getEstado().getCodigoEstado());
         Assertions.assertEquals("SECASYNC", result.getAtributos().getEstado().getLiteralErrorSec());
 
-        verify(recobrimentHelper, times(1)).peticionAsincrona(any(Peticion.class), eq(false));
+        verify(recobrimentHelper, times(1)).peticionAsincrona(any(Peticion.class), eq(true));
     }
 
     @Test

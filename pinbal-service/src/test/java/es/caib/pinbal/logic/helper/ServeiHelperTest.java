@@ -3,7 +3,10 @@ package es.caib.pinbal.logic.helper;
 import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.persist.entity.Entitat;
 import es.caib.pinbal.persist.entity.EntitatUsuari;
+import es.caib.pinbal.persist.entity.EntitatServei;
 import es.caib.pinbal.persist.entity.Procediment;
+import es.caib.pinbal.persist.entity.ProcedimentServei;
+import es.caib.pinbal.persist.entity.ServeiConfig;
 import es.caib.pinbal.persist.repository.EntitatServeiRepository;
 import es.caib.pinbal.persist.repository.EntitatUsuariRepository;
 import es.caib.pinbal.persist.repository.ProcedimentServeiRepository;
@@ -17,13 +20,20 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.springframework.security.acls.model.Acl;
 import org.springframework.security.acls.model.MutableAclService;
+import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -132,5 +142,74 @@ public class ServeiHelperTest {
         boolean result = serveiHelper.isServeiPermesPerUsuari(entitat, procediment, "SV001");
 
         assertFalse(result);
+    }
+
+    @Test
+    public void findCodisSiaPermesosPerServei_usuariNoDelegat_retornaMapaBuit() {
+        when(entitatUsuariRepository.findByEntitatIdAndUsuariCodi(1L, "usuari1")).thenReturn(null);
+
+        Map<String, List<String>> result = serveiHelper.findCodisSiaPermesosPerServei(1L, auth);
+
+        assertTrue(result.isEmpty());
+        verify(procedimentServeiRepository, never()).findActiusByEntitatId(anyLong());
+    }
+
+    @Test
+    public void findCodisSiaPermesosPerServei_retornaCodisSiaDelsProcedimentsPermesos() {
+        EntitatUsuari eu = mock(EntitatUsuari.class);
+        when(eu.isAplicacio()).thenReturn(true);
+        when(eu.isActiu()).thenReturn(true);
+        when(entitatUsuariRepository.findByEntitatIdAndUsuariCodi(1L, "usuari1")).thenReturn(eu);
+        List<ProcedimentServei> pss = new ArrayList<>(Arrays.asList(
+                procedimentServei(1L, "SV1", "200002"),
+                procedimentServei(2L, "SV1", "100001"),
+                procedimentServei(3L, "SV1", null),          // procediment sense codi SIA
+                procedimentServei(4L, "SV1", " "),           // procediment amb codi SIA buit
+                procedimentServei(5L, "SV1", "100001"),      // codi SIA repetit (dos procediments)
+                procedimentServei(6L, "SV2", "300003"),      // sense permís sobre el procediment-servei
+                procedimentServei(7L, "SV3", "400004"))); // servei no disponible per a l'entitat
+        when(procedimentServeiRepository.findActiusByEntitatId(1L)).thenReturn(pss);
+        List<EntitatServei> serveisEntitat = Arrays.asList(entitatServei("SV1"), entitatServei("SV2"));
+        when(entitatServeiRepository.findByEntitatId(1L)).thenReturn(serveisEntitat);
+        ServeiConfig serveiConfig = mock(ServeiConfig.class);
+        when(serveiConfig.getId()).thenReturn(10L);
+        when(serveiConfig.getServei()).thenReturn("SV1");
+        when(serveiConfig.isActiu()).thenReturn(true);
+        when(serveiConfigRepository.findByServei("SV1")).thenReturn(serveiConfig);
+        permetreProcedimentServeis(1L, 2L, 3L, 4L, 5L, 7L);
+
+        Map<String, List<String>> result = serveiHelper.findCodisSiaPermesosPerServei(1L, auth);
+
+        assertEquals(1, result.size());
+        assertEquals(Arrays.asList("100001", "200002"), result.get("SV1"));
+    }
+
+    private static ProcedimentServei procedimentServei(Long id, String servei, String codiSia) {
+        Procediment procediment = mock(Procediment.class);
+        when(procediment.getCodiSia()).thenReturn(codiSia);
+        ProcedimentServei ps = mock(ProcedimentServei.class);
+        when(ps.getId()).thenReturn(id);
+        when(ps.getServei()).thenReturn(servei);
+        when(ps.getProcediment()).thenReturn(procediment);
+        return ps;
+    }
+
+    private static EntitatServei entitatServei(String servei) {
+        EntitatServei entitatServei = mock(EntitatServei.class);
+        when(entitatServei.getServei()).thenReturn(servei);
+        return entitatServei;
+    }
+
+    /** Dona permís de lectura sobre els procediment-servei indicats; la resta queden sense permís. */
+    private void permetreProcedimentServeis(Long... ids) {
+        Set<Long> permesos = new HashSet<>(Arrays.asList(ids));
+        when(aclService.readAclById(any(ObjectIdentity.class))).thenAnswer(invocation -> {
+            ObjectIdentity oid = invocation.getArgument(0);
+            boolean granted = !ProcedimentServei.class.getName().equals(oid.getType())
+                    || permesos.contains(((Number) oid.getIdentifier()).longValue());
+            Acl acl = mock(Acl.class);
+            when(acl.isGranted(anyList(), anyList(), anyBoolean())).thenReturn(granted);
+            return acl;
+        });
     }
 }

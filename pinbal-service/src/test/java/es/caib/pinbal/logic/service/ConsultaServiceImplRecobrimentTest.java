@@ -434,7 +434,7 @@ public class ConsultaServiceImplRecobrimentTest {
 		Procediment procediment = crearProcediment(entitat, "PROC1");
 		ProcedimentServei ps = crearProcedimentServeiActiu(procediment, "SV001");
 		RecobrimentSolicitudDto solicitud = crearSolicitud("Q0700001A", "PROC1");
-		solicitud.setAplicacioGuardaJustificantArxiu(true);
+		solicitud.setJustificantGestionatPerAplicacio(true);
 		when(entitatRepository.findByCif("Q0700001A")).thenReturn(entitat);
 		when(procedimentRepository.findByEntitatAndCodi(entitat, "PROC1")).thenReturn(procediment);
 		when(procedimentServeiRepository.findByProcedimentIdAndServei(procediment.getId(), "SV001")).thenReturn(ps);

@@ -12,11 +12,13 @@ import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecificaBasic;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
 import es.caib.pinbal.client.recobriment.v2.EstatEnum;
+import es.caib.pinbal.client.recobriment.v2.GrupDadesEspecifiques;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
+import es.caib.pinbal.client.recobriment.v2.Regla;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
 import es.caib.pinbal.logic.intf.dto.apiresponse.ServiceExecutionException;
@@ -216,6 +218,54 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
 			log.error("Error obtenint les dades especifiques del servei " + serveiCodi, ex);
+			throw new ServiceExecutionException(ex.getMessage(), ex);
+		}
+	}
+
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
+	@RequestMapping(value = "/serveis/{serveiCodi}/grups", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<GrupDadesEspecifiques>> getGrups(@PathVariable("serveiCodi") String serveiCodi) {
+		try {
+			List<GrupDadesEspecifiques> grups = recobrimentService.getGrupsByServei(serveiCodi);
+
+			if (grups == null || grups.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<>(grups, HttpStatus.OK);
+		} catch (ServeiNotFoundException e) {
+			throw new ResourceNotFoundException(e.getDefaultMessage(), e);
+		} catch (AccessDeniedException | AccessDenegatException ade) {
+			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+		} catch (Exception ex) {
+			log.error("Error obtenint els grups del servei " + serveiCodi, ex);
+			throw new ServiceExecutionException(ex.getMessage(), ex);
+		}
+	}
+
+	/**
+	 * Si es modifica aquest endpoint, actualitzar també la documentació OpenAPI
+	 * definida a la interfície RecobrimentRestV2Intf.
+	 */
+	@Override
+	@RequestMapping(value = "/serveis/{serveiCodi}/regles", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<Regla>> getRegles(@PathVariable("serveiCodi") String serveiCodi) {
+		try {
+			List<Regla> regles = recobrimentService.getReglesByServei(serveiCodi);
+
+			if (regles == null || regles.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+			return new ResponseEntity<>(regles, HttpStatus.OK);
+		} catch (ServeiNotFoundException e) {
+			throw new ResourceNotFoundException(e.getDefaultMessage(), e);
+		} catch (AccessDeniedException | AccessDenegatException ade) {
+			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+		} catch (Exception ex) {
+			log.error("Error obtenint les regles del servei " + serveiCodi, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
 	}

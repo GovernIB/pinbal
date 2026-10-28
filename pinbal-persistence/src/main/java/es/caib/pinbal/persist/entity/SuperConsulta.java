@@ -84,9 +84,10 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
     @Column(name = "arxiu_expedient_tancat")
     protected boolean arxiuExpedientTancat = false;
     @Column(name = "app_guarda_just_arx", nullable = false)
-    // Indica si és l'aplicació que ha fet la petició a través de recobriment
-    // qui s'encarrega de guardar el justificant a l'arxiu
-    protected boolean aplicacioGuardaJustificantArxiu = false;
+    // Indica que el justificant el gestiona l'aplicació que ha fet la petició
+    // a través de recobriment: PINBAL no el desa a l'arxiu, sinó que el genera
+    // i el firma sota demanda. Si és false, PINBAL desa el justificant a l'arxiu.
+    protected boolean justificantGestionatPerAplicacio = false;
 
     @Column(name = "der")
     @Temporal(TemporalType.TIMESTAMP)
@@ -201,8 +202,8 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
         this.arxiuDocumentUuid = arxiuDocumentUuid;
     }
 
-    public void updateAplicacioGuardaJustificantArxiu(boolean aplicacioGuardaJustificantArxiu) {
-        this.aplicacioGuardaJustificantArxiu = aplicacioGuardaJustificantArxiu;
+    public void updateJustificantGestionatPerAplicacio(boolean justificantGestionatPerAplicacio) {
+        this.justificantGestionatPerAplicacio = justificantGestionatPerAplicacio;
     }
 
     public void updateArxiuExpedientUuid(String arxiuExpedientUuid) {
@@ -249,7 +250,7 @@ public abstract class SuperConsulta extends PinbalAuditable<Long> implements ICo
                 .append("arxiuExpedientUuid", arxiuExpedientUuid)
                 .append("arxiuDocumentUuid", arxiuDocumentUuid)
                 .append("arxiuExpedientTancat", arxiuExpedientTancat)
-                .append("aplicacioGuardaJustificantArxiu", aplicacioGuardaJustificantArxiu)
+                .append("justificantGestionatPerAplicacio", justificantGestionatPerAplicacio)
                 .append("dataEsperadaResposta", dataEsperadaResposta)
                 .append("procedimentServei.id", EntityToStringHelper.identificador(procedimentServei, ProcedimentServei::getId))
                 .append("procediment.id", EntityToStringHelper.identificador(procediment, Procediment::getId))

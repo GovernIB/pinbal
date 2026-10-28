@@ -39,7 +39,7 @@ public class RecobrimentSolicitudDto implements Serializable {
 	private String titularLlinatge2;
 	private String titularNomComplet;
 	private Element dadesEspecifiques;
-	private boolean aplicacioGuardaJustificantArxiu;
+	private boolean justificantGestionatPerAplicacio;
 
 	private static final long serialVersionUID = -139254994389509932L;
 

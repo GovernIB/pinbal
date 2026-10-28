@@ -15,4 +15,5 @@ public class ProcedimentBasic {
     private String nom;
     private boolean actiu;
     private String organGestorDir3;
+    private String codiSia;
 }

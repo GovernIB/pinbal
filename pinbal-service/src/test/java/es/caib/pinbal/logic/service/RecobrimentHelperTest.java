@@ -509,7 +509,7 @@ public class RecobrimentHelperTest {
         when(scspHelperMock.recuperarRespuestaScsp("PETICIO_OK")).thenReturn(respostaEsperada);
         ReflectionTestUtils.setField(recobrimentHelper, "scspHelper", scspHelperMock);
 
-        Respuesta resultat = recobrimentHelper.peticionSincrona(peticio);
+        Respuesta resultat = recobrimentHelper.peticionSincrona(peticio, RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO);
 
         assertEquals(respostaEsperada, resultat);
     }
@@ -524,7 +524,7 @@ public class RecobrimentHelperTest {
         consultaDto.setRespostaEstadoError("Error SCSP");
         when(consultaService.novaConsultaRecobriment(eq("COD_CER"), any())).thenReturn(consultaDto);
 
-        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionSincrona(peticio));
+        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionSincrona(peticio, RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO));
 
         assertEquals("0100", ex.getScspCode());
         assertEquals("Error SCSP", ex.getMessage());
@@ -539,7 +539,7 @@ public class RecobrimentHelperTest {
         consultaDto.setError("Error sense codi");
         when(consultaService.novaConsultaRecobriment(eq("COD_CER"), any())).thenReturn(consultaDto);
 
-        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionSincrona(peticio));
+        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionSincrona(peticio, RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO));
 
         assertEquals("0227", ex.getScspCode());
         assertEquals("Error sense codi", ex.getMessage());
@@ -563,7 +563,7 @@ public class RecobrimentHelperTest {
         consultaDto.setRespostaAtributs(atributsDto);
         when(consultaService.novaConsultaRecobrimentMultiple(eq("COD_CER"), any())).thenReturn(consultaDto);
 
-        ConfirmacionPeticion resultat = recobrimentHelper.peticionAsincrona(peticio);
+        ConfirmacionPeticion resultat = recobrimentHelper.peticionAsincrona(peticio, RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO);
 
         assertNotNull(resultat);
         assertEquals("COD_CER", resultat.getAtributos().getCodigoCertificado());
@@ -579,7 +579,7 @@ public class RecobrimentHelperTest {
         consultaDto.setRespostaEstadoError("Error SCSP multiple");
         when(consultaService.novaConsultaRecobrimentMultiple(eq("COD_CER"), any())).thenReturn(consultaDto);
 
-        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionAsincrona(peticio));
+        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionAsincrona(peticio, RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO));
 
         assertEquals("0200", ex.getScspCode());
         assertEquals("Error SCSP multiple", ex.getMessage());

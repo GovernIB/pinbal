@@ -25,11 +25,13 @@ import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecificaBasic;
 import es.caib.pinbal.client.recobriment.v2.DadaTipusEnum;
 import es.caib.pinbal.client.recobriment.v2.EstatEnum;
+import es.caib.pinbal.client.recobriment.v2.GrupDadesEspecifiques;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
+import es.caib.pinbal.client.recobriment.v2.Regla;
 import es.caib.pinbal.client.recobriment.v2.Validacio;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
@@ -44,6 +46,7 @@ import es.caib.pinbal.logic.intf.dto.IdiomaEnumDto;
 import es.caib.pinbal.logic.intf.dto.JustificantDto;
 import es.caib.pinbal.logic.intf.dto.NodeDto;
 import es.caib.pinbal.logic.intf.dto.ServeiCampDto;
+import es.caib.pinbal.logic.intf.dto.regles.ModificatEnum;
 import es.caib.pinbal.logic.intf.service.DadesExternesService;
 import es.caib.pinbal.logic.intf.service.RecobrimentService;
 import es.caib.pinbal.logic.intf.service.ServeiService;
@@ -63,13 +66,18 @@ import es.caib.pinbal.persist.entity.ServeiCamp;
 import es.caib.pinbal.persist.entity.ServeiCamp.ServeiCampTipus;
 import es.caib.pinbal.persist.entity.ServeiCampGrup;
 import es.caib.pinbal.persist.entity.ServeiConfig;
+import es.caib.pinbal.persist.entity.Servei;
+import es.caib.pinbal.persist.entity.ServeiRegla;
 import es.caib.pinbal.persist.entity.SuperConsulta;
 import es.caib.pinbal.persist.repository.ConsultaRepository;
 import es.caib.pinbal.persist.repository.EntitatRepository;
 import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
 import es.caib.pinbal.persist.repository.ProcedimentRepository;
+import es.caib.pinbal.persist.repository.ServeiCampGrupRepository;
 import es.caib.pinbal.persist.repository.ServeiCampRepository;
 import es.caib.pinbal.persist.repository.ServeiConfigRepository;
+import es.caib.pinbal.persist.repository.ServeiReglaRepository;
+import es.caib.pinbal.persist.repository.ServeiRepository;
 import es.caib.pinbal.plugin.dadescomuns.Municipi;
 import es.caib.pinbal.plugin.dadescomuns.Pais;
 import es.caib.pinbal.plugin.dadescomuns.Provincia;
@@ -145,15 +153,15 @@ import java.util.Set;
 @Service
 public class RecobrimentServiceImpl implements RecobrimentService, ApplicationContextAware, MessageSourceAware {
 
-    // Les peticions de recobriment provenen d'aplicacions de tramitacio.
-    private static final boolean APLICACIO_GUARDA_JUSTIFICANT_ARXIU = false;
-
     private final ConsultaRepository consultaRepository;
     private final EntitatRepository entitatRepository;
     private final HistoricConsultaRepository historicConsultaRepository;
     private final ProcedimentRepository procedimentRepository;
     private final ServeiCampRepository serveiCampRepository;
+    private final ServeiCampGrupRepository serveiCampGrupRepository;
     private final ServeiConfigRepository serveiConfigRepository;
+    private final ServeiReglaRepository serveiReglaRepository;
+    private final ServeiRepository serveiRepository;
 
     private final PluginHelper pluginHelper;
     private final RecobrimentHelper recobrimentHelper;
@@ -186,7 +194,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             return toScspRespuesta(
                     recobrimentHelper.peticionSincrona(
                             toPeticion(peticion, false),
-                            APLICACIO_GUARDA_JUSTIFICANT_ARXIU));
+                            RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO));
         } catch (ScspException ex) {
             if (RecobrimentHelper.ERROR_CODE_SCSP_VALIDATION.equals(ex.getScspCode())) {
                 throw new RecobrimentScspValidationException(
@@ -223,7 +231,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             return toScspConfirmacionPeticion(
                     recobrimentHelper.peticionAsincrona(
                             toPeticion(peticion, true),
-                            APLICACIO_GUARDA_JUSTIFICANT_ARXIU));
+                            RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO));
         } catch (ScspException ex) {
             throw new RecobrimentScspException(
                     ex.getMessage(),
@@ -680,9 +688,33 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         if (entitat == null)
             throw new EntitatNotFoundException();
 
-        return toServeisResposta(
+        List<ServeiBasic> serveis = toServeisResposta(
                 serveiHelper.findServeisClientPerEntitat(entitatCodi),
                 ambPermisos ? findServeisPermesos(entitat, null) : null);
+        emplenarProcedimentsCodiSia(serveis, entitat);
+        return serveis;
+    }
+
+    /**
+     * Informa, per a cada servei, els codis SIA dels procediments de l'entitat
+     * amb els que l'usuari autenticat el pot consultar. Els serveis sense cap
+     * procediment permès amb codi SIA queden amb una llista buida.
+     * <p>
+     * Els serveis han de ser còpies (veure {@link #toServeisResposta}), ja que
+     * la informació depèn de l'usuari.
+     */
+    private void emplenarProcedimentsCodiSia(List<ServeiBasic> serveis, Entitat entitat) {
+        if (serveis == null)
+            return;
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Map<String, List<String>> codisSia = auth != null
+                ? serveiHelper.findCodisSiaPermesosPerServei(entitat.getId(), auth)
+                : Collections.<String, List<String>>emptyMap();
+        for (ServeiBasic servei : serveis) {
+            List<String> codis = codisSia.get(servei.getCodi());
+            servei.setProcedimentsCodiSia(codis != null ? codis : new ArrayList<>());
+        }
     }
 
     @Override
@@ -777,6 +809,42 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
 
         List<ServeiCamp> serveiCamps = serveiCampRepository.findByServeiOrderByGrupOrdreAsc(serveiCodi);
         return toDadesEspecifiques(serveiCamps);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<GrupDadesEspecifiques> getGrupsByServei(String serveiCodi) throws ServeiNotFoundException {
+        log.debug("Cercant els grups de dades especifiques del servei (codi=" + serveiCodi + ")");
+        ServeiConfig serveiConfig = serveiConfigRepository.findByServei(serveiCodi);
+        if (serveiConfig == null)
+            throw new ServeiNotFoundException(serveiCodi);
+
+        List<ServeiCampGrup> grups = serveiCampGrupRepository.findByServeiAndPareIsNullOrderByOrdreAsc(serveiCodi);
+        return toGrups(grups);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Regla> getReglesByServei(String serveiCodi) throws ServeiNotFoundException {
+        log.debug("Cercant les regles del servei (codi=" + serveiCodi + ")");
+        List<Servei> serveis = serveiRepository.findByCode(serveiCodi);
+        if (serveis == null || serveis.isEmpty())
+            throw new ServeiNotFoundException(serveiCodi);
+
+        List<ServeiRegla> regles = serveiReglaRepository.findByServeiOrderByOrdreAsc(serveis.get(0));
+        if (regles == null || regles.isEmpty())
+            return new ArrayList<>();
+
+        // Les regles de grups referencien els grups pel nom: es tradueixen al codi del grup
+        Map<String, String> codisGrups = new HashMap<>();
+        for (ServeiCampGrup grup : serveiCampGrupRepository.findByServei(serveiCodi)) {
+            codisGrups.put(grup.getNom(), obtenirNomGrup(grup));
+        }
+        List<Regla> resposta = new ArrayList<>();
+        for (ServeiRegla regla : regles) {
+            resposta.add(toRegla(regla, codisGrups));
+        }
+        return resposta;
     }
 
     @Override
@@ -923,7 +991,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             Peticion peticion = recobrimentV2Helper.toPeticion(peticio);
             Respuesta scspRespuesta = recobrimentHelper.peticionSincrona(
                     peticion,
-                    APLICACIO_GUARDA_JUSTIFICANT_ARXIU);
+                    RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO);
             resposta = recobrimentV2Helper.toRespostaSincrona(scspRespuesta);
         } catch (Exception e) {
             log.error("Error al realitzar petició sincrona al servei= " +
@@ -945,7 +1013,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             Peticion peticion = recobrimentV2Helper.toPeticion(peticio);
             ConfirmacionPeticion respuesta = recobrimentHelper.peticionAsincrona(
                     peticion,
-                    APLICACIO_GUARDA_JUSTIFICANT_ARXIU);
+                    RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO);
             resposta = recobrimentV2Helper.toConfirmacio(respuesta);
         } catch (Exception e) {
             log.error("Error al realitzar la petició asincrona al servei= " +
@@ -1160,6 +1228,10 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                     throw new JustificantGeneracioException("No ha estat possible recuperar la informació del justificant a l'arxiu.");
                 }
             }
+            if (consulta.isJustificantGestionatPerAplicacio()) {
+                // El justificant no es desa a l'arxiu: no té CSV
+                return null;
+            }
             // Encara no té justificant
             JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false);
             return justificant.getArxiuCsv();
@@ -1178,6 +1250,10 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             SuperConsulta consulta = getConsulta(idPeticion, idSolicitud, false);
             if (consulta.getArxiuDocumentUuid() != null && !consulta.getArxiuDocumentUuid().isEmpty()) {
                 return consulta.getArxiuDocumentUuid();
+            }
+            if (consulta.isJustificantGestionatPerAplicacio()) {
+                // El justificant no es desa a l'arxiu: no té UUID
+                return null;
             }
             // Encara no té justificant
             JustificantDto justificant = recobrimentHelper.getJustificante(idPeticion, idSolicitud, true, false);
@@ -1240,6 +1316,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                 .codi(procedimentEntity.getCodi())
                 .nom(procedimentEntity.getNom())
                 .organGestorDir3(procedimentEntity.getOrganGestor() != null ? procedimentEntity.getOrganGestor().getCodi() : null)
+                .codiSia(procedimentEntity.getCodiSia())
                 .actiu(procedimentEntity.isActiu())
                 .build();
     }
@@ -1272,7 +1349,63 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                 .valorCondicionant(serveiCamp.getValorPare())
                 .validacio(obtenirValidacio(serveiCamp))
                 .grup(obtenirNomGrup(serveiCamp.getGrup()))
+                .enumTipus(toEnumTipus(serveiCamp.getTipus()))
+                .visible(serveiCamp.isVisible())
+                .ordre(serveiCamp.getOrdre())
                 .build();
+    }
+
+    private DadaEspecifica.EnumTipus toEnumTipus(ServeiCampTipus tipus) {
+        if (!ServeiCampTipus.isEnumOLloc(tipus)) return null;
+
+        return DadaEspecifica.EnumTipus.valueOf(tipus.name());
+    }
+
+    private List<GrupDadesEspecifiques> toGrups(List<ServeiCampGrup> grups) {
+        if (grups == null) return new ArrayList<>();
+
+        List<GrupDadesEspecifiques> resposta = new ArrayList<>();
+        for (ServeiCampGrup grup : grups) {
+            resposta.add(GrupDadesEspecifiques.builder()
+                    .codi(obtenirNomGrup(grup))
+                    .nom(grup.getNom())
+                    .ordre(grup.getOrdre())
+                    .ajuda(grup.getAjuda())
+                    .subgrups(toGrups(grup.getFills()))
+                    .build());
+        }
+        return resposta;
+    }
+
+    private Regla toRegla(ServeiRegla regla, Map<String, String> codisGrups) {
+        boolean reglaCamps = ModificatEnum.CAMPS.equals(regla.getModificat()) || ModificatEnum.ALGUN_CAMP.equals(regla.getModificat());
+        return Regla.builder()
+                .nom(regla.getNom())
+                .ordre(regla.getOrdre())
+                .modificat(regla.getModificat() != null ? Regla.ReglaModificat.valueOf(regla.getModificat().name()) : null)
+                .modificatValors(toReglaValors(regla.getModificatValor(), reglaCamps, codisGrups))
+                .accio(regla.getAccio() != null ? Regla.ReglaAccio.valueOf(regla.getAccio().name()) : null)
+                .afectatValors(toReglaValors(regla.getAfectatValor(), reglaCamps, codisGrups))
+                .build();
+    }
+
+    /**
+     * Els valors de les regles de camps es guarden com a "id | path"; es
+     * retorna només el path, que és el codi de la dada específica. Els de les
+     * regles de grups són el nom del grup; es retorna el codi del grup.
+     */
+    private List<String> toReglaValors(Set<String> valors, boolean reglaCamps, Map<String, String> codisGrups) {
+        List<String> resposta = new ArrayList<>();
+        if (valors == null) return resposta;
+
+        for (String valor : valors) {
+            if (reglaCamps) {
+                resposta.add(valor.contains(" | ") ? valor.split(" \\| ")[1] : valor);
+            } else {
+                resposta.add(codisGrups.containsKey(valor) ? codisGrups.get(valor) : valor);
+            }
+        }
+        return resposta;
     }
 
     private List<DadaEspecifica> toDadesEspecifiques(List<ServeiCamp> serveiCamps) {

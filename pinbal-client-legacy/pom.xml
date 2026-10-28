@@ -4,7 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>es.caib.pinbal</groupId>
 	<artifactId>pinbal-client-legacy</artifactId>
-	<version>2.0.1</version>
+	<!-- Versió del client, independent de la versió de l'aplicació PINBAL -->
+	<version>2.0.2</version>
 
 	<properties>
 		<jersey.version>1.19.4</jersey.version>
@@ -12,6 +13,9 @@
 		<slf4j.version>1.7.36</slf4j.version>
 		<maven.compiler.source>1.7</maven.compiler.source>
 		<maven.compiler.target>1.7</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- Fonts dels DTOs compartits amb el servidor, que es compilen dins aquest client per a Java 7 -->
+		<pinbal.client.intf.sources>${project.basedir}/../pinbal-client-intf/src/main/java</pinbal.client.intf.sources>
 	</properties>
 
 	<dependencies>
@@ -60,11 +64,17 @@
 			<version>1.18.24</version>
 			<scope>provided</scope>
 		</dependency>
-
+		<!--
+			Els DTOs de pinbal-client-intf no s'agafen com a dependència perquè aquell jar està compilat per a
+			Java 11. Les seves fonts es compilen dins aquest client per a Java 7 (veure build-helper-maven-plugin).
+			Les anotacions de validació només es necessiten per compilar: si no són al classpath en execució,
+			la JVM les ignora.
+		-->
 		<dependency>
-			<groupId>es.caib.pinbal</groupId>
-			<artifactId>pinbal-client-intf</artifactId>
-			<version>${project.version}</version>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>2.0.2</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -128,20 +138,47 @@
 				<version>2.2.0</version>
 			</plugin>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>add-client-intf-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${pinbal.client.intf.sources}</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12.4</version>
+				<!-- 2.22.x és la darrera versió que pot executar els tests en una JVM Java 7 -->
+				<version>2.22.2</version>
 				<configuration>
-					<skip>true</skip>
+					<!--
+						Només s'executen els tests unitaris. La resta de tests necessiten una instància de PINBAL
+						en marxa i s'han d'executar explícitament (-Dtest=...).
+						Per comprovar el client amb Java 7: -Djvm=/ruta/jdk1.7/bin/java
+					-->
+					<includes>
+						<include>**/*UnitTest.java</include>
+					</includes>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.8.1</version>
 				<configuration>
-					<source>7</source>
-					<target>7</target>
+					<!-- 'release' (i no source/target) per a garantir que només s'empra l'API de Java 7 -->
+					<release>7</release>
 				</configuration>
 			</plugin>
 		</plugins>

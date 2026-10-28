@@ -5,11 +5,13 @@ import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecificaBasic;
 import es.caib.pinbal.client.recobriment.v2.Entitat;
+import es.caib.pinbal.client.recobriment.v2.GrupDadesEspecifiques;
 import es.caib.pinbal.client.recobriment.v2.PeticioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioConfirmacioAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaAsincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioRespostaSincrona;
 import es.caib.pinbal.client.recobriment.v2.PeticioSincrona;
+import es.caib.pinbal.client.recobriment.v2.Regla;
 import es.caib.pinbal.client.recobriment.v2.ValorEnum;
 import es.caib.pinbal.client.serveis.ServeiBasic;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -100,7 +102,9 @@ public interface RecobrimentRestV2Intf {
             description = "Retorna una llista dels serveis disponibles a Pinbal per a una entitat. Si s'indica 'ambPermisos=true', per " +
                     "a cada servei s'afegeix el camp 'permis', que indica si l'usuari autenticat hi té permís dins l'entitat, i el " +
                     "camp 'documentsTipusPermesos', amb els tipus de document identificatiu del titular admesos pel servei. Si no " +
-                    "s'indica, aquests dos camps no s'inclouen a la resposta.",
+                    "s'indica, aquests dos camps no s'inclouen a la resposta. Per a cada servei s'inclou sempre el camp " +
+                    "'procedimentsCodiSia', amb els codis SIA dels procediments de l'entitat amb els que l'usuari autenticat " +
+                    "pot consultar el servei (permís sobre el procediment-servei); els procediments sense codi SIA no s'hi inclouen.",
             operationId = "getServeisPerEntitatV2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Serveis obtinguts amb èxit",
@@ -143,7 +147,9 @@ public interface RecobrimentRestV2Intf {
 
     @Operation(
             summary = "Obtenir dades específiques d'un servei",
-            description = "Retorna la llista de camps necessaris per emplenar l'apartat de dades específiques de la petició SCSP al servei web final.",
+            description = "Retorna la llista de camps necessaris per emplenar l'apartat de dades específiques de la petició SCSP al servei web final. " +
+                    "Per a cada camp s'indica el grup al que pertany (veure /serveis/{serveiCodi}/grups), l'ordre dins el grup, si és visible i, " +
+                    "pels camps de tipus ENUM, el tipus d'enumerat ('enumTipus') a emprar per obtenir-ne els valors.",
             operationId = "getDadesEspecifiquesV2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dades específiques obtingudes amb èxit",
@@ -154,6 +160,41 @@ public interface RecobrimentRestV2Intf {
             @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
     ResponseEntity<List<DadaEspecifica>> getDadesEspecifiques(
+            @Parameter(description = "Codi del servei", required = true, example = "SVCDATOS")
+            String serveiCodi);
+
+    @Operation(
+            summary = "Obtenir grups de dades específiques d'un servei",
+            description = "Retorna l'arbre de grups i subgrups en que s'organitzen els camps de dades específiques del servei, ordenats pel seu ordre. " +
+                    "El codi de cada grup coincideix amb el camp 'grup' de les dades específiques.",
+            operationId = "getGrupsV2")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Grups obtinguts amb èxit",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = GrupDadesEspecifiques.class)))),
+            @ApiResponse(responseCode = "204", description = "El servei no té grups", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Servei no trobat", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
+    })
+    ResponseEntity<List<GrupDadesEspecifiques>> getGrups(
+            @Parameter(description = "Codi del servei", required = true, example = "SVCDATOS")
+            String serveiCodi);
+
+    @Operation(
+            summary = "Obtenir regles del formulari de dades específiques d'un servei",
+            description = "Retorna les regles, ordenades, que modifiquen el formulari de dades específiques en funció dels camps o grups informats. " +
+                    "Quan es compleix la condició sobre els elements modificats ('modificat' i 'modificatValors'), s'aplica l'acció ('accio') " +
+                    "als elements afectats ('afectatValors'). Els camps s'identifiquen pel seu codi i els grups pel codi del grup.",
+            operationId = "getReglesV2")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Regles obtingudes amb èxit",
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = Regla.class)))),
+            @ApiResponse(responseCode = "204", description = "El servei no té regles", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Servei no trobat", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
+    })
+    ResponseEntity<List<Regla>> getRegles(
             @Parameter(description = "Codi del servei", required = true, example = "SVCDATOS")
             String serveiCodi);
 
@@ -297,14 +338,15 @@ public interface RecobrimentRestV2Intf {
 
     @Operation(
             summary = "Obtenir CSV del justificant",
-            description = "Obté el codi CSV del justificant de la petició.",
+            description = "Obté el codi CSV del justificant de la petició a l'arxiu. Els justificants de les peticions de recobriment "
+                    + "els gestiona l'aplicació que fa la petició i PINBAL no els desa a l'arxiu: en aquest cas es retorna 204.",
             operationId = "getJustificantCsvV2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "CSV del justificant obtingut correctament",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(type = "string"))),
-            @ApiResponse(responseCode = "204", description = "No s'ha trobat la consulta", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Justificant no trobat", content = @Content),
+            @ApiResponse(responseCode = "204", description = "El justificant no està desat a l'arxiu", content = @Content),
+            @ApiResponse(responseCode = "404", description = "No s'ha trobat la consulta", content = @Content),
             @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
     ResponseEntity<String> getJustificantCsv(
@@ -315,14 +357,15 @@ public interface RecobrimentRestV2Intf {
 
     @Operation(
             summary = "Obtenir UUID del justificant",
-            description = "Obté el codi UUID del justificant de la petició.",
+            description = "Obté el codi UUID del justificant de la petició a l'arxiu. Els justificants de les peticions de recobriment "
+                    + "els gestiona l'aplicació que fa la petició i PINBAL no els desa a l'arxiu: en aquest cas es retorna 204.",
             operationId = "getJustificantUuidV2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "UUID del justificant obtingut correctament",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(type = "string"))),
-            @ApiResponse(responseCode = "204", description = "No s'ha trobat la consulta", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Justificant no trobat", content = @Content),
+            @ApiResponse(responseCode = "204", description = "El justificant no està desat a l'arxiu", content = @Content),
+            @ApiResponse(responseCode = "404", description = "No s'ha trobat la consulta", content = @Content),
             @ApiResponse(responseCode = "500", description = "Error intern del servidor", content = @Content)
     })
     ResponseEntity<String> getJustificantUuid(

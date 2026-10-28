@@ -122,12 +122,12 @@ public class HistoricConsultaTest {
     }
 
     @Test
-    public void testUpdateAplicacioGuardaJustificantArxiu() {
+    public void testUpdateJustificantGestionatPerAplicacio() {
         HistoricConsulta historic = crearHistoricConsulta();
 
-        historic.updateAplicacioGuardaJustificantArxiu(true);
+        historic.updateJustificantGestionatPerAplicacio(true);
 
-        assertTrue(historic.isAplicacioGuardaJustificantArxiu());
+        assertTrue(historic.isJustificantGestionatPerAplicacio());
     }
 
     @Test
