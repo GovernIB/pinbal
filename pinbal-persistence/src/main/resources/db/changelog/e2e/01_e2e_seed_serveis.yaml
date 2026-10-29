@@ -55,7 +55,8 @@ databaseChangeLog:
         - column: { name: actionsolicitud, value: solicitudRespuesta }
         - column: { name: versionesquema, value: V3 }
         - column: { name: tiposeguridad, value: WS-Security }
-        - column: { name: xpathcifradosincrono, value: "//*[local-name()='DatosEspecificos']" }
+        # Sintaxi de parts de WSS4J (SCSP 5 no avalua expressions XPath per al xifratge)
+        - column: { name: xpathcifradosincrono, value: "{Content}{http://intermediacion.redsara.es/scsp/esquemas/datosespecificos}DatosEspecificos" }
         - column: { name: esquemas, value: /schemas/Q2827003ATGSS001v3 }
         - column: { name: numeromaximoreenvios, valueNumeric: 0 }
         - column: { name: maxsolicitudespeticion, valueNumeric: 0 }

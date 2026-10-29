@@ -11,6 +11,10 @@
 			<module name="com.fasterxml.jackson.core.jackson-annotations" />
 			<module name="com.fasterxml.jackson.dataformat.jackson-dataformat-xml" />
 			<module name="com.fasterxml.jackson.dataformat.jackson-dataformat-yaml" />
+			<!-- WSS4J i xmlsec s'han d'agafar de l'EAR (versions requerides per scsp-core 5.0.11).
+			     Les del JBoss EAP 7.2 (WSS4J 2.2.2) no són compatibles i fan fallar el xifratge de les peticions -->
+			<module name="org.apache.ws.security" />
+			<module name="org.apache.santuario.xmlsec" />
 		</exclusions>
 		<dependencies>
 			<module name="jdk.jfr"/>
@@ -18,7 +22,6 @@
 			<module name="org.bouncycastle"/>
 			<module name="org.apache.cxf"/>
 			<module name="org.apache.cxf.impl"/>
-			<module name="org.apache.ws.security"/>
 			<module name="io.undertow.core"/>
 			<module name="io.undertow.servlet" export="true"/>
 			<module name="io.undertow.websocket" export="true"/>
