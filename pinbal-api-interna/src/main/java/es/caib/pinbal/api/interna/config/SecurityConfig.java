@@ -88,6 +88,13 @@ public class SecurityConfig {
             "/ws/recobriment/**"
     };
 
+    // API REST v2 de recobriment: tots els mètodes de l'EJB RecobrimentService requereixen PBL_WS.
+    // Es comprova també aquí perquè les crides sense el rol retornin un 403 sense arribar a l'EJB.
+    private static final String[] REST_RECOBRIMENT_V2_PATHS = {
+            "/recobriment/v2",
+            "/recobriment/v2/**"
+    };
+
     // El WSDL (i els XSD que importa) del servei SOAP de recobriment es pot consultar sense autenticar.
     static final RequestMatcher WS_RECOBRIMENT_WSDL_MATCHER = request -> {
         String query = request.getQueryString();
@@ -119,6 +126,7 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(WS_RECOBRIMENT_WSDL_MATCHER).permitAll()
                         .antMatchers(WS_RECOBRIMENT_PATHS).hasAnyAuthority("PBL_WS")
+                        .antMatchers(REST_RECOBRIMENT_V2_PATHS).hasAnyAuthority("PBL_WS")
                         .anyRequest().authenticated())
                 .headers(hd -> hd.frameOptions().disable())
                 .build();

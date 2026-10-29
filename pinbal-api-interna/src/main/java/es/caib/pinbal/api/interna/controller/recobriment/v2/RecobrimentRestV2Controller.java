@@ -84,6 +84,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error obtenint les entitats", ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -111,6 +114,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error obtenint els procediments", ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -137,6 +143,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error obtenint els serveis", ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -163,6 +172,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error obtenint els serveis per entitat", ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -190,6 +202,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error obtenint els serveis per procediment", ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -217,6 +232,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error obtenint les dades especifiques del servei " + serveiCodi, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -241,6 +259,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error obtenint els grups del servei " + serveiCodi, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -265,6 +286,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error obtenint les regles del servei " + serveiCodi, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -291,6 +315,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
         } catch (AccessDeniedException | AccessDenegatException ade) {
             throw new AccessDenegatException(Arrays.asList("PBL_WS"));
         } catch (Exception ex) {
+            if (isEjbAccessDenegat(ex)) {
+                throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+            }
             log.error("Error obtenint les dades especifiques del servei " + serveiCodi, ex);
             throw new ServiceExecutionException(ex.getMessage(), ex);
         }
@@ -365,6 +392,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDeniedException | AccessDenegatException ade) {
 			throw new AccessDenegatException(Arrays.asList("PBL_WS"));
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error obtenint els valors de l'enumerat " + enumCodi + " del camp " + campCodi + " del servei " + serveiCodi, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -396,6 +426,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			PeticioRespostaSincrona respuesta = recobrimentService.peticionSincrona(peticio);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error realitzant petició síncrona al servei " + serveiCodi, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -424,6 +457,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 			PeticioConfirmacioAsincrona respuesta = recobrimentService.peticionAsincrona(peticio);
 			return new ResponseEntity<>(respuesta, HttpStatus.OK);
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error realitzant petició asíncrona al servei " + serveiCodi, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -450,6 +486,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (ConsultaNotFoundException ce) {
 			throw  new ResourceNotFoundException(ce.getMessage(), ce);
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error consultat resposta de la petició " + idPeticio, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -478,6 +517,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDenegatException ade) {
 			throw ade;
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			// Desencapsular possibles EJBException
 			Exception unwrapped = unwrapException(ex);
 			if (unwrapped instanceof ConsultaNotFoundException) {
@@ -513,6 +555,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (AccessDenegatException ade) {
 			throw ade;
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			// Desencapsular possibles EJBException
 			Exception unwrapped = unwrapException(ex);
 			if (unwrapped instanceof ConsultaNotFoundException) {
@@ -545,6 +590,9 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (ConsultaNotFoundException ce) {
 			throw  new ResourceNotFoundException(ce.getMessage(), ce);
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error obtenint el csv del justificant de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
@@ -569,9 +617,26 @@ public class RecobrimentRestV2Controller extends PinbalHalRestController impleme
 		} catch (ConsultaNotFoundException ce) {
 			throw  new ResourceNotFoundException(ce.getMessage(), ce);
 		} catch (Exception ex) {
+			if (isEjbAccessDenegat(ex)) {
+				throw new AccessDenegatException(Arrays.asList("PBL_WS"));
+			}
 			log.error("Error obtenint l'UUID del justificant de la petició " + idPeticio + ", solicitud " + idSolicitud, ex);
 			throw new ServiceExecutionException(ex.getMessage(), ex);
 		}
+	}
+
+	/**
+	 * Indica si l'excepció (o alguna de les seves causes) és una EJBAccessException, és a dir,
+	 * que el contenidor ha denegat la crida a l'EJB perquè l'usuari no té el rol requerit (@RolesAllowed).
+	 * Es compara pel nom de classe per evitar dependències de javax.ejb.
+	 */
+	private boolean isEjbAccessDenegat(Throwable ex) {
+		for (Throwable t = ex; t != null; t = (t.getCause() != t) ? t.getCause() : null) {
+			if ("javax.ejb.EJBAccessException".equals(t.getClass().getName())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

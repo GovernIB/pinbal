@@ -658,6 +658,17 @@ public class RecobrimentRestV2ControllerTest {
     }
 
     @Test
+    public void testPeticioSincrona_ReturnsForbiddenWhenEjbAccessDenied() throws Exception {
+        PeticioSincrona peticio = PeticioSincrona.builder().build();
+        when(recobrimentService.validatePeticio(anyString(), eq(peticio))).thenThrow(new javax.ejb.EJBAccessException("WFLYEJB0364"));
+
+        mockMvc.perform(post("/recobriment/v2/serveis/SERVEI001/peticioSincrona")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(peticio)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     public void testPeticioSincrona_IgnoraAplicacioGuardaJustificantArxiuDesfasat() throws Exception {
         PeticioRespostaSincrona resposta = PeticioRespostaSincrona.builder().error(false).build();
         Map<String, List<String>> respostaValidacio = new java.util.HashMap<>();
@@ -860,6 +871,26 @@ public class RecobrimentRestV2ControllerTest {
         mockMvc.perform(get("/recobriment/v2/consultes/idPeticio/solicitud/idSolicitud/justificant")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void testGetJustificant_ReturnsForbiddenWhenEjbAccessDenied() throws Exception {
+        // El contenidor denega la crida a l'EJB quan l'usuari no té el rol PBL_WS
+        when(recobrimentService.getJustificant("idPeticio", "idSolicitud")).thenThrow(new javax.ejb.EJBAccessException("WFLYEJB0364"));
+
+        mockMvc.perform(get("/recobriment/v2/consultes/idPeticio/solicitud/idSolicitud/justificant")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testGetJustificant_ReturnsForbiddenWhenEjbAccessDeniedEncapsulat() throws Exception {
+        when(recobrimentService.getJustificant("idPeticio", "idSolicitud"))
+                .thenThrow(new RuntimeException(new javax.ejb.EJBAccessException("WFLYEJB0364")));
+
+        mockMvc.perform(get("/recobriment/v2/consultes/idPeticio/solicitud/idSolicitud/justificant")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
     }
 
     // TESTS getJustificantImprimible
