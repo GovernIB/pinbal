@@ -688,33 +688,33 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         if (entitat == null)
             throw new EntitatNotFoundException();
 
-        List<ServeiBasic> serveis = toServeisResposta(
-                serveiHelper.findServeisClientPerEntitat(entitatCodi),
-                ambPermisos ? findServeisPermesos(entitat, null) : null);
-        emplenarProcedimentsCodiSia(serveis, entitat);
+        List<ServeiBasic> serveisEntitat = serveiHelper.findServeisClientPerEntitat(entitatCodi);
+        if (!ambPermisos)
+            return toServeisResposta(serveisEntitat, null);
+
+        // Una sola comprovació de permisos: les claus del mapa són els serveis permesos
+        Map<String, List<String>> codisSiaPerServei = findCodisSiaPermesosPerServei(entitat);
+        List<ServeiBasic> serveis = toServeisResposta(serveisEntitat, codisSiaPerServei.keySet());
+        if (serveis != null) {
+            for (ServeiBasic servei : serveis) {
+                List<String> codisSia = codisSiaPerServei.get(servei.getCodi());
+                servei.setProcedimentsCodiSia(codisSia != null ? codisSia : new ArrayList<>());
+            }
+        }
         return serveis;
     }
 
     /**
-     * Informa, per a cada servei, els codis SIA dels procediments de l'entitat
-     * amb els que l'usuari autenticat el pot consultar. Els serveis sense cap
-     * procediment permès amb codi SIA queden amb una llista buida.
-     * <p>
-     * Els serveis han de ser còpies (veure {@link #toServeisResposta}), ja que
-     * la informació depèn de l'usuari.
+     * @return per a cada servei sobre el que l'usuari autenticat té permís a
+     *         l'entitat, els codis SIA dels procediments amb els que el pot
+     *         consultar.
      */
-    private void emplenarProcedimentsCodiSia(List<ServeiBasic> serveis, Entitat entitat) {
-        if (serveis == null)
-            return;
-
+    private Map<String, List<String>> findCodisSiaPermesosPerServei(Entitat entitat) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Map<String, List<String>> codisSia = auth != null
-                ? serveiHelper.findCodisSiaPermesosPerServei(entitat.getId(), auth)
-                : Collections.<String, List<String>>emptyMap();
-        for (ServeiBasic servei : serveis) {
-            List<String> codis = codisSia.get(servei.getCodi());
-            servei.setProcedimentsCodiSia(codis != null ? codis : new ArrayList<>());
-        }
+        if (auth == null)
+            return Collections.emptyMap();
+
+        return serveiHelper.findCodisSiaPermesosPerServei(entitat.getId(), auth);
     }
 
     @Override

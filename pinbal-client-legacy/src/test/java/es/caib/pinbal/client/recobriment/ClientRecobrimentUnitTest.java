@@ -137,6 +137,28 @@ public class ClientRecobrimentUnitTest {
     }
 
     @Test
+    public void getServeisPerEntitat_ambProcedimentsCodiSia() throws Exception {
+        servidor.responJson("GET", "entitats/E1/serveis", "[" +
+                "{\"codi\":\"S1\",\"permis\":true,\"documentsTipusPermesos\":[\"DNI\"],\"procedimentsCodiSia\":[\"100001\",\"200002\"]}," +
+                "{\"codi\":\"S2\",\"permis\":false,\"documentsTipusPermesos\":[],\"procedimentsCodiSia\":[]}]");
+
+        List<ServeiBasic> serveis = client.getServeisPerEntitat("E1", true);
+
+        assertEquals(Arrays.asList("100001", "200002"), serveis.get(0).getProcedimentsCodiSia());
+        assertTrue(serveis.get(1).getProcedimentsCodiSia().isEmpty());
+    }
+
+    @Test
+    public void getServeisPerEntitat_senseAmbPermisos_procedimentsCodiSiaNull() throws Exception {
+        servidor.responJson("GET", "entitats/E1/serveis", "[{\"codi\":\"S1\",\"actiu\":true}]");
+
+        List<ServeiBasic> serveis = client.getServeisPerEntitat("E1");
+
+        assertNull(serveis.get(0).getPermis());
+        assertNull(serveis.get(0).getProcedimentsCodiSia());
+    }
+
+    @Test
     public void getServeisPerProcediment() throws Exception {
         servidor.responJson("GET", "entitats/E1/procediments/P1/serveis", "[{\"codi\":\"S1\"},{\"codi\":\"S2\"}]");
 

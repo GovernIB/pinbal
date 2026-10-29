@@ -492,24 +492,46 @@ public class RecobrimentServiceImplTest {
         ReflectionTestUtils.setField(entitat, "id", 1L);
         List<ServeiBasic> mockServeis = Arrays.asList(
                 new ServeiBasic("SERV001", "Servei 1", true),
-                new ServeiBasic("SERV002", "Servei 2", true));
+                new ServeiBasic("SERV002", "Servei 2", true),
+                new ServeiBasic("SERV003", "Servei 3", true));
         Map<String, List<String>> codisSia = new HashMap<>();
         codisSia.put("SERV001", Arrays.asList("100001", "200002"));
+        codisSia.put("SERV002", new ArrayList<>());
 
         Authentication authentication = mockAuthenticationAmbUsuari("aplicacioIntegracio");
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(entitat);
         when(serveiHelper.findServeisClientPerEntitat(entitatCodi)).thenReturn(mockServeis);
         when(serveiHelper.findCodisSiaPermesosPerServei(1L, authentication)).thenReturn(codisSia);
 
-        // Els codis SIA s'informen encara que no es demanin els permisos
-        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi, false);
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi, true);
 
+        Assertions.assertTrue(serveis.get(0).getPermis());
         Assertions.assertEquals(Arrays.asList("100001", "200002"), serveis.get(0).getProcedimentsCodiSia());
-        // Servei sense cap procediment permès amb codi SIA: llista buida
+        // Servei permès sense cap procediment amb codi SIA: llista buida
+        Assertions.assertTrue(serveis.get(1).getPermis());
         Assertions.assertTrue(serveis.get(1).getProcedimentsCodiSia().isEmpty());
-        Assertions.assertNull(serveis.get(0).getPermis());
+        // Servei no permès: llista buida
+        Assertions.assertFalse(serveis.get(2).getPermis());
+        Assertions.assertTrue(serveis.get(2).getProcedimentsCodiSia().isEmpty());
+        // Els permisos es comproven una sola vegada
+        verify(serveiHelper, Mockito.never()).findServeisPermesosPerUsuari(any(), any(), any());
         // Els objectes de la cache no es modifiquen
         Assertions.assertNull(mockServeis.get(0).getProcedimentsCodiSia());
+    }
+
+    @Test
+    public void testGetServeisByEntitat_SensePermisos_NoInformaProcedimentsCodiSia() throws EntitatNotFoundException {
+        String entitatCodi = "ENT001";
+        mockAuthenticationAmbUsuari("aplicacioIntegracio");
+        when(entitatRepository.findByCodi(entitatCodi)).thenReturn(new Entitat());
+        when(serveiHelper.findServeisClientPerEntitat(entitatCodi)).thenReturn(
+                Collections.singletonList(new ServeiBasic("SERV001", "Servei 1", true)));
+
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi, false);
+
+        Assertions.assertNull(serveis.get(0).getPermis());
+        Assertions.assertNull(serveis.get(0).getProcedimentsCodiSia());
+        verify(serveiHelper, Mockito.never()).findCodisSiaPermesosPerServei(any(), any());
     }
 
     @Test
@@ -520,8 +542,9 @@ public class RecobrimentServiceImplTest {
         when(serveiHelper.findServeisClientPerEntitat(entitatCodi)).thenReturn(
                 Collections.singletonList(new ServeiBasic("SERV001", "Servei 1", true)));
 
-        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi, false);
+        List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi, true);
 
+        Assertions.assertFalse(serveis.get(0).getPermis());
         Assertions.assertTrue(serveis.get(0).getProcedimentsCodiSia().isEmpty());
         verify(serveiHelper, Mockito.never()).findCodisSiaPermesosPerServei(any(), any());
     }
@@ -543,7 +566,8 @@ public class RecobrimentServiceImplTest {
         Authentication authentication = mockAuthenticationAmbUsuari(username);
         when(entitatRepository.findByCodi(entitatCodi)).thenReturn(entitat);
         when(serveiHelper.findServeisClientPerEntitat(entitatCodi)).thenReturn(mockServeis);
-        when(serveiHelper.findServeisPermesosPerUsuari(1L, null, authentication)).thenReturn(Collections.singletonList("SERV001"));
+        when(serveiHelper.findCodisSiaPermesosPerServei(1L, authentication)).thenReturn(
+                Collections.singletonMap("SERV001", Collections.<String>emptyList()));
 
         // Call the method
         List<ServeiBasic> serveis = recobrimentServiceImpl.getServeisByEntitat(entitatCodi, true);

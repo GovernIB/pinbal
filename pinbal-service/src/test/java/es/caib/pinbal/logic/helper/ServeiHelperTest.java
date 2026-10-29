@@ -167,21 +167,31 @@ public class ServeiHelperTest {
                 procedimentServei(4L, "SV1", " "),           // procediment amb codi SIA buit
                 procedimentServei(5L, "SV1", "100001"),      // codi SIA repetit (dos procediments)
                 procedimentServei(6L, "SV2", "300003"),      // sense permís sobre el procediment-servei
-                procedimentServei(7L, "SV3", "400004"))); // servei no disponible per a l'entitat
+                procedimentServei(7L, "SV3", "400004"),      // servei no disponible per a l'entitat
+                procedimentServei(8L, "SV4", null)));        // servei permès sense cap codi SIA
         when(procedimentServeiRepository.findActiusByEntitatId(1L)).thenReturn(pss);
-        List<EntitatServei> serveisEntitat = Arrays.asList(entitatServei("SV1"), entitatServei("SV2"));
+        List<EntitatServei> serveisEntitat = Arrays.asList(entitatServei("SV1"), entitatServei("SV2"), entitatServei("SV4"));
         when(entitatServeiRepository.findByEntitatId(1L)).thenReturn(serveisEntitat);
-        ServeiConfig serveiConfig = mock(ServeiConfig.class);
-        when(serveiConfig.getId()).thenReturn(10L);
-        when(serveiConfig.getServei()).thenReturn("SV1");
-        when(serveiConfig.isActiu()).thenReturn(true);
-        when(serveiConfigRepository.findByServei("SV1")).thenReturn(serveiConfig);
-        permetreProcedimentServeis(1L, 2L, 3L, 4L, 5L, 7L);
+        ServeiConfig serveiConfig1 = serveiConfig(10L, "SV1");
+        ServeiConfig serveiConfig4 = serveiConfig(11L, "SV4");
+        when(serveiConfigRepository.findByServei("SV1")).thenReturn(serveiConfig1);
+        when(serveiConfigRepository.findByServei("SV4")).thenReturn(serveiConfig4);
+        permetreProcedimentServeis(1L, 2L, 3L, 4L, 5L, 7L, 8L);
 
         Map<String, List<String>> result = serveiHelper.findCodisSiaPermesosPerServei(1L, auth);
 
-        assertEquals(1, result.size());
+        // Les claus són els serveis permesos (igual que findServeisPermesosPerUsuari)
+        assertEquals(new HashSet<>(Arrays.asList("SV1", "SV4")), result.keySet());
         assertEquals(Arrays.asList("100001", "200002"), result.get("SV1"));
+        assertTrue(result.get("SV4").isEmpty());
+    }
+
+    private static ServeiConfig serveiConfig(Long id, String servei) {
+        ServeiConfig serveiConfig = mock(ServeiConfig.class);
+        when(serveiConfig.getId()).thenReturn(id);
+        when(serveiConfig.getServei()).thenReturn(servei);
+        when(serveiConfig.isActiu()).thenReturn(true);
+        return serveiConfig;
     }
 
     private static ProcedimentServei procedimentServei(Long id, String servei, String codiSia) {

@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -106,6 +107,34 @@ public class ClientRecobrimentTest {
 
         assertNotNull(serveis);
         assertTrue(conteServei(serveis), "No s'ha trobat el servei " + SERVEI_CODI + " a l'entitat");
+    }
+
+    @Test
+    public void getServeisPerEntitat_ambPermisos_informaProcedimentsCodiSia() throws Exception {
+        List<ServeiBasic> serveis = client.getServeisPerEntitat(getEntitatCodi(), true);
+
+        assertNotNull(serveis);
+        for (ServeiBasic servei : serveis) {
+            assertNotNull(servei.getPermis(), "Permís no informat al servei " + servei.getCodi());
+            assertNotNull(servei.getProcedimentsCodiSia(), "Codis SIA no informats al servei " + servei.getCodi());
+            if (!servei.getPermis()) {
+                assertTrue(servei.getProcedimentsCodiSia().isEmpty(),
+                        "El servei " + servei.getCodi() + " no és permès però té codis SIA");
+            }
+            for (String codiSia : servei.getProcedimentsCodiSia()) {
+                assertFalse(codiSia == null || codiSia.trim().isEmpty(), "Codi SIA buit al servei " + servei.getCodi());
+            }
+        }
+    }
+
+    @Test
+    public void getServeisPerEntitat_senseAmbPermisos_noInformaProcedimentsCodiSia() throws Exception {
+        List<ServeiBasic> serveis = client.getServeisPerEntitat(getEntitatCodi());
+
+        assertNotNull(serveis);
+        for (ServeiBasic servei : serveis) {
+            assertNull(servei.getProcedimentsCodiSia());
+        }
     }
 
     @Test

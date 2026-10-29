@@ -126,9 +126,11 @@ public class ServeiHelper {
 	 *            id de l'entitat.
 	 * @param auth
 	 *            usuari autenticat.
-	 * @return mapa amb el codi del servei com a clau i els codis SIA (ordenats
-	 *         i sense duplicats) com a valor. Els serveis sense cap procediment
-	 *         amb codi SIA no hi apareixen.
+	 * @return mapa amb el codi de cada servei permès (els mateixos que retorna
+	 *         {@link #findServeisPermesosPerUsuari} sense procediment) com a
+	 *         clau i els codis SIA (ordenats i sense duplicats) com a valor. Els
+	 *         serveis permesos sense cap procediment amb codi SIA tenen una
+	 *         llista buida.
 	 */
 	public Map<String, List<String>> findCodisSiaPermesosPerServei(
 			Long entitatId,
@@ -138,19 +140,16 @@ public class ServeiHelper {
 		if (pss == null) {
 			return resposta;
 		}
-		Set<String> serveisPermesos = new HashSet<String>(filtrarServeisPermesos(entitatId, pss, auth));
 		Map<String, Set<String>> codisSia = new HashMap<String, Set<String>>();
+		for (String servei: filtrarServeisPermesos(entitatId, pss, auth)) {
+			codisSia.put(servei, new TreeSet<String>());
+		}
 		for (ProcedimentServei ps: pss) {
 			String codiSia = ps.getProcediment().getCodiSia();
-			if (codiSia == null || codiSia.trim().isEmpty() || !serveisPermesos.contains(ps.getServei())) {
-				continue;
-			}
 			Set<String> codis = codisSia.get(ps.getServei());
-			if (codis == null) {
-				codis = new TreeSet<String>();
-				codisSia.put(ps.getServei(), codis);
+			if (codis != null && codiSia != null && !codiSia.trim().isEmpty()) {
+				codis.add(codiSia.trim());
 			}
-			codis.add(codiSia.trim());
 		}
 		for (Map.Entry<String, Set<String>> entry: codisSia.entrySet()) {
 			resposta.put(entry.getKey(), new ArrayList<String>(entry.getValue()));

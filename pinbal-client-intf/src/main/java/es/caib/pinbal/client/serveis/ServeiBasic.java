@@ -37,8 +37,9 @@ public class ServeiBasic {
      * Codis SIA dels procediments de l'entitat amb els que l'usuari que
      * realitza la petició pot consultar aquest servei (té permís sobre la
      * combinació procediment-servei). No inclou els procediments sense codi SIA.
-     * Només s'informa en obtenir els serveis d'una entitat; a la resta de
-     * casos queda a null i no s'inclou a la resposta.
+     * Només s'informa en obtenir els serveis d'una entitat si s'han demanat
+     * els permisos (veure {@link #permis}); a la resta de casos queda a null i
+     * no s'inclou a la resposta.
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<String> procedimentsCodiSia;

@@ -160,11 +160,10 @@ public interface RecobrimentService {
 	/**
 	 * @param entitatCodi codi de l'entitat
 	 * @param ambPermisos si s'ha d'informar, per a cada servei, dels tipus de
-	 *        document admesos i de si l'usuari autenticat hi té permís dins
-	 *        l'entitat
-	 * @return lista de tots els elements de tipus Servei d’una entitat. Per a
-	 *         cada servei s'informen sempre els codis SIA dels procediments amb
-	 *         els que l'usuari autenticat el pot consultar.
+	 *        document admesos, de si l'usuari autenticat hi té permís dins
+	 *        l'entitat i dels codis SIA dels procediments amb els que el pot
+	 *        consultar
+	 * @return lista de tots els elements de tipus Servei d’una entitat
 	 * @throws EntitatNotFoundException
 	 */
 	@PreAuthorize("hasRole('PBL_WS')")

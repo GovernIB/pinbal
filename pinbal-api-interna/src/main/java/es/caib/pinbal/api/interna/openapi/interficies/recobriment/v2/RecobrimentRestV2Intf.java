@@ -100,11 +100,11 @@ public interface RecobrimentRestV2Intf {
     @Operation(
             summary = "Obtenir serveis per entitat",
             description = "Retorna una llista dels serveis disponibles a Pinbal per a una entitat. Si s'indica 'ambPermisos=true', per " +
-                    "a cada servei s'afegeix el camp 'permis', que indica si l'usuari autenticat hi té permís dins l'entitat, i el " +
-                    "camp 'documentsTipusPermesos', amb els tipus de document identificatiu del titular admesos pel servei. Si no " +
-                    "s'indica, aquests dos camps no s'inclouen a la resposta. Per a cada servei s'inclou sempre el camp " +
-                    "'procedimentsCodiSia', amb els codis SIA dels procediments de l'entitat amb els que l'usuari autenticat " +
-                    "pot consultar el servei (permís sobre el procediment-servei); els procediments sense codi SIA no s'hi inclouen.",
+                    "a cada servei s'afegeixen el camp 'permis', que indica si l'usuari autenticat hi té permís dins l'entitat, el " +
+                    "camp 'documentsTipusPermesos', amb els tipus de document identificatiu del titular admesos pel servei, i el " +
+                    "camp 'procedimentsCodiSia', amb els codis SIA dels procediments de l'entitat amb els que l'usuari autenticat " +
+                    "pot consultar el servei (permís sobre el procediment-servei); els procediments sense codi SIA no s'hi inclouen. " +
+                    "Si no s'indica, aquests tres camps no s'inclouen a la resposta.",
             operationId = "getServeisPerEntitatV2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Serveis obtinguts amb èxit",
