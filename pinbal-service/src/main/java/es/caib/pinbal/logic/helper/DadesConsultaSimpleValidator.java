@@ -39,7 +39,10 @@ public class DadesConsultaSimpleValidator implements Validator {
 
     public void validate(Object obj, Errors errors) {
 
-        Map<String, Object> dadesEspecifiquesValors = (Map<String, Object>) obj;
+        // Les peticions de recobriment poden arribar sense dades específiques
+        Map<String, Object> dadesEspecifiquesValors = obj != null
+                ? (Map<String, Object>) obj
+                : Collections.<String, Object>emptyMap();
 
         List<String> campsModificats = new ArrayList<>(); // Path
         List<String> grupsModificats = new ArrayList<>(); // Nom

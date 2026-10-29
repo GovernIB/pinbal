@@ -64,6 +64,37 @@ public class DadesConsultaSimpleValidatorTest {
     }
 
     @Test
+    public void validate_dadesNull_campObligatori_rejectaSenseExcepcio() throws ServeiNotFoundException {
+        ServeiCampDto camp = campObligatori("NIF", "/NIF");
+        when(serveiService.findServeiCamps(SERVEI_CODI)).thenReturn(Collections.singletonList(camp));
+        when(serveiService.findServeiCampGrupsAndSubgrups(SERVEI_CODI)).thenReturn(Collections.emptyList());
+        when(serveiService.getCampsByserveiRegla(eq(SERVEI_CODI), any())).thenReturn(Collections.emptyList());
+        when(serveiService.getGrupsByserveiRegla(eq(SERVEI_CODI), any())).thenReturn(Collections.emptyList());
+
+        Errors errors = bindingResult(new HashMap<>());
+
+        validator.validate(null, errors);
+
+        assertNotNull(errors.getFieldError("dadesEspecifiques[/NIF]"));
+    }
+
+    @Test
+    public void validate_dadesNull_campsOpcionals_noRejecta() throws ServeiNotFoundException {
+        ServeiCampDto camp = campObligatori("NIF", "/NIF");
+        camp.setObligatori(false);
+        when(serveiService.findServeiCamps(SERVEI_CODI)).thenReturn(Collections.singletonList(camp));
+        when(serveiService.findServeiCampGrupsAndSubgrups(SERVEI_CODI)).thenReturn(Collections.emptyList());
+        when(serveiService.getCampsByserveiRegla(eq(SERVEI_CODI), any())).thenReturn(Collections.emptyList());
+        when(serveiService.getGrupsByserveiRegla(eq(SERVEI_CODI), any())).thenReturn(Collections.emptyList());
+
+        Errors errors = bindingResult(new HashMap<>());
+
+        validator.validate(null, errors);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     public void validate_campObligatori_emplenat_noRejecta() throws ServeiNotFoundException {
         ServeiCampDto camp = campObligatori("NIF", "/NIF");
         when(serveiService.findServeiCamps(SERVEI_CODI)).thenReturn(Collections.singletonList(camp));
