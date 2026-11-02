@@ -493,6 +493,10 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 
 		// Procediment
 		Procediment procediment = procedimentRepository.findByEntitatAndCodi(entitat, dadesComunes.getProcedimentCodi());
+		//Si no es troba per codi intern de pinbal el procediment, es cerca per codi SIA (com es feia a la V1 ConsultaServiceImpl.java:962-964)
+		if (procediment == null) {
+			procediment = procedimentRepository.findByEntitatAndCodiSia(entitat, dadesComunes.getProcedimentCodi());
+		}
 		Procedimiento procedimiento = new Procedimiento();
 		procedimiento.setCodProcedimiento(procediment.getCodi());
 		procedimiento.setNombreProcedimiento(procediment.getNom());
