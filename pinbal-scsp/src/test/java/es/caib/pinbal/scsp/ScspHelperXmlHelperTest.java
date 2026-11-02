@@ -37,6 +37,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -178,6 +179,51 @@ public class ScspHelperXmlHelperTest {
 
         Object datosEspecificos = peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosEspecificos();
         assertSame(dadesEspecifiques, datosEspecificos);
+    }
+
+    @Test
+    public void crearPeticionSenseDadesEspecifiquesAmbAddDadesEspecifiquesGeneraElNode() throws Exception {
+        // Consulta des del formulari web d'un servei sense camps de dades específiques: el mapa és buit,
+        // però el servei està configurat per incloure sempre el node (necessari per al xifrat amb SCSP 5)
+        when(servicioDao.select("SERV1")).thenReturn(serviAmbEmisor());
+        when(xmlHelper.hasCodigoUnidadTramitadora(any(), anyBoolean())).thenReturn(false);
+        Element dadesEspecifiques = domElement("<DatosEspecificos/>");
+        when(xmlHelper.crearDadesEspecifiques(any(), eq(new HashMap<String, Object>()), anyBoolean(), anyBoolean(), any(), eq(true)))
+                .thenReturn(dadesEspecifiques);
+
+        Solicitud sol = solicitud("SERV1");
+        sol.setDadesEspecifiquesMap(new HashMap<>());
+
+        Peticion peticio = scspHelper.crearPeticion("PET1", List.of(sol), false, false, null, true);
+
+        assertSame(dadesEspecifiques, peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosEspecificos());
+    }
+
+    @Test
+    public void crearPeticionSenseDadesEspecifiquesNiAddDadesEspecifiquesNoGeneraElNode() throws Exception {
+        when(servicioDao.select("SERV1")).thenReturn(serviAmbEmisor());
+        when(xmlHelper.hasCodigoUnidadTramitadora(any(), anyBoolean())).thenReturn(false);
+
+        Peticion peticio = scspHelper.crearPeticion("PET1", List.of(solicitud("SERV1")), false, false, null, false);
+
+        assertNull(peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosEspecificos());
+        verify(xmlHelper, never()).crearDadesEspecifiques(any(), any(), anyBoolean(), anyBoolean(), any(), anyBoolean());
+    }
+
+    @Test
+    public void crearPeticionAmbElementDadesEspecifiquesNoElRegenera() throws Exception {
+        // Recobriment: les dades específiques ja arriben com a element
+        when(servicioDao.select("SERV1")).thenReturn(serviAmbEmisor());
+        when(xmlHelper.hasCodigoUnidadTramitadora(any(), anyBoolean())).thenReturn(false);
+        Element dadesEspecifiques = domElement("<DatosEspecificos/>");
+
+        Solicitud sol = solicitud("SERV1");
+        sol.setDadesEspecifiquesElement(dadesEspecifiques);
+
+        Peticion peticio = scspHelper.crearPeticion("PET1", List.of(sol), false, false, null, true);
+
+        assertSame(dadesEspecifiques, peticio.getSolicitudes().getSolicitudTransmision().get(0).getDatosEspecificos());
+        verify(xmlHelper, never()).crearDadesEspecifiques(any(), any(), anyBoolean(), anyBoolean(), any(), anyBoolean());
     }
 
     @Test

@@ -1126,11 +1126,16 @@ public class ScspHelper {
 		if (solicitud.getDadesEspecifiquesElement() != null) {
 			st.setDatosEspecificos(solicitud.getDadesEspecifiquesElement());
 		}
-		if (solicitud.getDadesEspecifiquesMap() != null && solicitud.getDadesEspecifiquesMap().size() > 0) {
+		boolean ambDadesEspecifiquesMap = solicitud.getDadesEspecifiquesMap() != null && solicitud.getDadesEspecifiquesMap().size() > 0;
+		// Si el servei està configurat per incloure sempre el node de dades específiques, es genera
+		// encara que no s'hagi informat cap dada. Amb SCSP 5 el xifrat de la petició requereix que
+		// el node DatosEspecificos existeixi.
+		boolean dadesEspecifiquesBuides = solicitud.getDadesEspecifiquesElement() == null && addDadesEspecifiques;
+		if (ambDadesEspecifiquesMap || dadesEspecifiquesBuides) {
 			st.setDatosEspecificos(
 					getXmlHelper().crearDadesEspecifiques(
 							getServicioDao().select(solicitud.getServeiCodi()),
-							solicitud.getDadesEspecifiquesMap(),
+							ambDadesEspecifiquesMap ? solicitud.getDadesEspecifiquesMap() : new HashMap<String, Object>(),
 							gestioXsdActiva,
 							iniDadesEspecifiques,
 							pathCampsInicialitzar,
