@@ -37,7 +37,9 @@ import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pluginsib.arxiu.api.ContingutArxiu;
 import es.caib.pluginsib.arxiu.api.ContingutOrigen;
+import es.caib.pluginsib.arxiu.api.ContingutTipus;
 import es.caib.pluginsib.arxiu.api.DocumentEstatElaboracio;
+import es.caib.pluginsib.arxiu.api.Expedient;
 import es.scsp.common.exceptions.ScspException;
 import fr.opensagres.xdocreport.core.XDocReportException;
 import fr.opensagres.xdocreport.document.IXDocReport;
@@ -172,16 +174,12 @@ public class JustificantHelper implements MessageSourceAware {
 								}
 								if (arxiuExpedientUuid != null) {
 									justificantFitxer.setContingut(justificantFirmat.getContingut());
-									arxiuDocumentUuid = pluginHelper.arxiuDocumentGuardarFirmaPades(
-											consulta.getScspPeticionId(),
+									arxiuDocumentUuid = guardarODocumentExistentArxiu(
+											consulta,
 											arxiuExpedientUuid,
-											consulta.getScspSolicitudId(),
-											procediment.getOrganGestor().getCodi(),
+											procediment,
 											serieDocumental,
-											justificantFitxer,
-											ContingutOrigen.ADMINISTRACIO,
-											DocumentEstatElaboracio.ORIGINAL,
-											es.caib.pluginsib.arxiu.api.DocumentTipus.CERTIFICAT);
+											justificantFitxer);
 									log.info(
 											"Guardat justificant a l'arxiu relacionat amb la consulta (" +
 													"id=" + consulta.getId() + ", " +
@@ -278,6 +276,66 @@ public class JustificantHelper implements MessageSourceAware {
         } finally {
             releaseExpedientLock(scspPeticionId, expedientLock);
         }
+    }
+
+    /**
+     * Desa el justificant firmat dins l'expedient. Si l'expedient ja conté un document amb el mateix
+     * nom (un intent anterior el va crear però no se'n va poder desar l'uuid a la consulta), es
+     * reutilitza el document existent en lloc de fallar per nom duplicat.
+     */
+    private String guardarODocumentExistentArxiu(
+            IConsulta consulta,
+            String arxiuExpedientUuid,
+            Procediment procediment,
+            String serieDocumental,
+            FitxerDto justificantFitxer) throws Exception {
+        try {
+            return pluginHelper.arxiuDocumentGuardarFirmaPades(
+                    consulta.getScspPeticionId(),
+                    arxiuExpedientUuid,
+                    consulta.getScspSolicitudId(),
+                    procediment.getOrganGestor().getCodi(),
+                    serieDocumental,
+                    justificantFitxer,
+                    ContingutOrigen.ADMINISTRACIO,
+                    DocumentEstatElaboracio.ORIGINAL,
+                    es.caib.pluginsib.arxiu.api.DocumentTipus.CERTIFICAT);
+        } catch (Exception ex) {
+            if (isDuplicateExpedientException(ex)) {
+                String documentExistentUuid = cercarDocumentArxiuAmbNom(
+                        consulta.getScspPeticionId(),
+                        arxiuExpedientUuid,
+                        consulta.getScspSolicitudId());
+                if (documentExistentUuid != null) {
+                    log.warn(
+                            "El justificant ja existia a l'arxiu; es reutilitza el document existent (" +
+                                    "id=" + consulta.getId() + ", " +
+                                    "scspPeticionId=" + consulta.getScspPeticionId() + ", " +
+                                    "scspSolicitudId=" + consulta.getScspSolicitudId() + ", " +
+                                    "arxiuExpedientUuid=" + arxiuExpedientUuid + ", " +
+                                    "arxiuDocumentUuid=" + documentExistentUuid + ")",
+                            ex);
+                    return documentExistentUuid;
+                }
+            }
+            throw ex;
+        }
+    }
+
+    private String cercarDocumentArxiuAmbNom(
+            String peticioId,
+            String arxiuExpedientUuid,
+            String nom) throws Exception {
+        Expedient expedient = pluginHelper.arxiuExpedientConsultar(peticioId, arxiuExpedientUuid);
+        if (expedient == null || expedient.getContinguts() == null) {
+            return null;
+        }
+        for (ContingutArxiu contingut : expedient.getContinguts()) {
+            if (ContingutTipus.DOCUMENT.equals(contingut.getTipus()) && nom.equals(contingut.getNom())) {
+                return contingut.getIdentificador();
+            }
+        }
+        return null;
     }
 
     private boolean isDuplicateExpedientException(Throwable ex) {

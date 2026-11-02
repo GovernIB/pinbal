@@ -3,6 +3,7 @@ package es.caib.pinbal.logic.helper;
 import es.caib.pinbal.logic.intf.dto.FitxerDto;
 import es.caib.pinbal.logic.intf.dto.JustificantEstat;
 import es.caib.pinbal.persist.entity.Consulta;
+import es.caib.pinbal.plugin.SistemaExternException;
 import es.caib.pinbal.persist.entity.OrganGestor;
 import es.caib.pinbal.persist.entity.Procediment;
 import es.caib.pinbal.persist.entity.ProcedimentServei;
@@ -17,8 +18,10 @@ import es.caib.pinbal.scsp.ResultatEnviamentPeticio;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.caib.pluginsib.arxiu.api.ContingutArxiu;
 import es.caib.pluginsib.arxiu.api.ContingutOrigen;
+import es.caib.pluginsib.arxiu.api.ContingutTipus;
 import es.caib.pluginsib.arxiu.api.DocumentEstatElaboracio;
 import es.caib.pluginsib.arxiu.api.DocumentTipus;
+import es.caib.pluginsib.arxiu.api.Expedient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -104,7 +108,7 @@ public class JustificantHelperTest {
                 anyString(),
                 anyString(),
                 anyString())).thenReturn(signaturaResposta);
-        when(pluginHelper.arxiuDocumentGuardarFirmaPades(
+        lenient().when(pluginHelper.arxiuDocumentGuardarFirmaPades(
                 anyString(),
                 anyString(),
                 anyString(),
@@ -158,6 +162,99 @@ public class JustificantHelperTest {
     }
 
     @Test
+    public void whenDocumentCreateReturnsDuplicateThenReusesExistingDocument() throws Exception {
+        // Un intent anterior va crear el document a l'arxiu però no se'n va desar l'uuid a la consulta
+        Consulta consulta = mockConsulta("PETICIO-3", "PETICIO-3");
+        ContingutArxiu expedientExistent = Mockito.mock(ContingutArxiu.class);
+        when(expedientExistent.getIdentificador()).thenReturn("EXP-3");
+        when(pluginHelper.arxiuExpedientCercarAmbNom("PETICIO-3")).thenReturn(expedientExistent);
+        when(consultaRepository.findByScspPeticionId("PETICIO-3")).thenReturn(Collections.<Consulta>emptyList());
+        when(pluginHelper.arxiuDocumentGuardarFirmaPades(
+                anyString(), eq("EXP-3"), anyString(), anyString(), anyString(), any(FitxerDto.class),
+                Mockito.<ContingutOrigen>any(), Mockito.<DocumentEstatElaboracio>any(), Mockito.<DocumentTipus>any()))
+                .thenThrow(new SistemaExternException("[HTTP_500, COD_021] Duplicate child name not allowed: PETICIO-3"));
+        when(pluginHelper.arxiuExpedientConsultar("PETICIO-3", "EXP-3"))
+                .thenReturn(expedientAmbContinguts(
+                        contingut("ALTRE", ContingutTipus.DOCUMENT, "DOC-ALTRE"),
+                        contingut("PETICIO-3", ContingutTipus.CARPETA, "CARPETA-3"),
+                        contingut("PETICIO-3", ContingutTipus.DOCUMENT, "DOC-EXISTENT")));
+
+        justificantHelper.generarCustodiarJustificantPendent(consulta, scspHelper);
+
+        verify(consulta).updateJustificantEstat(
+                eq(JustificantEstat.OK),
+                eq(true),
+                eq((String) null),
+                eq((String) null),
+                eq((String) null),
+                eq("EXP-3"),
+                eq("DOC-EXISTENT"));
+    }
+
+    @Test
+    public void whenDocumentCreateReturnsDuplicateAndDocumentNotFoundThenError() throws Exception {
+        Consulta consulta = mockConsulta("PETICIO-4", "PETICIO-4");
+        ContingutArxiu expedientExistent = Mockito.mock(ContingutArxiu.class);
+        when(expedientExistent.getIdentificador()).thenReturn("EXP-4");
+        when(pluginHelper.arxiuExpedientCercarAmbNom("PETICIO-4")).thenReturn(expedientExistent);
+        when(consultaRepository.findByScspPeticionId("PETICIO-4")).thenReturn(Collections.<Consulta>emptyList());
+        when(pluginHelper.arxiuDocumentGuardarFirmaPades(
+                anyString(), eq("EXP-4"), anyString(), anyString(), anyString(), any(FitxerDto.class),
+                Mockito.<ContingutOrigen>any(), Mockito.<DocumentEstatElaboracio>any(), Mockito.<DocumentTipus>any()))
+                .thenThrow(new SistemaExternException("[HTTP_500, COD_021] Duplicate child name not allowed: PETICIO-4"));
+        when(pluginHelper.arxiuExpedientConsultar("PETICIO-4", "EXP-4")).thenReturn(expedientAmbContinguts());
+
+        justificantHelper.generarCustodiarJustificantPendent(consulta, scspHelper);
+
+        verify(consulta).updateJustificantEstat(
+                eq(JustificantEstat.ERROR),
+                eq(false),
+                eq((String) null),
+                eq((String) null),
+                anyString(),
+                eq("EXP-4"),
+                eq((String) null));
+    }
+
+    @Test
+    public void whenDocumentCreateFailsWithOtherErrorThenDoesNotSearchExistingDocument() throws Exception {
+        Consulta consulta = mockConsulta("PETICIO-5", "PETICIO-5");
+        ContingutArxiu expedientExistent = Mockito.mock(ContingutArxiu.class);
+        when(expedientExistent.getIdentificador()).thenReturn("EXP-5");
+        when(pluginHelper.arxiuExpedientCercarAmbNom("PETICIO-5")).thenReturn(expedientExistent);
+        when(consultaRepository.findByScspPeticionId("PETICIO-5")).thenReturn(Collections.<Consulta>emptyList());
+        when(pluginHelper.arxiuDocumentGuardarFirmaPades(
+                anyString(), eq("EXP-5"), anyString(), anyString(), anyString(), any(FitxerDto.class),
+                Mockito.<ContingutOrigen>any(), Mockito.<DocumentEstatElaboracio>any(), Mockito.<DocumentTipus>any()))
+                .thenThrow(new SistemaExternException("Timeout connectant amb l'arxiu"));
+
+        justificantHelper.generarCustodiarJustificantPendent(consulta, scspHelper);
+
+        verify(pluginHelper, never()).arxiuExpedientConsultar(anyString(), anyString());
+        verify(consulta).updateJustificantEstat(
+                eq(JustificantEstat.ERROR),
+                eq(false),
+                eq((String) null),
+                eq((String) null),
+                anyString(),
+                eq("EXP-5"),
+                eq((String) null));
+    }
+
+    private static Expedient expedientAmbContinguts(ContingutArxiu... continguts) {
+        Expedient expedient = new Expedient();
+        expedient.setContinguts(Arrays.asList(continguts));
+        return expedient;
+    }
+
+    private static ContingutArxiu contingut(String nom, ContingutTipus tipus, String identificador) {
+        ContingutArxiu contingut = new ContingutArxiu(tipus);
+        contingut.setNom(nom);
+        contingut.setIdentificador(identificador);
+        return contingut;
+    }
+
+    @Test
     public void whenExpedientIsResolvedThenPropagatesUuidToSiblingConsultes() throws Exception {
         Consulta consulta = mockConsulta("PETICIO-2", "000001");
         Consulta consultaGermana = Mockito.mock(Consulta.class);
@@ -185,13 +282,13 @@ public class JustificantHelperTest {
 
     private Consulta mockConsulta(String scspPeticionId, String scspSolicitudId) {
         Consulta consulta = Mockito.mock(Consulta.class);
-        when(consulta.getId()).thenReturn(1L);
+        lenient().when(consulta.getId()).thenReturn(1L);
         when(consulta.getScspPeticionId()).thenReturn(scspPeticionId);
         when(consulta.getScspSolicitudId()).thenReturn(scspSolicitudId);
         when(consulta.getProcedimentServei()).thenReturn(procedimentServei);
         when(consulta.getArxiuExpedientUuid()).thenReturn(null);
         when(consulta.getArxiuDocumentUuid()).thenReturn(null);
-        when(consulta.getTitularDocumentNum()).thenReturn("12345678A");
+        lenient().when(consulta.getTitularDocumentNum()).thenReturn("12345678A");
         when(consulta.isJustificantGestionatPerAplicacio()).thenReturn(false);
         when(consulta.isCustodiat()).thenReturn(false);
         when(consulta.getCustodiaUrl()).thenReturn(null);
