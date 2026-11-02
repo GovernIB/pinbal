@@ -6,13 +6,14 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import org.jboss.resteasy.client.jaxrs.ClientHttpEngineBuilder43;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.jboss.resteasy.client.jaxrs.engines.ApacheHttpClient43Engine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.ClientResponseContext;
@@ -204,8 +205,7 @@ public abstract class ClientBase {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 		CookieFilter cookieFilter = new CookieFilter();
-		ResteasyClientBuilder builder = (ResteasyClientBuilder) ClientBuilder.newBuilder();
-		builder.setFollowRedirects(true);
+		ResteasyClientBuilder builder = new ResteasyClientBuilder();
 		builder.register(new JacksonJsonProvider(mapper));
 		builder.register(cookieFilter);
 		if (timeoutConnect != null) {
@@ -221,7 +221,13 @@ public abstract class ClientBase {
 					ctx.getHeaders().putSingle("Authorization", "Basic " + credentials));
 			logDebug("Autenticant REST amb autenticació de tipus HTTP basic (usuari=" + usuari + ", contrasenya=********)");
 		}
-		rsClient = builder.build();
+		// RESTEasy 3.6 (JBoss EAP 7.2) només permet activar els redirects a l'engine HTTP, que
+		// s'ha de crear al final perquè agafa els timeouts configurats al builder.
+		ApacheHttpClient43Engine engine = (ApacheHttpClient43Engine) new ClientHttpEngineBuilder43()
+				.resteasyClientBuilder(builder)
+				.build();
+		engine.setFollowRedirects(true);
+		rsClient = builder.httpEngine(engine).build();
 		if (usuari != null && !basicAuth) {
 			logDebug("Autenticant client REST per a fer peticions cap a servei desplegat a damunt jBoss (usuari=" + usuari + ", contrasenya=********)");
 			rsClient.target(getUrlAmbMetode("getRespuesta")).request().get().close();

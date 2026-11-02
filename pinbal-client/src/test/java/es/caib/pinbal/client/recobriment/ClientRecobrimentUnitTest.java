@@ -1,5 +1,6 @@
 package es.caib.pinbal.client.recobriment;
 
+import es.caib.pinbal.client.comu.ClientBase;
 import es.caib.pinbal.client.procediments.ProcedimentBasic;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.client.recobriment.v2.DadaEspecifica;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -65,6 +67,40 @@ public class ClientRecobrimentUnitTest {
     @AfterEach
     public void tearDown() {
         servidor.atura();
+    }
+
+    // Configuració del client HTTP
+    // /////////////////////////////////////////////////////////
+
+    @Test
+    public void segueixRedireccionsGet() throws Exception {
+        servidor.redirigeix("GET", "entitats", "desti");
+        servidor.responJson("GET", "desti", "[{\"codi\":\"E1\"}]");
+
+        List<Entitat> entitats = client.getEntitats();
+
+        assertEquals(1, entitats.size());
+        assertEquals(ServidorPinbalSimulat.BASE_RECOBRIMENT + "desti", servidor.getDarrerPath());
+    }
+
+    @Test
+    public void clientBaseSegueixRedireccionsGet() throws Exception {
+        servidor.redirigeix("GET", "origen", "desti");
+        servidor.respon("GET", "desti", 200, "text/plain", "resultat");
+
+        ClientBaseProva clientBase = new ClientBaseProva(servidor.getUrlBase());
+
+        assertEquals("resultat", clientBase.get("/interna/recobriment/v2/origen"));
+        assertEquals(AUTORITZACIO, servidor.getDarreraAutoritzacio());
+    }
+
+    private static class ClientBaseProva extends ClientBase {
+        ClientBaseProva(String urlBase) {
+            super(urlBase, "usuari", "contrasenya");
+        }
+        String get(String metode) throws IOException {
+            return restPeticioGetString(metode, null);
+        }
     }
 
     // Entitats, procediments i serveis

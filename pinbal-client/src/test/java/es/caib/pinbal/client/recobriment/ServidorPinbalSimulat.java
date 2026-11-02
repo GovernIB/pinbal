@@ -71,6 +71,15 @@ public class ServidorPinbalSimulat {
         respon(metode, path, 200, "application/json", json);
     }
 
+    /**
+     * Configura una redirecció HTTP 302 cap a un altre path del recobriment v2.
+     */
+    public void redirigeix(String metode, String path, String pathDesti) {
+        Resposta resposta = new Resposta(302, null, null);
+        resposta.location = getUrlBase() + "/interna/recobriment/v2/" + pathDesti;
+        respostes.put(metode + " " + BASE_RECOBRIMENT + path, resposta);
+    }
+
     private synchronized void gestionar(HttpExchange exchange) throws IOException {
         darrerMetode = exchange.getRequestMethod();
         darrerPath = exchange.getRequestURI().getRawPath();
@@ -86,6 +95,9 @@ public class ServidorPinbalSimulat {
         byte[] cos = resposta.cos != null ? resposta.cos.getBytes(UTF8) : new byte[0];
         if (resposta.contentType != null) {
             exchange.getResponseHeaders().set("Content-Type", resposta.contentType);
+        }
+        if (resposta.location != null) {
+            exchange.getResponseHeaders().set("Location", resposta.location);
         }
         if (cos.length == 0) {
             exchange.sendResponseHeaders(resposta.status, -1);
@@ -131,6 +143,7 @@ public class ServidorPinbalSimulat {
         final int status;
         final String contentType;
         final String cos;
+        String location;
 
         Resposta(int status, String contentType, String cos) {
             this.status = status;
