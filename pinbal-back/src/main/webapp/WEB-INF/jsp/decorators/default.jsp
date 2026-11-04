@@ -95,6 +95,7 @@
 	<script src="<c:url value="/webjars/bootstrap/3.3.6/js/bootstrap.min.js"/>"></script>
 	<script src="<c:url value="/webjars/font-awesome/5.13.1/js/all.min.js"/>"></script>
 	<script src="<c:url value="/js/webutil.modal.js"/>"></script>
+	<script src="<c:url value="/js/webutil.modalcontent.js"/>"></script>
 	<decorator:head />
 <style>
 body {

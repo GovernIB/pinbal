@@ -99,7 +99,7 @@
 		
 		$('#modal-procediment-list').find('.modal-header h3').html($(element).data("titol"));
 		$('#modal-procediment-list').find('.modal-body').css({"max-height": alt + "px"});
-		$('#modal-procediment-list').find('.modal-body').load(element.href);
+		webutilLoadModalContent($('#modal-procediment-list').find('.modal-body'), element.href);
 		$('#modal-procediment-list').modal('toggle');
 	}
 </script>

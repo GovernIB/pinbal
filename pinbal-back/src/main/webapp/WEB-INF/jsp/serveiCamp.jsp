@@ -408,7 +408,7 @@ function initModalCamp(
 }
 // Modal per a previsualitzar el formulari
 function initModalPreview(element) {
-	$('#modal-form-preview .modal-body').load(element.href);
+	webutilLoadModalContent('#modal-form-preview .modal-body', element.href);
 // 	$('#modal-form-preview').css('width', '700px');
 	$('#modal-form-preview').modal('toggle');
 }

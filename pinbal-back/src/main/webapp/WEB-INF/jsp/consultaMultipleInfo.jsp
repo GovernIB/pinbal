@@ -15,7 +15,7 @@
 	<script src="<c:url value="/js/vkbeautify.js"/>"></script>
 <script>
 function initModalXml(element) {
-	$('#modal-missatge-xml .modal-body').load(element.href);
+	webutilLoadModalContent('#modal-missatge-xml .modal-body', element.href);
 	$('#modal-missatge-xml').modal('toggle');
 }
 

@@ -55,7 +55,8 @@ $(document).ready(function() {
 	$("#gestioXsdFieldSet").attr("hidden", $("#activaGestioXsd").attr("checked") ? false : true);
 	
 	$('#modal-boto-submit').click(function() {
-		$('#modal-redir-form .modal-body').load(
+		webutilLoadModalContent(
+			'#modal-redir-form .modal-body',
 			'<c:url value="/modal/servei/${serveiCommand.codi}/redir/save"/>',
 			$('#modal-form').serializeArray());
 	});
@@ -162,7 +163,7 @@ $(document).ready(function() {
 function showModalRedir(element) {
 <c:choose>
 	<c:when test="${not empty serveiCommand.pinbalEntitatTipus}">
-		$('#modal-redir-form .modal-body').load(element.href);
+		webutilLoadModalContent('#modal-redir-form .modal-body', element.href);
 		$('#modal-redir-form').modal('toggle');
 	</c:when>
 	<c:otherwise>
@@ -185,7 +186,7 @@ function esborraFitxerXsd(tipusFitxer) {
 };
 
 function showModalXsd(element) {
-		$('#modal-xsd-form .modal-body').load(element.href);
+		webutilLoadModalContent('#modal-xsd-form .modal-body', element.href);
 		$('#modal-xsd-form').modal('toggle');	
 	}
 </script>
