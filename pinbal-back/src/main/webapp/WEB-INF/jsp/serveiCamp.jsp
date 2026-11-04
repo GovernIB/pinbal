@@ -432,11 +432,15 @@ function showHideValidation() {
 }
 function showHideValidationData(initValue) {
 	if (initValue) {
+		// La validació de data només aplica si hi ha camp de comparació (validacioDataCmpCamp2)
+		const datcampVal = $('#modal-input-val-datcamp2').val();
 		const datnumVal = $('#modal-input-val-datnum').val();
-		if (datnumVal) {
-			$('#modal-input-val-datvalcamp').val('DIFERENCIA')
+		if (!datcampVal) {
+			$('#modal-input-val-datvalcamp').val('');
+		} else if (datnumVal) {
+			$('#modal-input-val-datvalcamp').val('DIFERENCIA');
 		} else {
-			$('#modal-input-val-datvalcamp').val('VALOR')
+			$('#modal-input-val-datvalcamp').val('VALOR');
 		}
 	}
 	const dataTipus = $('#modal-input-val-datvalcamp').val();
@@ -445,8 +449,15 @@ function showHideValidationData(initValue) {
 	if (dataTipus == 'VALOR') {
 		$('#validacio_tipus_data_valor').css('display', 'block');
 		$('#modal-input-val-datnum').val('');
-	} else {
+		$('#modal-input-val-dattip').val('');
+	} else if (dataTipus == 'DIFERENCIA') {
 		$('#validacio_tipus_data_diferencia').css('display', 'block');
+	} else {
+		// Sense validació: es buiden tots els camps perquè s'enviïn com a null i s'esborri la validació
+		$('#modal-input-val-datop, #modal-input-val-datop2').val('');
+		$('#modal-input-val-datcamp2, #modal-input-val-datcamp3').val('');
+		$('#modal-input-val-datnum').val('');
+		$('#modal-input-val-dattip').val('');
 	}
 	$("#modal-input-val-datcamp2 > option").each(function() {
 		const currentId = $('#modal-hidden-id').val();
@@ -842,6 +853,7 @@ $(function() {
 										<div class="form-group">
 											<label for="modal-input-val-datvalcamp"><spring:message code="servei.camp.validacio.data.valorcamp"/></label>
 											<select id="modal-input-val-datvalcamp" name="validacioDataCmpValcamp" class="form-control">
+												<option value=""><spring:message code="servei.camp.validacio.enum.tipval.CAP"/></option>
 												<option value="VALOR"><spring:message code="servei.camp.validacio.enum.tipval.VALOR"/></option>
 												<option value="DIFERENCIA"><spring:message code="servei.camp.validacio.enum.tipval.DIFERENCIA"/></option>
 											</select>
@@ -854,6 +866,7 @@ $(function() {
 											<div class="form-group">
 												<label for="modal-input-val-datop"><spring:message code="servei.camp.validacio.data.operacio"/></label>
 												<select id="modal-input-val-datop" name="validacioDataCmpOperacio" class="form-control">
+													<option value=""></option>
 													<c:forEach var="op" items="${serveiCampValidacioOperacio}">
 														<option value="${op}"><spring:message code="servei.camp.validacio.enum.operacio.${op}"/></option>
 													</c:forEach>
@@ -864,6 +877,7 @@ $(function() {
 											<div class="form-group">
 												<label for="modal-input-val-datcamp2"><spring:message code="servei.camp.validacio.data.camp2"/></label>
 												<select class="form-control" id="modal-input-val-datcamp2" name="validacioDataCmpCamp2Id" class="input-lg">
+													<option value=""></option>
 													<c:forEach var="camp" items="${camps}">
 														<c:if test="${camp.tipus=='DATA'}">
 															<option value="${camp.id}">${camp.path}</option>
@@ -878,6 +892,7 @@ $(function() {
 											<div class="form-group">
 												<label for="modal-input-val-datcamp3"><spring:message code="servei.camp.validacio.data.camp2"/></label>
 												<select class="form-control" id="modal-input-val-datcamp3" name="validacioDataCmpCamp3Id" class="input-lg">
+													<option value=""></option>
 													<c:forEach var="camp" items="${camps}">
 														<c:if test="${camp.tipus=='DATA'}">
 															<option value="${camp.id}">${camp.path}</option>
@@ -890,6 +905,7 @@ $(function() {
 											<div class="form-group">
 												<label for="modal-input-val-datop2"><spring:message code="servei.camp.validacio.data.operacio"/></label>
 												<select id="modal-input-val-datop2" name="validacioDataCmpOperacio2" class="form-control">
+													<option value=""></option>
 													<c:forEach var="op" items="${serveiCampValidacioOperacio}">
 														<option value="${op}"><spring:message code="servei.camp.validacio.enum.operacio.${op}"/></option>
 													</c:forEach>
@@ -906,6 +922,7 @@ $(function() {
 											<div class="form-group">
 												<label for="modal-input-val-dattip"><spring:message code="servei.camp.validacio.data.tipus"/></label>
 												<select id="modal-input-val-dattip" name="validacioDataCmpTipus" class="form-control">
+													<option value=""></option>
 													<c:forEach var="tip" items="${serveiCampValidacioDataTipus}">
 														<option value="${tip}"><spring:message code="servei.camp.validacio.enum.tipus.${tip}"/></option>
 													</c:forEach>
