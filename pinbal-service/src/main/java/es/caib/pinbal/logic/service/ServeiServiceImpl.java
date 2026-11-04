@@ -1285,6 +1285,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			camps.add(indexDesti, camps.remove(indexOrigen));
 			for (int i = 0; i < camps.size(); i++)
 				camps.get(i).updateOrdre(i);
+			// Les dades específiques (API de recobriment) es retornen ordenades i estan en caché
+			cacheHelper.evictDadesEspecifiques(perMoure.getServei());
 		}
 	}
 
@@ -1475,6 +1477,8 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			grups.get(perMoure.getOrdre() + 1).updateOrdre(perMoure.getOrdre());
 			perMoure.updateOrdre(perMoure.getOrdre() + 1);
 		}
+		// L'ordre dels camps a les dades específiques depèn de l'ordre dels grups
+		cacheHelper.evictDadesEspecifiques(perMoure.getServei());
 	}
 
 	@Transactional(readOnly = true)
