@@ -18,6 +18,10 @@ public class SolicitudSimple {
 //    private String id;
     private Titular titular;
     private String expedient;
+    /**
+     * Valors de les dades específiques, indexats pel codi (path) del camp.
+     * Els camps de tipus FILE (fitxers binaris o XML) s'envien codificats en base64.
+     */
     private Map<String, String> dadesEspecifiques;
 
 }

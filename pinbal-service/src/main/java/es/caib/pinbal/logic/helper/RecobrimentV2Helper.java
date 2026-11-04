@@ -34,6 +34,7 @@ import org.springframework.context.MessageSourceAware;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -80,6 +81,10 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 
 	public void setScspHelper(ScspHelper scspHelper) {
 		this.scspHelper = scspHelper;
+	}
+
+	void setXmlHelper(XmlHelper xmlHelper) {
+		this.xmlHelper = xmlHelper;
 	}
 
 	private ScspHelper getScspHelper() {
@@ -576,6 +581,20 @@ public class RecobrimentV2Helper implements ApplicationContextAware, MessageSour
 			ServeiCamp camp = serveiCampRepository.findByServeiAndPath(serveiCodi, entry.getKey());
 			if (camp != null && ServeiCamp.ServeiCampTipus.DATA.equals(camp.getTipus()) && camp.getDataFormat() != null && !camp.getDataFormat().isEmpty()) {
 				valor = getDateFormat(valor, camp.getDataFormat());
+			}
+			if (camp != null && ServeiCamp.ServeiCampTipus.ADJUNT_XML.equals(camp.getTipus())) {
+				// Igual que al formulari web: el fitxer XML s'insereix com a nodes, no com a text
+				try {
+					Document documentXml = AdjuntXmlHelper.parse(valor);
+					if (documentXml != null) {
+						dadesEspecifiquesConverted.put(entry.getKey(), documentXml);
+						continue;
+					}
+				} catch (IllegalArgumentException ex) {
+					throw new ConsultaScspGeneracioException(
+							"El valor del camp " + entry.getKey() + " no és un fitxer XML vàlid codificat en base64: " + ex.getMessage(),
+							ex);
+				}
 			}
 			dadesEspecifiquesConverted.put(entry.getKey(), valor);
 		}

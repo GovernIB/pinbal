@@ -37,6 +37,14 @@ public interface RecobrimentRestV2Intf {
      * permisos als mètodes d'obtenció de serveis. Per defecte és 'false' per a
      * mantenir la resposta idèntica a la de les versions anteriors de l'API.
      */
+    /**
+     * Descripció compartida de com s'han d'enviar els camps de tipus fitxer a les dades específiques.
+     */
+    String DESC_DADES_ESPECIFIQUES_FILE = "Els camps de dades específiques de tipus FILE s'envien codificats en base64, " +
+            "tant si són fitxers binaris (format 'BINARI') com XML (format 'XML'). Els fitxers XML s'insereixen " +
+            "com a nodes XML a la petició i s'han de correspondre amb l'esquema del servei; si no són XML vàlids " +
+            "es retorna un error de validació del camp.";
+
     String PARAM_AMB_PERMISOS = "Si és 'true', afegeix a cada servei els camps 'permis' (indica si l'usuari autenticat té permís " +
             "sobre el servei) i 'documentsTipusPermesos' (tipus de document identificatiu del titular admesos pel servei). " +
             "Per defecte és 'false' i aquests camps no s'inclouen a la resposta.";
@@ -149,7 +157,9 @@ public interface RecobrimentRestV2Intf {
             summary = "Obtenir dades específiques d'un servei",
             description = "Retorna la llista de camps necessaris per emplenar l'apartat de dades específiques de la petició SCSP al servei web final. " +
                     "Per a cada camp s'indica el grup al que pertany (veure /serveis/{serveiCodi}/grups), l'ordre dins el grup, si és visible i, " +
-                    "pels camps de tipus ENUM, el tipus d'enumerat ('enumTipus') a emprar per obtenir-ne els valors.",
+                    "pels camps de tipus ENUM, el tipus d'enumerat ('enumTipus') a emprar per obtenir-ne els valors. " +
+                    "Pels camps de tipus FILE, 'format' indica si s'espera un fitxer binari ('BINARI') o XML ('XML'). " +
+                    DESC_DADES_ESPECIFIQUES_FILE,
             operationId = "getDadesEspecifiquesV2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dades específiques obtingudes amb èxit",
@@ -247,7 +257,8 @@ public interface RecobrimentRestV2Intf {
 
     @Operation(
             summary = "Realitzar consulta síncrona",
-            description = "Realitza una consulta síncrona al servei indicat. Retorna informació dels possibles errors de validació o la resposta de la consulta si s'ha realitzat correctament.",
+            description = "Realitza una consulta síncrona al servei indicat. Retorna informació dels possibles errors de validació o la resposta de la consulta si s'ha realitzat correctament. " +
+                    DESC_DADES_ESPECIFIQUES_FILE,
             operationId = "peticioSincronaV2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Consulta realitzada. Pot retornar errors de validació, error en la consulta, o haver-se realitzat correctament.",
@@ -265,7 +276,8 @@ public interface RecobrimentRestV2Intf {
 
     @Operation(
             summary = "Realitzar consulta asíncrona",
-            description = "Realitza una consulta asíncrona al servei indicat. Retorna informació dels possibles errors de validació o la confirmació de la petició si s'ha enviat correctament.",
+            description = "Realitza una consulta asíncrona al servei indicat. Retorna informació dels possibles errors de validació o la confirmació de la petició si s'ha enviat correctament. " +
+                    DESC_DADES_ESPECIFIQUES_FILE,
             operationId = "peticioAsincronaV2")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Consulta realitzada. Pot retornar errors de validació, error en la consulta, o haver-se realitzat correctament.",

@@ -80,6 +80,18 @@ public class DadesConsultaSimpleValidator implements Validator {
                     grupsModificats.add(camp.getGrup().getNom());
                 }
 
+                // Validar que els fitxers XML rebuts com a text (base64) siguin XML ben format
+                if (ServeiCampDto.ServeiCampDtoTipus.ADJUNT_XML.equals(camp.getTipus()) && valorCamp instanceof String) {
+                    try {
+                        AdjuntXmlHelper.parse((String) valorCamp);
+                    } catch (IllegalArgumentException ex) {
+                        errors.rejectValue(
+                                "dadesEspecifiques[" + camp.getPath() + "]",
+                                "XmlNoValid",
+                                "El valor ha de ser un fitxer XML vàlid codificat en base64. " + ex.getMessage());
+                    }
+                }
+
                 // Validar expressió regular si n'hi ha
                 String validacioRegexp = camp.getValidacioRegexp();
                 if (ServeiCampDto.ServeiCampDtoTipus.TEXT.equals(camp.getTipus()) && validacioRegexp != null && !validacioRegexp.isEmpty()) {

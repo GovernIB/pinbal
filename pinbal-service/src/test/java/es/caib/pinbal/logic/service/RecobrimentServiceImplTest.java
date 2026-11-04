@@ -740,6 +740,26 @@ public class RecobrimentServiceImplTest {
     }
 
     @Test
+    public void testGetDadesEspecifiquesByServei_FormatFitxers() throws ServeiNotFoundException {
+        String serveiCodi = "SERV001";
+
+        ServeiCamp campBinari = ServeiCamp.getBuilder(serveiCodi, "path/binari", ServeiCamp.ServeiCampTipus.ADJUNT_BINARI, "Binari", null, 0, 6).build();
+        ServeiCamp campXml = ServeiCamp.getBuilder(serveiCodi, "path/xml", ServeiCamp.ServeiCampTipus.ADJUNT_XML, "Xml", null, 1, 6).build();
+        ServeiCamp campText = ServeiCamp.getBuilder(serveiCodi, "path/text", ServeiCamp.ServeiCampTipus.TEXT, "Text", null, 2, 6).build();
+
+        when(serveiConfigRepository.findByServei(serveiCodi)).thenReturn(new ServeiConfig());
+        when(serveiCampRepository.findByServeiOrderByGrupOrdreAsc(serveiCodi)).thenReturn(Arrays.asList(campBinari, campXml, campText));
+
+        List<DadaEspecifica> dades = recobrimentServiceImpl.getDadesEspecifiquesByServei(serveiCodi);
+
+        Assertions.assertEquals(DadaTipusEnum.FILE, dades.get(0).getTipus());
+        Assertions.assertEquals(DadaEspecifica.FORMAT_FILE_BINARI, dades.get(0).getFormat());
+        Assertions.assertEquals(DadaTipusEnum.FILE, dades.get(1).getTipus());
+        Assertions.assertEquals(DadaEspecifica.FORMAT_FILE_XML, dades.get(1).getFormat());
+        Assertions.assertNull(dades.get(2).getFormat());
+    }
+
+    @Test
     public void testGetDadesEspecifiquesByServei_NoDataFound() throws ServeiNotFoundException {
         // Mock data
         String serveiCodi = "SERV002";

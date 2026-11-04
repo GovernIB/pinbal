@@ -112,6 +112,54 @@ public class DadesConsultaSimpleValidatorTest {
     }
 
     @Test
+    public void validate_campAdjuntXml_base64Valid_noRejecta() throws ServeiNotFoundException {
+        ServeiCampDto camp = campAdjuntXml("/DatosEspecificos/Fitxer");
+        mockCampsSenseRegles(camp);
+
+        Map<String, Object> dades = new HashMap<>();
+        dades.put("/DatosEspecificos/Fitxer", java.util.Base64.getEncoder().encodeToString(
+                "<arrel><fill>1</fill></arrel>".getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        Errors errors = bindingResult(dades);
+
+        validator.validate(dades, errors);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
+    public void validate_campAdjuntXml_noEsXml_rejecta() throws ServeiNotFoundException {
+        ServeiCampDto camp = campAdjuntXml("/DatosEspecificos/Fitxer");
+        mockCampsSenseRegles(camp);
+
+        Map<String, Object> dades = new HashMap<>();
+        dades.put("/DatosEspecificos/Fitxer", java.util.Base64.getEncoder().encodeToString(
+                "no és xml".getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        Errors errors = bindingResult(dades);
+
+        validator.validate(dades, errors);
+
+        FieldError error = errors.getFieldError("dadesEspecifiques[/DatosEspecificos/Fitxer]");
+        assertNotNull(error);
+        assertEquals("XmlNoValid", error.getCode());
+    }
+
+    @Test
+    public void validate_campAdjuntXml_valorDocument_noEsValida() throws Exception {
+        // Formulari web: el fitxer XML ja arriba parsejat com a Document
+        ServeiCampDto camp = campAdjuntXml("/DatosEspecificos/Fitxer");
+        mockCampsSenseRegles(camp);
+
+        Map<String, Object> dades = new HashMap<>();
+        dades.put("/DatosEspecificos/Fitxer",
+                javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
+        Errors errors = bindingResult(dades);
+
+        validator.validate(dades, errors);
+
+        assertFalse(errors.hasErrors());
+    }
+
+    @Test
     public void validate_campText_regexpInvalida_rejecta() throws ServeiNotFoundException {
         ServeiCampDto camp = campText("NIF", "/NIF");
         camp.setValidacioRegexp("[0-9]{8}[A-Z]");
@@ -617,6 +665,22 @@ public class DadesConsultaSimpleValidatorTest {
         c.setValidacioMin(min);
         c.setValidacioMax(max);
         return c;
+    }
+
+    private ServeiCampDto campAdjuntXml(String path) {
+        ServeiCampDto c = new ServeiCampDto();
+        c.setEtiqueta("Fitxer");
+        c.setPath(path);
+        c.setObligatori(false);
+        c.setTipus(ServeiCampDto.ServeiCampDtoTipus.ADJUNT_XML);
+        return c;
+    }
+
+    private void mockCampsSenseRegles(ServeiCampDto camp) throws ServeiNotFoundException {
+        when(serveiService.findServeiCamps(SERVEI_CODI)).thenReturn(Collections.singletonList(camp));
+        when(serveiService.findServeiCampGrupsAndSubgrups(SERVEI_CODI)).thenReturn(Collections.emptyList());
+        when(serveiService.getCampsByserveiRegla(eq(SERVEI_CODI), any())).thenReturn(Collections.emptyList());
+        when(serveiService.getGrupsByserveiRegla(eq(SERVEI_CODI), any())).thenReturn(Collections.emptyList());
     }
 
     private Errors bindingResult(Map<String, Object> target) {

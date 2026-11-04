@@ -475,6 +475,90 @@ public class RecobrimentV2HelperTest {
     }
 
     @Test
+    public void testToPeticion_campAdjuntXml_esPassaComDocument() throws Exception {
+        String path = "DatosEspecificos/Fitxer";
+        String base64 = java.util.Base64.getEncoder().encodeToString(
+                "<Fitxer><Dada>1</Dada></Fitxer>".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        Map<String, String> dadesEspecifiques = new HashMap<>();
+        dadesEspecifiques.put(path, base64);
+        dadesEspecifiques.put("DatosEspecificos/Text", "valor");
+
+        Map<String, Object> dadesEnviades = toPeticionCapturantDadesEspecifiques(dadesEspecifiques,
+                es.caib.pinbal.persist.entity.ServeiCamp.getBuilder("SVC", path,
+                        es.caib.pinbal.persist.entity.ServeiCamp.ServeiCampTipus.ADJUNT_XML, "Fitxer", null, 0, 0).build());
+
+        assertTrue(dadesEnviades.get(path) instanceof org.w3c.dom.Document);
+        assertEquals("Fitxer", ((org.w3c.dom.Document) dadesEnviades.get(path)).getDocumentElement().getNodeName());
+        assertEquals("valor", dadesEnviades.get("DatosEspecificos/Text"));
+    }
+
+    @Test
+    public void testToPeticion_campAdjuntXmlNoValid_llancaExcepcioGeneracio() throws Exception {
+        String path = "DatosEspecificos/Fitxer";
+        Map<String, String> dadesEspecifiques = new HashMap<>();
+        dadesEspecifiques.put(path, java.util.Base64.getEncoder().encodeToString(
+                "no és xml".getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+
+        assertThrows(es.caib.pinbal.logic.intf.service.exception.ConsultaScspGeneracioException.class, () ->
+                toPeticionCapturantDadesEspecifiques(dadesEspecifiques,
+                        es.caib.pinbal.persist.entity.ServeiCamp.getBuilder("SVC", path,
+                                es.caib.pinbal.persist.entity.ServeiCamp.ServeiCampTipus.ADJUNT_XML, "Fitxer", null, 0, 0).build()));
+    }
+
+    @Test
+    public void testToPeticion_campAdjuntBinari_esMantéComText() throws Exception {
+        String path = "DatosEspecificos/Fitxer";
+        String base64 = java.util.Base64.getEncoder().encodeToString(new byte[] {1, 2, 3});
+        Map<String, String> dadesEspecifiques = new HashMap<>();
+        dadesEspecifiques.put(path, base64);
+
+        Map<String, Object> dadesEnviades = toPeticionCapturantDadesEspecifiques(dadesEspecifiques,
+                es.caib.pinbal.persist.entity.ServeiCamp.getBuilder("SVC", path,
+                        es.caib.pinbal.persist.entity.ServeiCamp.ServeiCampTipus.ADJUNT_BINARI, "Fitxer", null, 0, 0).build());
+
+        assertEquals(base64, dadesEnviades.get(path));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> toPeticionCapturantDadesEspecifiques(
+            Map<String, String> dadesEspecifiques,
+            es.caib.pinbal.persist.entity.ServeiCamp campAdjunt) throws Exception {
+        DadesComunes dadesComunes = DadesComunes.builder()
+                .serveiCodi("SVC")
+                .entitatCif("VALID_CIF")
+                .procedimentCodi("PROC")
+                .funcionari(Funcionari.builder().nom("FUNC").nif("12345678Z").build())
+                .finalitat("Finalitat")
+                .consentiment(DadesComunes.Consentiment.Si)
+                .build();
+        PeticioSincrona peticio = PeticioSincrona.builder()
+                .dadesComunes(dadesComunes)
+                .solicitud(SolicitudSimple.builder().dadesEspecifiques(dadesEspecifiques).build())
+                .build();
+
+        Procediment procediment = new Procediment();
+        procediment.setCodi("PROC");
+        Entitat entitat = new Entitat();
+        entitat.setCif("VALID_CIF");
+        when(serveiConfigRepository.findByServei("SVC")).thenReturn(new ServeiConfig());
+        when(entitatRepository.findByCif("VALID_CIF")).thenReturn(entitat);
+        when(procedimentRepository.findByEntitatAndCodi(any(Entitat.class), eq("PROC"))).thenReturn(procediment);
+        when(serveiCampRepository.findByServeiAndPath(eq("SVC"), anyString())).thenAnswer(inv ->
+                campAdjunt.getPath().equals(inv.getArgument(1)) ? campAdjunt : null);
+
+        es.caib.pinbal.scsp.XmlHelper xmlHelper = mock(es.caib.pinbal.scsp.XmlHelper.class);
+        recobrimentV2Helper.setXmlHelper(xmlHelper);
+        org.mockito.ArgumentCaptor<Map<String, Object>> captor = org.mockito.ArgumentCaptor.forClass(Map.class);
+        // lenient: si la conversió falla no s'arriba a generar l'XML
+        lenient().when(xmlHelper.crearDadesEspecifiques(any(), captor.capture(), anyBoolean(), anyBoolean(), any(), anyBoolean()))
+                .thenReturn(null);
+
+        recobrimentV2Helper.toPeticion(peticio);
+
+        return captor.getValue();
+    }
+
+    @Test
     public void testToPeticion_NullPeticioSincrona() throws Exception {
         Peticion peticion = recobrimentV2Helper.toPeticion((PeticioSincrona) null);
         assertNull(peticion);

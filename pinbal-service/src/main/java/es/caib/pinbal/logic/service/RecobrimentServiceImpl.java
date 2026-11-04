@@ -1339,7 +1339,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                 .codi(serveiCamp.getPath())
                 .nom(obtenirUltimaPartDelPath(serveiCamp.getPath()))
                 .tipus(toTipus(serveiCamp.getTipus()))
-                .format(serveiCamp.getDataFormat())
+                .format(toFormat(serveiCamp))
                 .etiqueta(serveiCamp.getEtiqueta())
                 .comentari(serveiCamp.getComentari())
                 .valorDefecte(serveiCamp.getValorPerDefecte())
@@ -1353,6 +1353,21 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
                 .visible(serveiCamp.isVisible())
                 .ordre(serveiCamp.getOrdre())
                 .build();
+    }
+
+    /**
+     * Pels camps de tipus FILE indica quin tipus de fitxer s'espera (els dos s'envien en base64):
+     * BINARI (s'insereix el base64 com a text) o XML (s'insereix com a nodes XML).
+     * Per la resta de camps és el format de data configurat.
+     */
+    private String toFormat(ServeiCamp serveiCamp) {
+        if (ServeiCampTipus.ADJUNT_BINARI.equals(serveiCamp.getTipus())) {
+            return DadaEspecificaBasic.FORMAT_FILE_BINARI;
+        }
+        if (ServeiCampTipus.ADJUNT_XML.equals(serveiCamp.getTipus())) {
+            return DadaEspecificaBasic.FORMAT_FILE_XML;
+        }
+        return serveiCamp.getDataFormat();
     }
 
     private DadaEspecifica.EnumTipus toEnumTipus(ServeiCampTipus tipus) {
