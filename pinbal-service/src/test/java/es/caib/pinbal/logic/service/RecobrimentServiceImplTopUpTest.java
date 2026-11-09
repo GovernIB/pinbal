@@ -312,6 +312,7 @@ public class RecobrimentServiceImplTopUpTest {
         transmisionesOut.getTransmisionDatos().add(t2);
         respuesta.setTransmisiones(transmisionesOut);
 
+        when(recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual()).thenReturn(true);
         when(recobrimentHelper.peticionSincrona(any(Peticion.class), eq(true))).thenReturn(respuesta);
 
         ScspRespuesta result = recobrimentServiceImpl.peticionSincrona(peticio);
@@ -376,6 +377,7 @@ public class RecobrimentServiceImplTopUpTest {
 
     @Test
     public void testOldPeticionSincrona_NullPeticion_ReturnsNull() throws Exception {
+        when(recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual()).thenReturn(true);
         when(recobrimentHelper.peticionSincrona(nullable(Peticion.class), eq(true))).thenReturn(null);
 
         ScspRespuesta result = recobrimentServiceImpl.peticionSincrona((ScspPeticion) null);
@@ -419,6 +421,7 @@ public class RecobrimentServiceImplTopUpTest {
         atrOut.setEstado(estadoOut);
         confirmacio.setAtributos(atrOut);
 
+        when(recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual()).thenReturn(true);
         when(recobrimentHelper.peticionAsincrona(any(Peticion.class), eq(true))).thenReturn(confirmacio);
 
         ScspConfirmacionPeticion result = recobrimentServiceImpl.peticionAsincrona(peticio);

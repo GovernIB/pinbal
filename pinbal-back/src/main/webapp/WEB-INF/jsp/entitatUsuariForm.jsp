@@ -123,6 +123,33 @@
 			</div>
 		</div>
 
+		<%-- Configuració de client: només aplica als usuaris d'aplicació --%>
+		<div class="form-group" id="justificantClientGroup">
+			<label class="control-label col-md-2"><spring:message code="usuari.form.camp.justificant"/></label>
+			<div class="col-md-10" style="margin-top: 0px; padding-left: 35px;">
+				<label class="checkbox" for="justificantGestionatPerAplicacio">
+					<form:checkbox path="justificantGestionatPerAplicacio" id="justificantGestionatPerAplicacio" name="justificantGestionatPerAplicacio" />
+					<spring:message code="usuari.form.camp.justificant.gestionat.aplicacio"/>
+				</label>
+				<p class="help-block"><spring:message code="usuari.form.camp.justificant.gestionat.aplicacio.comment"/></p>
+			</div>
+		</div>
+		<script>
+			$(document).ready(function() {
+				function toggleJustificantClient() {
+					$('#justificantClientGroup').toggle($('#rolAplicacio').is(':checked'));
+				}
+				$('#rolAplicacio').change(function() {
+					toggleJustificantClient();
+					// Reajusta l'alçada de la modal perquè el camp nou hi càpiga sense scroll
+					if (window.frameElement && typeof webutilModalAdjustHeight === 'function') {
+						webutilModalAdjustHeight();
+					}
+				});
+				toggleJustificantClient();
+			});
+		</script>
+
 		<div id="modal-botons">
 			<a href="<c:url value="/"/>" class="btn btn-default" data-modal-cancel="true"><span class="fa fa-times"></span>&nbsp;<spring:message code="comu.boto.tancar"/></a>
 			<button type="submit" class="btn btn-success">

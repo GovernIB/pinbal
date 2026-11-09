@@ -33,7 +33,13 @@ import java.util.stream.Stream;
 				// FOP (Apache XSL-FO) no és al classpath; evitem que Spring introspeccioni
 				// FopFactorySingleton/HandlerPdfXsltTransform i llanci ClassNotFoundException.
 				// Usem el subpaquet 'handler' per no excloure JustificanteMaker (es.scsp.common.pdf.*).
-				@Filter(type = FilterType.REGEX, pattern = "es\\.scsp\\.common\\.pdf\\.handler\\..*")
+				@Filter(type = FilterType.REGEX, pattern = "es\\.scsp\\.common\\.pdf\\.handler\\..*"),
+				// Es defineixen explícitament a application-context-scsp.xml. Si també s'escanegen queden
+				// definits dues vegades amb el mateix nom i Spring Boot (que no permet sobreescriure beans)
+				// no arrenca. A JBoss guanyava igualment la definició del XML.
+				@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
+						es.scsp.common.dao.ParametroConfiguracionDao.class,
+						es.scsp.common.utils.ProxyManager.class})
 		}
 )
 @ImportResource("classpath:application-context-scsp.xml")

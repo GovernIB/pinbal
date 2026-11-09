@@ -20,8 +20,10 @@ import es.caib.pinbal.logic.intf.service.exception.ProcedimentServeiNotFoundExce
 import es.caib.pinbal.logic.intf.service.exception.ServeiNotAllowedException;
 import es.caib.pinbal.persist.entity.Consulta;
 import es.caib.pinbal.persist.entity.HistoricConsulta;
+import es.caib.pinbal.persist.entity.Usuari;
 import es.caib.pinbal.persist.repository.ConsultaRepository;
 import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
+import es.caib.pinbal.persist.repository.UsuariRepository;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.bean.common.confirmacion.Atributos;
 import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
@@ -43,6 +45,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -76,26 +80,44 @@ import java.util.List;
 public class RecobrimentHelper implements ApplicationContextAware, MessageSourceAware {
 
 	public static final String ERROR_CODE_SCSP_VALIDATION = "0226";
-	/**
-	 * Les peticions de recobriment (REST i SOAP) provenen d'aplicacions de
-	 * tramitació, que desen el justificant dins el seu propi expedient. Per
-	 * evitar duplicar-lo (#357), PINBAL no el desa a l'arxiu (sèrie de PINBAL):
-	 * es genera i es firma sota demanda cada vegada que es consulta.
-	 * <p>
-	 * Les consultes fetes des del frontal web no passen per aquí i continuen
-	 * desant el justificant a l'arxiu.
-	 */
-	public static final boolean JUSTIFICANT_GESTIONAT_PER_APLICACIO = true;
 
 	private final ConsultaRepository consultaRepository;
 	private final HistoricConsultaRepository historicConsultaRepository;
 	private final ConsultaService consultaService;
 	private final HistoricConsultaService historicConsultaService;
 	private final ConfigHelper configHelper;
+	private final UsuariRepository usuariRepository;
 
 	private ApplicationContext applicationContext;
 	private MessageSource messageSource;
 	private ScspHelper scspHelper;
+
+	/**
+	 * Indica si el justificant de les consultes de recobriment que fa l'usuari
+	 * autenticat (aplicació client) el gestiona la pròpia aplicació.
+	 * <p>
+	 * Es configura a nivell de client (usuari d'aplicació):
+	 * <ul>
+	 * <li><b>false</b> (per defecte, compatible amb els clients ja integrats):
+	 * PINBAL genera automàticament el justificant i el desa a l'arxiu.</li>
+	 * <li><b>true</b>: PINBAL no desa el justificant a l'arxiu; el genera i el
+	 * firma sota demanda cada vegada que es consulta i és l'aplicació client
+	 * qui el desa dins el seu propi expedient (evita duplicats, #357).</li>
+	 * </ul>
+	 * Les consultes fetes des del frontal web no passen per aquí i sempre
+	 * desen el justificant a l'arxiu.
+	 */
+	public boolean isJustificantGestionatPerAplicacioUsuariActual() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth == null || auth.getName() == null) {
+			return false;
+		}
+		Usuari usuari = usuariRepository.findByCodi(auth.getName());
+		boolean gestionatPerAplicacio = usuari != null && usuari.isJustificantGestionatPerAplicacio();
+		log.debug("Gestió del justificant per a l'usuari (codi=" + auth.getName() + "): " +
+				(gestionatPerAplicacio ? "gestionat per l'aplicació client" : "desat a l'arxiu per PINBAL"));
+		return gestionatPerAplicacio;
+	}
 
 	public Respuesta peticionSincrona(Peticion peticion, boolean justificantGestionatPerAplicacio) throws ScspException {
 		String codigoCertificado = peticion.getAtributos().getCodigoCertificado();

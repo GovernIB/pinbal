@@ -16,6 +16,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<!-- Fonts dels DTOs compartits amb el servidor, que es compilen dins aquest client per a Java 7 -->
 		<pinbal.client.intf.sources>${project.basedir}/../pinbal-client-intf/src/main/java</pinbal.client.intf.sources>
+		<!--
+			Còpia d'aquestes fonts dins el target d'aquest mòdul, que és la que realment es compila. No s'afegeix
+			directament el directori de pinbal-client-intf com a font perquè IntelliJ no permet que una mateixa
+			carpeta de fonts pertanyi a dos mòduls: l'assignava a pinbal-client-legacy i el mòdul pinbal-client-intf
+			quedava buit a l'IDE (errors "package es.caib.pinbal.client.comu does not exist" a pinbal-service-intf).
+		-->
+		<pinbal.client.intf.sources.copia>${project.build.directory}/generated-sources/client-intf</pinbal.client.intf.sources.copia>
 	</properties>
 
 	<dependencies>
@@ -138,6 +145,32 @@
 				<version>2.2.0</version>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<executions>
+					<execution>
+						<id>copy-client-intf-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${pinbal.client.intf.sources.copia}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${pinbal.client.intf.sources}</directory>
+									<includes>
+										<include>**/*.java</include>
+									</includes>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
 				<version>3.3.0</version>
@@ -150,7 +183,7 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>${pinbal.client.intf.sources}</source>
+								<source>${pinbal.client.intf.sources.copia}</source>
 							</sources>
 						</configuration>
 					</execution>

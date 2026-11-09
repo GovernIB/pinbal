@@ -1287,25 +1287,60 @@ public class RecobrimentServiceImplTest {
         mockRespuesta.setAtributos(atributos);
 
         when(recobrimentV2Helper.toPeticion(any(PeticioSincrona.class))).thenReturn(new Peticion());
+        when(recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual()).thenReturn(true);
         when(recobrimentHelper.peticionSincrona(any(Peticion.class), anyBoolean())).thenReturn(mockRespuesta);
         when(recobrimentV2Helper.toRespostaSincrona(any(Respuesta.class))).thenCallRealMethod();
 
         PeticioRespostaSincrona response = recobrimentServiceImpl.peticionSincrona(mockPeticio);
 
         Assertions.assertNotNull(response);
-        // El justificant de les peticions de recobriment el gestiona l'aplicació (#357)
+        // El client està configurat per gestionar ell mateix el justificant (#357)
         verify(recobrimentHelper).peticionSincrona(any(Peticion.class), eq(true));
+    }
+
+    @Test
+    public void testPeticionSincrona_JustificantDesatArxiuPerPinbal() throws Exception {
+        PeticioSincrona mockPeticio = PeticioSincrona.builder().build();
+        Respuesta mockRespuesta = new Respuesta();
+        es.scsp.bean.common.respuesta.Atributos atributos = new es.scsp.bean.common.respuesta.Atributos();
+        Estado estado = new Estado();
+        estado.setCodigoEstado("00");
+        atributos.setEstado(estado);
+        mockRespuesta.setAtributos(atributos);
+
+        when(recobrimentV2Helper.toPeticion(any(PeticioSincrona.class))).thenReturn(new Peticion());
+        when(recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual()).thenReturn(false);
+        when(recobrimentHelper.peticionSincrona(any(Peticion.class), anyBoolean())).thenReturn(mockRespuesta);
+        when(recobrimentV2Helper.toRespostaSincrona(any(Respuesta.class))).thenCallRealMethod();
+
+        recobrimentServiceImpl.peticionSincrona(mockPeticio);
+
+        // Client amb la configuració per defecte: PINBAL genera i desa el justificant a l'arxiu
+        verify(recobrimentHelper).peticionSincrona(any(Peticion.class), eq(false));
     }
 
     @Test
     public void testPeticionAsincrona_JustificantGestionatPerAplicacio() throws Exception {
         PeticioAsincrona mockPeticio = PeticioAsincrona.builder().build();
         when(recobrimentV2Helper.toPeticion(any(PeticioAsincrona.class))).thenReturn(new Peticion());
+        when(recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual()).thenReturn(true);
         when(recobrimentHelper.peticionAsincrona(any(Peticion.class), anyBoolean())).thenReturn(mock(ConfirmacionPeticion.class));
 
         recobrimentServiceImpl.peticionAsincrona(mockPeticio);
 
         verify(recobrimentHelper).peticionAsincrona(any(Peticion.class), eq(true));
+    }
+
+    @Test
+    public void testPeticionAsincrona_JustificantDesatArxiuPerPinbal() throws Exception {
+        PeticioAsincrona mockPeticio = PeticioAsincrona.builder().build();
+        when(recobrimentV2Helper.toPeticion(any(PeticioAsincrona.class))).thenReturn(new Peticion());
+        when(recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual()).thenReturn(false);
+        when(recobrimentHelper.peticionAsincrona(any(Peticion.class), anyBoolean())).thenReturn(mock(ConfirmacionPeticion.class));
+
+        recobrimentServiceImpl.peticionAsincrona(mockPeticio);
+
+        verify(recobrimentHelper).peticionAsincrona(any(Peticion.class), eq(false));
     }
 
 

@@ -31,6 +31,11 @@
 		<!-- FOP no és al classpath; evitem ClassNotFoundException en introspeccionar FopFactorySingleton -->
 		<!-- Usem el subpaquet 'handler' per no excloure JustificanteMaker -->
 		<context:exclude-filter type="regex" expression="es\.scsp\.common\.pdf\.handler\..*"/>
+		<!-- Aquests beans es defineixen explícitament més avall. Són @Component, i si també s'escanegen
+		     queden definits dues vegades amb el mateix nom: JBoss (Spring) ho permet i guanya la definició
+		     del XML, però Spring Boot no permet sobreescriure beans i l'arrencada falla. -->
+		<context:exclude-filter type="assignable" expression="es.scsp.common.dao.ParametroConfiguracionDao"/>
+		<context:exclude-filter type="assignable" expression="es.scsp.common.utils.ProxyManager"/>
 	</context:component-scan>
 
 	<!-- ==================================================================== -->

@@ -355,6 +355,28 @@
 		</resources>
 		<plugins>
 			<plugin>
+				<!-- Garanteix que existeix el directori dist del front abans d'empaquetar el war.
+				     Si es compila sense front (-Dfrontend.skip=true o -P !front) i no s'ha generat
+				     abans, el maven-war-plugin falla perquè el directori de webResources no existeix. -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+						<id>crear-directori-front-dist</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<mkdir dir="${project.basedir}/${frontend.app.path}/dist"/>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>

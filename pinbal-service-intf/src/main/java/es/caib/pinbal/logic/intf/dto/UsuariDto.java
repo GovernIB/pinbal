@@ -38,6 +38,8 @@ public class UsuariDto extends AbstractIdentificable<Long> implements Serializab
 	private String finalitat;
 	private boolean hasMultiplesEntitats;
 	private NumElementsPaginaEnum numElementsPagina;
+	/** Si el justificant de les consultes de recobriment el gestiona l'aplicació client (no es desa a l'arxiu). */
+	private boolean justificantGestionatPerAplicacio;
 
 	public UsuariDto(
 			String codi,

@@ -41,14 +41,16 @@ public class DtoMappingHelper {
 		mapperFactory.registerClassMap(ClassMapBuilder.map(Entitat.class, EntitatDto.class).byDefault().toClassMap());
 		mapperFactory.getConverterFactory().registerConverter(new CustomConverter<EntitatUsuari, EntitatUsuariDto>() {
 			public EntitatUsuariDto convert(EntitatUsuari source, Type<? extends EntitatUsuariDto> destinationClass, MappingContext mappingContext) {
+                UsuariDto usuariDto = new UsuariDto(
+                        source.getUsuari().getCodi(),
+                        source.getUsuari().getNif(),
+                        source.getUsuari().getNom(),
+                        source.getUsuari().isInicialitzat(),
+                        source.getUsuari().isNoInicialitzatNif(),
+                        source.getUsuari().isNoInicialitzatCodi());
+                usuariDto.setJustificantGestionatPerAplicacio(source.getUsuari().isJustificantGestionatPerAplicacio());
                 return new EntitatUsuariDto(
-                        new UsuariDto(
-                                source.getUsuari().getCodi(),
-                                source.getUsuari().getNif(),
-                                source.getUsuari().getNom(),
-                                source.getUsuari().isInicialitzat(),
-                                source.getUsuari().isNoInicialitzatNif(),
-                                source.getUsuari().isNoInicialitzatCodi()),
+                        usuariDto,
                         source.getDepartament(),
                         source.isPrincipal(),
                         source.isRepresentant(),

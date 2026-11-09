@@ -31,27 +31,26 @@ const getAuthConfig = () => ({
     clientId: envVar('VITE_AUTH_CLIENTID', envVars),
 });
 
+// Context path del backoffice (el fixa el build Maven a partir de pinbal.context.back)
+const contextPath = import.meta.env.VITE_CONTEXT_PATH || '/pinbalback';
+// API del backoffice que es fa servir si no s'ha configurat es.caib.pinbal.front.api.url
+const DEFAULT_API_PATH = contextPath + '/apinew/';
+
 export const getEnvApiUrl = () => {
     const envApiPublicUrl = envVar('VITE_API_PUBLIC_URL', envVars);
     const envApiUrl = envVar('VITE_API_URL', envVars);
     if (envApiPublicUrl || envApiUrl) {
-        return envApiPublicUrl ?? envApiUrl;
-    } else {
-        const envApiBaseUrl = envVar('VITE_API_BASE_URL', envVars);
-        const envApiSuffix = envVar('VITE_API_SUFFIX', envVars) ?? '/api';
-        if (envApiBaseUrl) {
-            return envApiBaseUrl + envApiSuffix;
-        } else {
-            const port = window.location.port ? ':' + window.location.port : '';
-            return (
-                window.location.protocol +
-                '//' +
-                window.location.hostname +
-                port +
-                envApiSuffix
-            );
-        }
+        // "||" i no "??": una propietat definida però buida s'ha de considerar no configurada
+        return envApiPublicUrl || envApiUrl;
     }
+    const envApiBaseUrl = envVar('VITE_API_BASE_URL', envVars);
+    if (envApiBaseUrl) {
+        return envApiBaseUrl + (envVar('VITE_API_SUFFIX', envVars) || '/api');
+    }
+    // Sense configuració: mateix origen que l'aplicació (protocol, host i port del navegador,
+    // vàlid també darrere d'un proxy invers). Ha de ser una URL absoluta (ResourceApiProvider
+    // fa new URL(apiUrl)).
+    return window.location.origin + (envVar('VITE_API_SUFFIX', envVars) || DEFAULT_API_PATH);
 };
 
 const isAuthUrlPresent = envVar('VITE_AUTH_URL', envVars) != null;

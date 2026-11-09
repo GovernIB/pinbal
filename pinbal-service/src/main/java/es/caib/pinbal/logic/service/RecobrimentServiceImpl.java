@@ -194,7 +194,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             return toScspRespuesta(
                     recobrimentHelper.peticionSincrona(
                             toPeticion(peticion, false),
-                            RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO));
+                            recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual()));
         } catch (ScspException ex) {
             if (RecobrimentHelper.ERROR_CODE_SCSP_VALIDATION.equals(ex.getScspCode())) {
                 throw new RecobrimentScspValidationException(
@@ -231,7 +231,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             return toScspConfirmacionPeticion(
                     recobrimentHelper.peticionAsincrona(
                             toPeticion(peticion, true),
-                            RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO));
+                            recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual()));
         } catch (ScspException ex) {
             throw new RecobrimentScspException(
                     ex.getMessage(),
@@ -991,7 +991,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             Peticion peticion = recobrimentV2Helper.toPeticion(peticio);
             Respuesta scspRespuesta = recobrimentHelper.peticionSincrona(
                     peticion,
-                    RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO);
+                    recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual());
             resposta = recobrimentV2Helper.toRespostaSincrona(scspRespuesta);
         } catch (Exception e) {
             log.error("Error al realitzar petició sincrona al servei= " +
@@ -1013,7 +1013,7 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
             Peticion peticion = recobrimentV2Helper.toPeticion(peticio);
             ConfirmacionPeticion respuesta = recobrimentHelper.peticionAsincrona(
                     peticion,
-                    RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO);
+                    recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual());
             resposta = recobrimentV2Helper.toConfirmacio(respuesta);
         } catch (Exception e) {
             log.error("Error al realitzar la petició asincrona al servei= " +

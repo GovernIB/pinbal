@@ -565,6 +565,7 @@ public class UsuariServiceImpl implements UsuariService {
 				usuariAntic.getFinalitat(),
 				usuariAntic.getNumElementsPagina()
 		);
+		usuariNou.updateJustificantGestionatPerAplicacio(usuariAntic.isJustificantGestionatPerAplicacio());
 		return usuariRepository.saveAndFlush(usuariNou);
 	}
 
@@ -582,6 +583,7 @@ public class UsuariServiceImpl implements UsuariService {
 				usuariAntic.getFinalitat(),
 				usuariAntic.getNumElementsPagina()
 		);
+		usuariNou.updateJustificantGestionatPerAplicacio(usuariAntic.isJustificantGestionatPerAplicacio());
 		return usuariRepository.saveAndFlush(usuariNou);
 	}
 
@@ -598,16 +600,45 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean aplicacio,
 			boolean afegir,
 			boolean actiu) throws EntitatNotFoundException, UsuariExternNotFoundException {
+		actualitzarDadesAdmin(
+				id,
+				codi,
+				nif,
+				departament,
+				representant,
+				delegat,
+				auditor,
+				aplicacio,
+				afegir,
+				actiu,
+				null);
+	}
+
+	@Transactional(rollbackFor = EntitatNotFoundException.class)
+	@Override
+	public void actualitzarDadesAdmin(
+			Long id,
+			String codi,
+			String nif,
+			String departament,
+			boolean representant,
+			boolean delegat,
+			boolean auditor,
+			boolean aplicacio,
+			boolean afegir,
+			boolean actiu,
+			Boolean justificantGestionatPerAplicacio) throws EntitatNotFoundException, UsuariExternNotFoundException {
 		log.debug("Actualitzant dades no auditor de l'usuari (" +
 				"codi=" + codi + ", " +
-				"nif=" + nif + ") a l'entitat (" +
+				"nif=" + nif + ", " +
+				"justificantGestionatPerAplicacio=" + justificantGestionatPerAplicacio + ") a l'entitat (" +
 				"id=" + id + ")");
 		Entitat entitat = entitatRepository.findById(id).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
 			throw new EntitatNotFoundException();
 		}
-		usuariActualitzarDades(
+		Usuari usuari = usuariActualitzarDades(
 				entitat,
 				codi,
 				nif,
@@ -622,6 +653,9 @@ public class UsuariServiceImpl implements UsuariService {
 				aplicacio,
 				afegir,
 				actiu);
+		if (justificantGestionatPerAplicacio != null) {
+			usuari.updateJustificantGestionatPerAplicacio(justificantGestionatPerAplicacio);
+		}
 	}
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
@@ -806,7 +840,7 @@ public class UsuariServiceImpl implements UsuariService {
 
 
 
-	private void usuariActualitzarDades(
+	private Usuari usuariActualitzarDades(
 			Entitat entitat,
 			String codi,
 			String nif,
@@ -904,7 +938,7 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean representatPerUpdate = (canviarRepresentant) ? representant : entitatUsuari.isRepresentant();
 			boolean delegatPerUpdate = (canviarDelegat) ? delegat : entitatUsuari.isDelegat();
 			boolean auditorPerUpdate = (canviarAuditor) ? auditor : entitatUsuari.isAuditor();
-			boolean aplicacioPerUpdate = (canviarAplicacio) ? aplicacio : entitatUsuari.isAuditor();
+			boolean aplicacioPerUpdate = (canviarAplicacio) ? aplicacio : entitatUsuari.isAplicacio();
 			if (afegir) {
 				representatPerUpdate = entitatUsuari.isRepresentant() || representant;
 				delegatPerUpdate = entitatUsuari.isDelegat() || delegat;
@@ -920,6 +954,7 @@ public class UsuariServiceImpl implements UsuariService {
 					(actiu != null) ? actiu : entitatUsuari.isActiu());
 		}
 		cacheHelper.evictPermisosPerDelegat(usuari.getCodi());
+		return usuari;
 	}
 
 	private UsuariDto toUsuariDtoAmbRols(

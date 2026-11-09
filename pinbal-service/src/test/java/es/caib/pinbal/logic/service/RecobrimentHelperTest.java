@@ -9,8 +9,10 @@ import es.caib.pinbal.logic.intf.service.ConsultaService;
 import es.caib.pinbal.logic.intf.service.HistoricConsultaService;
 import es.caib.pinbal.persist.entity.Consulta;
 import es.caib.pinbal.persist.entity.HistoricConsulta;
+import es.caib.pinbal.persist.entity.Usuari;
 import es.caib.pinbal.persist.repository.ConsultaRepository;
 import es.caib.pinbal.persist.repository.HistoricConsultaRepository;
+import es.caib.pinbal.persist.repository.UsuariRepository;
 import es.caib.pinbal.scsp.ScspHelper;
 import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
 import es.scsp.bean.common.peticion.Atributos;
@@ -28,18 +30,22 @@ import es.scsp.bean.common.peticion.Titular;
 import es.scsp.bean.common.peticion.Transmision;
 import es.scsp.bean.common.respuesta.Respuesta;
 import es.scsp.common.exceptions.ScspException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -63,6 +69,8 @@ public class RecobrimentHelperTest {
     private HistoricConsultaService historicConsultaService;
     @Mock
     private ConfigHelper configHelper;
+    @Mock
+    private UsuariRepository usuariRepository;
 
     @InjectMocks
     RecobrimentHelper recobrimentHelper;
@@ -509,7 +517,7 @@ public class RecobrimentHelperTest {
         when(scspHelperMock.recuperarRespuestaScsp("PETICIO_OK")).thenReturn(respostaEsperada);
         ReflectionTestUtils.setField(recobrimentHelper, "scspHelper", scspHelperMock);
 
-        Respuesta resultat = recobrimentHelper.peticionSincrona(peticio, RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO);
+        Respuesta resultat = recobrimentHelper.peticionSincrona(peticio, true);
 
         assertEquals(respostaEsperada, resultat);
     }
@@ -524,7 +532,7 @@ public class RecobrimentHelperTest {
         consultaDto.setRespostaEstadoError("Error SCSP");
         when(consultaService.novaConsultaRecobriment(eq("COD_CER"), any())).thenReturn(consultaDto);
 
-        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionSincrona(peticio, RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO));
+        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionSincrona(peticio, true));
 
         assertEquals("0100", ex.getScspCode());
         assertEquals("Error SCSP", ex.getMessage());
@@ -539,7 +547,7 @@ public class RecobrimentHelperTest {
         consultaDto.setError("Error sense codi");
         when(consultaService.novaConsultaRecobriment(eq("COD_CER"), any())).thenReturn(consultaDto);
 
-        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionSincrona(peticio, RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO));
+        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionSincrona(peticio, true));
 
         assertEquals("0227", ex.getScspCode());
         assertEquals("Error sense codi", ex.getMessage());
@@ -563,7 +571,7 @@ public class RecobrimentHelperTest {
         consultaDto.setRespostaAtributs(atributsDto);
         when(consultaService.novaConsultaRecobrimentMultiple(eq("COD_CER"), any())).thenReturn(consultaDto);
 
-        ConfirmacionPeticion resultat = recobrimentHelper.peticionAsincrona(peticio, RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO);
+        ConfirmacionPeticion resultat = recobrimentHelper.peticionAsincrona(peticio, true);
 
         assertNotNull(resultat);
         assertEquals("COD_CER", resultat.getAtributos().getCodigoCertificado());
@@ -579,7 +587,7 @@ public class RecobrimentHelperTest {
         consultaDto.setRespostaEstadoError("Error SCSP multiple");
         when(consultaService.novaConsultaRecobrimentMultiple(eq("COD_CER"), any())).thenReturn(consultaDto);
 
-        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionAsincrona(peticio, RecobrimentHelper.JUSTIFICANT_GESTIONAT_PER_APLICACIO));
+        ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.peticionAsincrona(peticio, true));
 
         assertEquals("0200", ex.getScspCode());
         assertEquals("Error SCSP multiple", ex.getMessage());
@@ -662,5 +670,52 @@ public class RecobrimentHelperTest {
         ScspException ex = assertThrows(ScspException.class, () -> recobrimentHelper.getJustificante("P9", "S1", true, true));
 
         assertTrue(ex.getMessage().contains("No es pot generar"));
+    }
+
+    // ---- isJustificantGestionatPerAplicacioUsuariActual ----
+
+    @AfterEach
+    void netejarContextSeguretat() {
+        SecurityContextHolder.clearContext();
+    }
+
+    private static void autenticar(String codi) {
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(codi, "pwd"));
+    }
+
+    @Test
+    void isJustificantGestionatPerAplicacioUsuariActual_clientConfiguratGestionarJustificant_retornaTrue() {
+        autenticar("app_ripea");
+        Usuari usuari = Usuari.getBuilderInicialitzat("app_ripea", "Ripea", null).build();
+        usuari.updateJustificantGestionatPerAplicacio(true);
+        when(usuariRepository.findByCodi("app_ripea")).thenReturn(usuari);
+
+        assertTrue(recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual());
+    }
+
+    @Test
+    void isJustificantGestionatPerAplicacioUsuariActual_clientPerDefecte_retornaFalse() {
+        autenticar("app_antiga");
+        when(usuariRepository.findByCodi("app_antiga")).thenReturn(
+                Usuari.getBuilderInicialitzat("app_antiga", "Aplicació antiga", null).build());
+
+        assertFalse(recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual());
+    }
+
+    @Test
+    void isJustificantGestionatPerAplicacioUsuariActual_usuariNoExisteix_retornaFalse() {
+        autenticar("desconegut");
+        when(usuariRepository.findByCodi("desconegut")).thenReturn(null);
+
+        assertFalse(recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual());
+    }
+
+    @Test
+    void isJustificantGestionatPerAplicacioUsuariActual_senseAutenticacio_retornaFalse() {
+        SecurityContextHolder.clearContext();
+
+        assertFalse(recobrimentHelper.isJustificantGestionatPerAplicacioUsuariActual());
+        verifyNoInteractions(usuariRepository);
     }
 }

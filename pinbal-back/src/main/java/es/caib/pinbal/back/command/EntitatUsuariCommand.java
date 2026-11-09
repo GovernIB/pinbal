@@ -53,6 +53,13 @@ public class EntitatUsuariCommand {
 	private boolean rolDelegat;
 	private boolean rolAuditor;
 	private boolean rolAplicacio;
+	/**
+	 * Configuració de client (només per a usuaris d'aplicació): si és true,
+	 * el justificant de les consultes de recobriment el desa l'aplicació
+	 * client (PINBAL el genera sota demanda); si és false, PINBAL el genera
+	 * automàticament i el desa a l'arxiu.
+	 */
+	private boolean justificantGestionatPerAplicacio;
 	private boolean afegir = false;
 	private boolean actiu = true;
 
@@ -98,6 +105,7 @@ public class EntitatUsuariCommand {
 		command.setRolDelegat(dto.isDelegat());
 		command.setRolAuditor(dto.isAuditor());
 		command.setRolAplicacio(dto.isAplicacio());
+		command.setJustificantGestionatPerAplicacio(dto.getUsuari().isJustificantGestionatPerAplicacio());
 		return command;
 	}
 

@@ -802,6 +802,42 @@ public class UsuariServiceImplTest {
         verify(entitatUsuari).update(eq("Departament3"), eq(true), eq(false), eq(true), eq(false), eq(false));
     }
 
+    @Test
+    public void actualitzarDadesAdmin_ambConfiguracioJustificant_actualitzaUsuari() throws Exception {
+        Entitat entitat = mock(Entitat.class);
+        when(entitat.getId()).thenReturn(1L);
+        when(entitatRepository.findById(1L)).thenReturn(Optional.of(entitat));
+        Usuari usuari = mock(Usuari.class);
+        when(usuari.isInicialitzat()).thenReturn(true);
+        when(usuari.getCodi()).thenReturn("APP1");
+        when(usuariRepository.findByCodi("APP1")).thenReturn(usuari);
+        EntitatUsuari entitatUsuari = mock(EntitatUsuari.class);
+        when(entitatUsuari.isActiu()).thenReturn(true);
+        when(entitatUsuariRepository.findByEntitatIdAndUsuariCodi(1L, "APP1")).thenReturn(entitatUsuari);
+
+        usuariService.actualitzarDadesAdmin(1L, "APP1", null, null, false, false, false, true, false, true, Boolean.TRUE);
+
+        verify(usuari).updateJustificantGestionatPerAplicacio(true);
+    }
+
+    @Test
+    public void actualitzarDadesAdmin_senseConfiguracioJustificant_noModificaUsuari() throws Exception {
+        Entitat entitat = mock(Entitat.class);
+        when(entitat.getId()).thenReturn(1L);
+        when(entitatRepository.findById(1L)).thenReturn(Optional.of(entitat));
+        Usuari usuari = mock(Usuari.class);
+        when(usuari.isInicialitzat()).thenReturn(true);
+        when(usuari.getCodi()).thenReturn("APP2");
+        when(usuariRepository.findByCodi("APP2")).thenReturn(usuari);
+        EntitatUsuari entitatUsuari = mock(EntitatUsuari.class);
+        when(entitatUsuari.isActiu()).thenReturn(true);
+        when(entitatUsuariRepository.findByEntitatIdAndUsuariCodi(1L, "APP2")).thenReturn(entitatUsuari);
+
+        usuariService.actualitzarDadesAdmin(1L, "APP2", null, null, false, false, false, true, false, true);
+
+        verify(usuari, never()).updateJustificantGestionatPerAplicacio(anyBoolean());
+    }
+
     // ---- actualitzarDadesRepresentant ----
 
     @Test
@@ -891,6 +927,31 @@ public class UsuariServiceImplTest {
         usuariService.actualitzarDadesAuditor(3L, "USR8", null, true, true);
 
         verify(entitatUsuariRepository).save(any(EntitatUsuari.class));
+    }
+
+    @Test
+    public void actualitzarDadesAuditor_entitatUsuariAplicacioExistent_conservaRolAplicacio() throws Exception {
+        Entitat entitat = mock(Entitat.class);
+        when(entitat.getId()).thenReturn(3L);
+        when(entitatRepository.findById(3L)).thenReturn(Optional.of(entitat));
+        Usuari usuari = mock(Usuari.class);
+        when(usuari.isInicialitzat()).thenReturn(true);
+        when(usuari.getCodi()).thenReturn("APP9");
+        when(usuariRepository.findByCodi("APP9")).thenReturn(usuari);
+        // Usuari d'aplicació que NO és auditor
+        EntitatUsuari entitatUsuari = mock(EntitatUsuari.class);
+        when(entitatUsuari.isRepresentant()).thenReturn(false);
+        when(entitatUsuari.isDelegat()).thenReturn(false);
+        when(entitatUsuari.isAuditor()).thenReturn(false);
+        when(entitatUsuari.isAplicacio()).thenReturn(true);
+        when(entitatUsuari.isActiu()).thenReturn(true);
+        when(entitatUsuariRepository.findByEntitatIdAndUsuariCodi(3L, "APP9")).thenReturn(entitatUsuari);
+
+        // L'auditor el marca com a auditor sense afegir (substitueix només el rol d'auditor)
+        usuariService.actualitzarDadesAuditor(3L, "APP9", null, true, false);
+
+        // El rol d'aplicació s'ha de conservar (abans prenia el valor del rol d'auditor anterior: false)
+        verify(entitatUsuari).update(isNull(), eq(false), eq(false), eq(true), eq(true), eq(true));
     }
 
     // ---- establirPrincipal ----

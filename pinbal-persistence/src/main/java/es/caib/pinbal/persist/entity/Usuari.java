@@ -83,6 +83,16 @@ public class Usuari implements Serializable {
 	@Column(name = "num_elements_pagina")
 	private Integer numElementsPagina;
 
+	// Configuració de client (usuari d'aplicació)
+	// ==============================================================
+	// Indica si el justificant de les consultes de recobriment fetes per
+	// aquest client el gestiona la pròpia aplicació client (PINBAL el genera
+	// i firma sota demanda i no el desa a l'arxiu) o si PINBAL el genera
+	// automàticament i el desa a l'arxiu (valor per defecte, compatible amb
+	// els clients ja integrats).
+	@Column(name = "app_guarda_just_arx", nullable = false)
+	private boolean justificantGestionatPerAplicacio = false;
+
 	@Version
 	private long version = 0;
 
@@ -198,6 +208,10 @@ public class Usuari implements Serializable {
 		this.finalitat = finalitat;
 		this.numElementsPagina = numElementsPagina;
 	}
+	public void updateJustificantGestionatPerAplicacio(boolean justificantGestionatPerAplicacio) {
+		this.justificantGestionatPerAplicacio = justificantGestionatPerAplicacio;
+	}
+
 	public void moureEntitats(
 			Usuari usuariNou) {
 		for (EntitatUsuari eu: entitats) {
@@ -293,6 +307,7 @@ public class Usuari implements Serializable {
 				.append("departament", departament)
 				.append("finalitat", finalitat)
 				.append("numElementsPagina", numElementsPagina)
+				.append("justificantGestionatPerAplicacio", justificantGestionatPerAplicacio)
 				.append("version", version)
 				.toString();
 	}

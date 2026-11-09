@@ -1,0 +1,22 @@
+databaseChangeLog:
+- changeSet:
+    id: 2.0.1-add-usuari-app-guarda-just-arx
+    author: Limit
+    comment: >-
+      Configuració a nivell de client (usuari d'aplicació) de la gestió del
+      justificant de les consultes fetes via recobriment. Si és 0 (valor per
+      defecte, compatible amb els clients ja integrats) PINBAL genera
+      automàticament el justificant i el desa a l'arxiu. Si és 1, PINBAL no el
+      desa a l'arxiu: el genera i firma sota demanda quan es consulta i delega
+      el seu desat a l'aplicació client. El valor es copia a
+      pbl_consulta.app_guarda_just_arx en el moment de crear la consulta.
+    changes:
+    - addColumn:
+        tableName: pbl_usuari
+        columns:
+        - column:
+            name: app_guarda_just_arx
+            type: NUMBER(1,0)
+            defaultValueNumeric: 0
+            constraints:
+              nullable: false

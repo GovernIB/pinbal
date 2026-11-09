@@ -143,6 +143,7 @@ public class UsuariHelper {
 				dadesUsuari.getCodi(),
 				dadesUsuari.getNom(),
 				dadesUsuari.getNif()).build();
+		usuariNou.updateJustificantGestionatPerAplicacio(usuari.isJustificantGestionatPerAplicacio());
 		// Mou els registres EntitatUsuari cap al nou usuari
 		usuari.moureEntitats(usuariNou);
 		usuariRepository.delete(usuari);
