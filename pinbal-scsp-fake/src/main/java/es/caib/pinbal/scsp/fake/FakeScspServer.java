@@ -5,6 +5,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import es.caib.pinbal.scsp.fake.ExampleCatalog.ServiceExamples;
+import es.caib.pinbal.scsp.fake.ExampleCatalog.SignatureStyle;
 import es.caib.pinbal.scsp.fake.ExampleCatalog.SoapEnvelopeInfo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -64,26 +65,133 @@ public final class FakeScspServer {
 		ExampleCatalog catalog = ExampleCatalog.loadDefault();
 
 		HttpServer server = HttpServer.create(new InetSocketAddress(host, port), 0);
-		server.createContext("/", new FakeScspHandler(catalog));
+		String help = buildHelp(catalog, host, port);
+		server.createContext("/", new FakeScspHandler(catalog, help));
 		server.setExecutor(Executors.newCachedThreadPool());
 		server.start();
 
 		System.out.println("Fake SCSP escoltant a http://" + host + ":" + port);
 		System.out.println("Serveis carregats: " + catalog.getServices().keySet());
+		System.out.println(help);
+	}
+
+	/**
+	 * Construeix el text d'ajuda que es mostra en arrencar (i a
+	 * {@code GET /__fake-scsp/ajuda}): per a cada servei carregat, les URLs
+	 * a configurar a {@code core_servicio} i exemples {@code curl} per a
+	 * cada tipus d'operació suportada.
+	 */
+	static String buildHelp(ExampleCatalog catalog, String host, int port) {
+		String displayHost = "0.0.0.0".equals(host) || "::".equals(host) ? "127.0.0.1" : host;
+		String baseUrl = "http://" + displayHost + ":" + port;
+		String sep = "================================================================================";
+		StringBuilder sb = new StringBuilder();
+		sb.append('\n').append(sep).append('\n');
+		sb.append(" AJUDA FAKE SCSP\n");
+		sb.append(sep).append('\n');
+		sb.append(" El servidor accepta POST SOAP a QUALSEVOL ruta. La resposta es tria per:\n");
+		sb.append("   - <CodigoCertificado> del cos SOAP -> servei\n");
+		sb.append("   - element arrel del Body: <Peticion> o <SolicitudRespuesta>\n");
+		sb.append("   - ruta que conté 'asincrona' (o <NumElementos> > 1) -> confirmació asíncrona\n");
+		sb.append('\n');
+		sb.append(" URLs a configurar a core_servicio (urlsincrona / urlasincrona):\n");
+		sb.append("   ").append(baseUrl).append("/servicios/<CODI>/sincrona\n");
+		sb.append("   ").append(baseUrl).append("/servicios/<CODI>/asincrona\n");
+		sb.append("   (des de Pinbal amb docker: http://host.docker.internal:").append(port).append("/servicios/...)\n");
+		sb.append("   Script: scripts/scsp-fake/point-to-fake.sql '<base-url>'"
+			+ " (restaurar: restore-original-urls.sql)\n");
+		sb.append('\n');
+		sb.append(" Altres:\n");
+		sb.append("   Estat:  curl ").append(baseUrl).append("/__fake-scsp\n");
+		sb.append("   Ajuda:  curl ").append(baseUrl).append("/__fake-scsp/ajuda\n");
+		sb.append("   Error simulat: titular amb document '")
+			.append(System.getProperty("fake.scsp.errorTriggerDoc", DEFAULT_ERROR_TRIGGER_DOC))
+			.append("' -> CodigoEstado ").append(ERROR_CODIGO_ESTADO).append('\n');
+
+		for (ServiceExamples service : catalog.getServices().values()) {
+			String code = service.getServiceCode();
+			String syncUrl = baseUrl + "/servicios/" + code + "/sincrona";
+			String asyncUrl = baseUrl + "/servicios/" + code + "/asincrona";
+			sb.append('\n').append("--------------------------------------------------------------------------------\n");
+			sb.append(" Servei ").append(code).append('\n');
+			sb.append("--------------------------------------------------------------------------------\n");
+			if (service.getSyncResponse() != null) {
+				sb.append("  Síncrona   (Peticion -> Respuesta):            POST ").append(syncUrl).append('\n');
+			}
+			if (service.getAsyncConfirmation() != null) {
+				sb.append("  Asíncrona  (Peticion -> ConfirmacionPeticion): POST ").append(asyncUrl).append('\n');
+			}
+			if (service.getAsyncResponse() != null || service.getAsyncConfirmation() != null) {
+				sb.append("  Asíncrona  (SolicitudRespuesta -> Respuesta):  POST ").append(asyncUrl).append('\n');
+			}
+			if (service.getSyncResponse() != null) {
+				sb.append("\n  Exemple síncron:\n");
+				appendCurl(sb, syncUrl, peticionExample(code, "1"));
+			}
+			if (service.getAsyncConfirmation() != null) {
+				sb.append("\n  Exemple petició asíncrona:\n");
+				appendCurl(sb, asyncUrl, peticionExample(code, "2"));
+			}
+			if (service.getAsyncResponse() != null || service.getAsyncConfirmation() != null) {
+				sb.append("\n  Exemple sol·licitud de resposta asíncrona:\n");
+				appendCurl(sb, asyncUrl, solicitudRespuestaExample(code));
+			}
+		}
+		sb.append(sep).append('\n');
+		return sb.toString();
+	}
+
+	private static void appendCurl(StringBuilder sb, String url, String body) {
+		sb.append("    curl -s -X POST -H 'Content-Type: text/xml; charset=utf-8' \\\n");
+		sb.append("      --data '").append(body).append("' \\\n");
+		sb.append("      ").append(url).append('\n');
+	}
+
+	private static String peticionExample(String code, String numElementos) {
+		StringBuilder solicituds = new StringBuilder();
+		int num = Integer.parseInt(numElementos);
+		for (int i = 1; i <= num; i++) {
+			solicituds.append("<SolicitudTransmision><DatosGenericos>")
+				.append("<Titular><TipoDocumentacion>NIF</TipoDocumentacion>")
+				.append("<Documentacion>12345678Z</Documentacion></Titular>")
+				.append("<Transmision><CodigoCertificado>").append(code).append("</CodigoCertificado>")
+				.append("<IdSolicitud>").append(String.format("%06d", i)).append("</IdSolicitud></Transmision>")
+				.append("</DatosGenericos></SolicitudTransmision>");
+		}
+		return "<soapenv:Envelope xmlns:soapenv=\"" + SOAPENV_NS + "\"><soapenv:Body>"
+			+ "<Peticion xmlns=\"http://intermediacion.redsara.es/scsp/esquemas/V3/peticion\">"
+			+ "<Atributos><IdPeticion>PROVA0001</IdPeticion><NumElementos>" + numElementos + "</NumElementos>"
+			+ "<CodigoCertificado>" + code + "</CodigoCertificado></Atributos>"
+			+ "<Solicitudes>" + solicituds + "</Solicitudes>"
+			+ "</Peticion></soapenv:Body></soapenv:Envelope>";
+	}
+
+	private static String solicitudRespuestaExample(String code) {
+		return "<soapenv:Envelope xmlns:soapenv=\"" + SOAPENV_NS + "\"><soapenv:Body>"
+			+ "<SolicitudRespuesta xmlns=\"http://intermediacion.redsara.es/scsp/esquemas/V3/solicitudRespuesta\">"
+			+ "<Atributos><IdPeticion>PROVA0001</IdPeticion><NumElementos>2</NumElementos>"
+			+ "<CodigoCertificado>" + code + "</CodigoCertificado></Atributos>"
+			+ "</SolicitudRespuesta></soapenv:Body></soapenv:Envelope>";
 	}
 
 	private static final class FakeScspHandler implements HttpHandler {
 
 		private final ExampleCatalog catalog;
 		private final SoapResponseSigner signer;
+		private final String help;
 
-		private FakeScspHandler(ExampleCatalog catalog) {
+		private FakeScspHandler(ExampleCatalog catalog, String help) {
 			this.catalog = catalog;
 			this.signer = new SoapResponseSigner();
+			this.help = help;
 		}
 
 		public void handle(HttpExchange exchange) throws IOException {
 			try {
+				if ("GET".equalsIgnoreCase(exchange.getRequestMethod()) && "/__fake-scsp/ajuda".equals(exchange.getRequestURI().getPath())) {
+					writeText(exchange, 200, help);
+					return;
+				}
 				if ("GET".equalsIgnoreCase(exchange.getRequestMethod()) && "/__fake-scsp".equals(exchange.getRequestURI().getPath())) {
 					writeText(exchange, 200, buildStatus());
 					return;
@@ -113,7 +221,7 @@ public final class FakeScspServer {
 					return;
 				}
 				responseXml = adaptResponseToRequest(responseXml, requestInfo);
-				responseXml = signer.sign(responseXml);
+				responseXml = signer.sign(responseXml, requestInfo.getSignatureStyle());
 				System.out.println("[FAKE-SCSP] XML resposta:");
 				System.out.println(responseXml);
 
@@ -545,9 +653,22 @@ public final class FakeScspServer {
 			}
 		}
 
-		private String sign(String xml) {
+		/**
+		 * Signa la resposta amb el mateix format que fa servir el client
+		 * ({@code requestStyle}, detectat a la capçalera de la petició). Si
+		 * la petició no anava signada (p.ex. curl), s'usa el format de la
+		 * plantilla de resposta. Per defecte, WS-Security.
+		 */
+		private String sign(String xml, SignatureStyle requestStyle) {
 			try {
 				Document document = parse(xml);
+				SignatureStyle style = requestStyle != null ? requestStyle : SignatureStyle.detect(document);
+				if (style == SignatureStyle.XMLDSIG) {
+					System.out.println("[FAKE-SCSP] Signant la resposta amb XMLDSig (Reference al Body)");
+					return signXmlDsig(document);
+				}
+				System.out.println("[FAKE-SCSP] Signant la resposta amb WS-Security");
+				removeHeaderXmlDsigSignatures(document);
 				removeSecurityHeader(document);
 				Element securityHeader = ensureSecurityHeader(document);
 				String idSeed = UUID.randomUUID().toString().replace("-", "").toUpperCase(Locale.ROOT);
@@ -560,6 +681,95 @@ public final class FakeScspServer {
 			} catch (Exception e) {
 				throw new IllegalStateException("No s'ha pogut firmar la resposta SOAP fake", e);
 			}
+		}
+
+		/**
+		 * Reprodueix la signatura de {@code es.scsp.common.signature.XMLDSigManager}
+		 * ("modo compatibilidad v.1.4.2"), que és la que valida el client SCSP
+		 * per als serveis configurats amb XMLSignature: una {@code ds:Signature}
+		 * com a primer fill del {@code Header} amb una Reference a l'{@code Id}
+		 * del {@code Body}, C14N amb comentaris, RSA-SHA1 i KeyInfo amb el
+		 * certificat X509 i la clau pública. El validador agafa el PRIMER
+		 * element {@code Signature} del document, per això cal eliminar la
+		 * signatura (ja invàlida) que porti la plantilla.
+		 */
+		private String signXmlDsig(Document document) throws Exception {
+			removeSecurityHeader(document);
+			removeHeaderXmlDsigSignatures(document);
+			Element envelope = document.getDocumentElement();
+			Element body = findDirectChildByLocalName(envelope, "Body");
+			if (body == null) {
+				throw new IllegalStateException("No s'ha trobat el Body del SOAP");
+			}
+			Element header = findDirectChildByLocalName(envelope, "Header");
+			if (header == null) {
+				header = document.createElementNS(SOAPENV_NS, qualifyName(envelope.getPrefix(), "Header"));
+				envelope.insertBefore(header, body);
+			}
+			String idAttribute = body.hasAttribute("Id") ? "Id" : body.hasAttribute("ID") ? "ID" : "Id";
+			String bodyId = body.getAttribute(idAttribute);
+			if (bodyId == null || bodyId.length() == 0) {
+				bodyId = "MsgBody";
+				body.setAttribute(idAttribute, bodyId);
+			}
+			body.setIdAttribute(idAttribute, true);
+
+			XMLSignatureFactory signatureFactory = XMLSignatureFactory.getInstance("DOM");
+			Reference reference = signatureFactory.newReference(
+				"#" + bodyId,
+				signatureFactory.newDigestMethod(DigestMethod.SHA1, null),
+				Collections.singletonList(signatureFactory.newTransform(
+					CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
+					(javax.xml.crypto.dsig.spec.TransformParameterSpec) null)),
+				null,
+				null);
+			SignedInfo signedInfo = signatureFactory.newSignedInfo(
+				signatureFactory.newCanonicalizationMethod(
+					CanonicalizationMethod.INCLUSIVE,
+					(javax.xml.crypto.dsig.spec.C14NMethodParameterSpec) null),
+				signatureFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
+				Collections.singletonList(reference));
+			KeyInfoFactory keyInfoFactory = signatureFactory.getKeyInfoFactory();
+			KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Arrays.<javax.xml.crypto.XMLStructure>asList(
+				keyInfoFactory.newX509Data(Collections.singletonList(certificate)),
+				keyInfoFactory.newKeyValue(certificate.getPublicKey())));
+
+			DOMSignContext signContext = header.getFirstChild() != null
+				? new DOMSignContext(privateKey, header, header.getFirstChild())
+				: new DOMSignContext(privateKey, header);
+			signContext.setDefaultNamespacePrefix("ds");
+			signatureFactory.newXMLSignature(signedInfo, keyInfo).sign(signContext);
+			return toXml(document);
+		}
+
+		private void removeHeaderXmlDsigSignatures(Document document) {
+			Element header = findDirectChildByLocalName(document.getDocumentElement(), "Header");
+			if (header == null) {
+				return;
+			}
+			NodeList children = header.getChildNodes();
+			for (int i = children.getLength() - 1; i >= 0; i--) {
+				Node child = children.item(i);
+				if (child instanceof Element
+					&& "Signature".equals(child.getLocalName())
+					&& XMLSignature.XMLNS.equals(child.getNamespaceURI())) {
+					header.removeChild(child);
+				}
+			}
+		}
+
+		private Element findDirectChildByLocalName(Element parent, String localName) {
+			if (parent == null) {
+				return null;
+			}
+			NodeList children = parent.getChildNodes();
+			for (int i = 0; i < children.getLength(); i++) {
+				Node child = children.item(i);
+				if (child instanceof Element && localName.equals(child.getLocalName())) {
+					return (Element) child;
+				}
+			}
+			return null;
 		}
 
 		private KeyStore loadKeyStore(String keystorePassword) throws Exception {

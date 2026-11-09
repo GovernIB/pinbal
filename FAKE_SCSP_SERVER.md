@@ -45,6 +45,13 @@ Estat del servidor:
 curl http://127.0.0.1:18080/__fake-scsp
 ```
 
+Ajuda (la mateixa que es mostra en arrencar): URLs síncrona/asíncrona de
+cada servei carregat i exemples `curl` per a cada operació suportada:
+
+```bash
+curl http://127.0.0.1:18080/__fake-scsp/ajuda
+```
+
 ## Simular una resposta d'error
 
 Independentment del servei consultat, si el document del titular de la

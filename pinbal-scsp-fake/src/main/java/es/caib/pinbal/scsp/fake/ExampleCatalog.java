@@ -192,6 +192,45 @@ final class ExampleCatalog {
 		}
 	}
 
+	/**
+	 * Format de signatura d'un missatge SCSP, segons el que porta a la
+	 * capçalera SOAP: WS-Security ({@code wsse:Security}) o XMLDSig
+	 * "compatibilitat v1.4.2" ({@code ds:Signature} directament sota
+	 * {@code Header}, referenciant l'{@code Id} del {@code Body}).
+	 */
+	enum SignatureStyle {
+		WSS,
+		XMLDSIG;
+
+		static SignatureStyle detect(Document document) {
+			Element header = firstChildByLocalName(document.getDocumentElement(), "Header");
+			if (header == null) {
+				return null;
+			}
+			if (firstChildByLocalName(header, "Security") != null) {
+				return WSS;
+			}
+			if (firstChildByLocalName(header, "Signature") != null) {
+				return XMLDSIG;
+			}
+			return null;
+		}
+
+		private static Element firstChildByLocalName(Element parent, String localName) {
+			if (parent == null) {
+				return null;
+			}
+			NodeList children = parent.getChildNodes();
+			for (int i = 0; i < children.getLength(); i++) {
+				Node child = children.item(i);
+				if (child instanceof Element && localName.equals(child.getLocalName())) {
+					return (Element) child;
+				}
+			}
+			return null;
+		}
+	}
+
 	static final class SoapEnvelopeInfo {
 
 		private final String bodyRoot;
@@ -200,6 +239,7 @@ final class ExampleCatalog {
 		private final String idPeticion;
 		private final List<String> idSolicitudes;
 		private final String documentacionTitular;
+		private final SignatureStyle signatureStyle;
 
 		private SoapEnvelopeInfo(
 			String bodyRoot,
@@ -207,13 +247,15 @@ final class ExampleCatalog {
 			String numElementos,
 			String idPeticion,
 			List<String> idSolicitudes,
-			String documentacionTitular) {
+			String documentacionTitular,
+			SignatureStyle signatureStyle) {
 			this.bodyRoot = bodyRoot;
 			this.serviceCode = serviceCode;
 			this.numElementos = numElementos;
 			this.idPeticion = idPeticion;
 			this.idSolicitudes = idSolicitudes;
 			this.documentacionTitular = documentacionTitular;
+			this.signatureStyle = signatureStyle;
 		}
 
 		static SoapEnvelopeInfo fromXml(String xml) throws IOException {
@@ -231,7 +273,14 @@ final class ExampleCatalog {
 				String idPeticion = findTextByLocalName(bodyChild, "IdPeticion");
 				List<String> idSolicitudes = findTextsByLocalName(bodyChild, "IdSolicitud");
 				String documentacionTitular = extractDocumentacionTitular(bodyChild);
-				return new SoapEnvelopeInfo(bodyChild.getLocalName(), code, num, idPeticion, idSolicitudes, documentacionTitular);
+				return new SoapEnvelopeInfo(
+					bodyChild.getLocalName(),
+					code,
+					num,
+					idPeticion,
+					idSolicitudes,
+					documentacionTitular,
+					SignatureStyle.detect(document));
 			} catch (Exception e) {
 				throw new IOException("No s'ha pogut analitzar l'XML SCSP", e);
 			}
@@ -259,6 +308,14 @@ final class ExampleCatalog {
 
 		String getDocumentacionTitular() {
 			return documentacionTitular;
+		}
+
+		/**
+		 * Format de signatura del missatge, o {@code null} si no en porta
+		 * (p.ex. peticions de prova enviades amb curl).
+		 */
+		SignatureStyle getSignatureStyle() {
+			return signatureStyle;
 		}
 
 		private static Element findByLocalName(Element root, String localName) {

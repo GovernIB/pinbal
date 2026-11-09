@@ -4,13 +4,35 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import javax.xml.crypto.AlgorithmMethod;
+import javax.xml.crypto.KeySelector;
+import javax.xml.crypto.KeySelectorException;
+import javax.xml.crypto.KeySelectorResult;
+import javax.xml.crypto.XMLCryptoContext;
+import javax.xml.crypto.dsig.Reference;
+import javax.xml.crypto.dsig.XMLSignature;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMValidateContext;
+import javax.xml.crypto.dsig.keyinfo.KeyInfo;
+import javax.xml.crypto.dsig.keyinfo.X509Data;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -126,5 +148,91 @@ public class FakeScspServerTest {
 		HttpResponse<String> response = send(BASE_URL + "/servicios/fake", peticionScdcpaju("00000000ERR"));
 		assertTrue("s'esperava CodigoEstado 9999, resposta: " + response.body(),
 			response.body().contains("<CodigoEstado>9999</CodigoEstado>"));
+	}
+
+	/**
+	 * SCDCPAJU es consumeix amb XMLSignature (no WS-Security): el client SCSP
+	 * valida el PRIMER element Signature del document contra l'Id del Body.
+	 * La resposta, que el fake modifica (IdPeticion, IdSolicitud...), ha de
+	 * portar una signatura XMLDSig nova i vàlida, no la de la plantilla.
+	 */
+	@Test
+	public void shouldReturnValidXmlDsigSignature_whenClientUsesXmlDsig() throws Exception {
+		String request = peticionScdcpaju("41510455D").replace(
+			"<soapenv:Body>",
+			"<soapenv:Header><ds:Signature xmlns:ds=\"http://www.w3.org/2000/09/xmldsig#\"/></soapenv:Header>"
+				+ "<soapenv:Body Id=\"MsgBody\">");
+		HttpResponse<String> response = send(BASE_URL + "/servicios/SCDCPAJU/sincrona", request);
+		assertEquals(200, response.statusCode());
+		assertFirstSignatureIsValidXmlDsigOverBody(response.body());
+	}
+
+	@Test
+	public void shouldUseTemplateSignatureStyle_whenRequestIsUnsigned() throws Exception {
+		HttpResponse<String> response = send(BASE_URL + "/servicios/SCDCPAJU/sincrona", peticionScdcpaju("41510455D"));
+		assertEquals(200, response.statusCode());
+		assertFirstSignatureIsValidXmlDsigOverBody(response.body());
+	}
+
+	@Test
+	public void shouldKeepWsSecurity_forWssServices() throws Exception {
+		HttpResponse<String> response = send(BASE_URL + "/servicios/fake", peticionV3("Q2827003ATGSS001", "43102532A"));
+		Document document = parseNamespaceAware(response.body());
+		Element header = directChild(document.getDocumentElement(), "Header");
+		assertTrue("s'esperava wsse:Security a la capçalera", directChild(header, "Security") != null);
+		assertTrue("no hi hauria d'haver cap ds:Signature directa a la capçalera", directChild(header, "Signature") == null);
+	}
+
+	private static void assertFirstSignatureIsValidXmlDsigOverBody(String xml) throws Exception {
+		Document document = parseNamespaceAware(xml);
+		Element signature = (Element) document.getElementsByTagNameNS("*", "Signature").item(0);
+		assertTrue("la resposta no porta cap signatura", signature != null);
+		assertEquals("la primera signatura ha de ser directament sota el Header",
+			"Header", signature.getParentNode().getLocalName());
+		Element body = directChild(document.getDocumentElement(), "Body");
+		body.setIdAttribute("Id", true);
+
+		DOMValidateContext context = new DOMValidateContext(new X509KeySelector(), signature);
+		context.setProperty("org.jcp.xml.dsig.secureValidation", Boolean.FALSE);
+		XMLSignature xmlSignature = XMLSignatureFactory.getInstance("DOM").unmarshalXMLSignature(context);
+		Reference reference = (Reference) xmlSignature.getSignedInfo().getReferences().get(0);
+		assertEquals("#" + body.getAttribute("Id"), reference.getURI());
+		assertTrue("digest del Body invàlid", reference.validate(context));
+		assertTrue("signatura XMLDSig invàlida", xmlSignature.validate(context));
+	}
+
+	private static Document parseNamespaceAware(String xml) throws Exception {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		return factory.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
+	}
+
+	private static Element directChild(Element parent, String localName) {
+		NodeList children = parent.getChildNodes();
+		for (int i = 0; i < children.getLength(); i++) {
+			Node child = children.item(i);
+			if (child instanceof Element && localName.equals(child.getLocalName())) {
+				return (Element) child;
+			}
+		}
+		return null;
+	}
+
+	private static final class X509KeySelector extends KeySelector {
+		@Override
+		public KeySelectorResult select(KeyInfo keyInfo, Purpose purpose, AlgorithmMethod method, XMLCryptoContext context)
+			throws KeySelectorException {
+			for (Object item : keyInfo.getContent()) {
+				if (item instanceof X509Data) {
+					for (Object data : ((X509Data) item).getContent()) {
+						if (data instanceof X509Certificate) {
+							final PublicKey key = ((X509Certificate) data).getPublicKey();
+							return () -> key;
+						}
+					}
+				}
+			}
+			throw new KeySelectorException("No s'ha trobat cap certificat X509 al KeyInfo");
+		}
 	}
 }
