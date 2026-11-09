@@ -121,12 +121,21 @@ $(document).ready(function() {
 				}
 			},
 			{
-				targets: [7, 8],
+				targets: [7],
+				orderable: false,
+				width: "10%",
+				render: function (data, type, row, meta) {
+					var template = $('#template-justificant-aplicacio').html();
+					return Mustache.render(template, row);
+				}
+			},
+			{
+				targets: [8, 9],
 				orderable: false,
 				visible: false
 			},
 			{
-				targets: [9],
+				targets: [10],
 				orderable: false,
 				width: "1%",
 				render: function (data, type, row, meta) {
@@ -386,6 +395,7 @@ function canviPrincipal(usuariCodi) {
 			<th data-data="representant"><spring:message code="entitat.usuaris.camp.rols" /></th>
 			<th data-data="principal"><spring:message code="entitat.usuaris.camp.principal" /></th>
 			<th data-data="actiu"><spring:message code="entitat.usuaris.camp.actiu" /></th>
+			<th data-data="usuari.justificantGestionatPerAplicacio"><spring:message code="entitat.usuaris.camp.justificant.aplicacio" /></th>
 			<th data-data="aplicacio"></th>
 			<th data-data="auditor"></th>
 			<th data-data="delegat"></th>
@@ -423,6 +433,13 @@ function canviPrincipal(usuariCodi) {
 {{#actiu}}
  	<i class="fas fa-check"></i>
 {{/actiu}}
+</script>
+<script id="template-justificant-aplicacio" type="x-tmpl-mustache">
+{{#aplicacio}}
+	{{#usuari.justificantGestionatPerAplicacio}}
+		<i class="fas fa-check" title="<spring:message code="usuari.form.camp.justificant.gestionat.aplicacio"/>"></i>
+	{{/usuari.justificantGestionatPerAplicacio}}
+{{/aplicacio}}
 </script>
 <script id="template-accions" type="x-tmpl-mustache">
 	<div class="btn-group">
