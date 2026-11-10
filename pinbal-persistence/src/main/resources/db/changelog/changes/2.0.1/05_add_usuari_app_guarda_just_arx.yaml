@@ -4,8 +4,7 @@ databaseChangeLog:
     author: Limit
     comment: >-
       Configuració a nivell de client (usuari d'aplicació) de la gestió del
-      justificant de les consultes fetes via recobriment. Si és 0 (valor per
-      defecte, compatible amb els clients ja integrats) PINBAL genera
+      justificant de les consultes fetes via recobriment. Si és 0 PINBAL genera
       automàticament el justificant i el desa a l'arxiu. Si és 1, PINBAL no el
       desa a l'arxiu: el genera i firma sota demanda quan es consulta i delega
       el seu desat a l'aplicació client. El valor es copia a
@@ -20,3 +19,12 @@ databaseChangeLog:
             defaultValueNumeric: 0
             constraints:
               nullable: false
+- changeSet:
+    id: 2.0.1-init-usuari-app-guarda-just-arx-aplicacio
+    author: Limit
+    comment: >-
+      Per defecte, els usuaris amb rol aplicació gestionen ells mateixos el
+      justificant (app_guarda_just_arx = 1).
+    changes:
+    - sql:
+        sql: UPDATE pbl_usuari SET app_guarda_just_arx = 1 WHERE codi IN (SELECT eu.usuari_id FROM pbl_entitat_usuari eu WHERE eu.aplicacio = 1)

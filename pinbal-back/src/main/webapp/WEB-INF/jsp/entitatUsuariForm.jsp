@@ -140,6 +140,10 @@
 					$('#justificantClientGroup').toggle($('#rolAplicacio').is(':checked'));
 				}
 				$('#rolAplicacio').change(function() {
+					// Per defecte, en marcar el rol aplicació el justificant el gestiona l'aplicació client
+					if ($(this).is(':checked')) {
+						$('#justificantGestionatPerAplicacio').prop('checked', true);
+					}
 					toggleJustificantClient();
 					// Reajusta l'alçada de la modal perquè el camp nou hi càpiga sense scroll
 					if (window.frameElement && typeof webutilModalAdjustHeight === 'function') {
