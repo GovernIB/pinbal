@@ -9,6 +9,7 @@ import es.caib.pinbal.back.datatables.ServerSideRequest;
 import es.caib.pinbal.back.datatables.ServerSideResponse;
 import es.caib.pinbal.back.helper.AlertHelper;
 import es.caib.pinbal.back.helper.EntitatHelper;
+import es.caib.pinbal.back.helper.ModalHelper;
 import es.caib.pinbal.back.helper.RequestSessionHelper;
 import es.caib.pinbal.back.helper.RolHelper;
 import es.caib.pinbal.logic.intf.dto.ArbreRespostaDto;
@@ -476,7 +477,10 @@ public class ConsultaAdminController extends BaseController {
 								"consulta.multiple.info.recuperar.resposta.error") + ": " + ex.getMessage());
 			}
 		}
-		return "redirect:../" + consultaId;
+		// Si s'ha cridat des de la modal, es torna al detall dins la modal (sense capçaleres).
+		return ModalHelper.isModal(request)
+				? "redirect:/modal/admin/consulta/" + consultaId
+				: "redirect:../" + consultaId;
 	}
 
 	private void omplirModelAmbDadesEspecifiques(

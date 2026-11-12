@@ -183,6 +183,15 @@ public class ConsultaMultipleControllerTest {
     }
 
     @Test
+    public void recuperarRespostaDesDeModalTornaAlDetallDinsLaModal() throws Exception {
+        entitatDelegat();
+        when(request.getAttribute("ModalHelper.Modal")).thenReturn(Boolean.TRUE);
+
+        assertEquals("redirect:/modal/consulta/multiple/1", controller.recuperarResposta(request, 1L));
+        verify(consultaService).recuperarRespostaConsultaMultiple(1L);
+    }
+
+    @Test
     public void recuperarRespostaAmbConsultaInexistentLlancaExcepcio() throws Exception {
         entitatDelegat();
         when(consultaService.findOneDelegat(1L)).thenThrow(new ConsultaNotFoundException());

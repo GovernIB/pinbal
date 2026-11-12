@@ -209,6 +209,14 @@ public class ConsultaAdminControllerTest {
         verify(consultaService).recuperarRespostaConsultaMultiple(1L);
     }
 
+    @Test
+    public void recuperarRespostaDesDeModalTornaAlDetallDinsLaModal() throws Exception {
+        when(request.getAttribute("ModalHelper.Modal")).thenReturn(Boolean.TRUE);
+
+        assertEquals("redirect:/modal/admin/consulta/1", controller.recuperarResposta(request, 1L));
+        verify(consultaService).recuperarRespostaConsultaMultiple(1L);
+    }
+
     // ------------------------- justificant -------------------------
 
     @Test
