@@ -814,6 +814,8 @@ public class UsuariServiceImplTest {
         EntitatUsuari entitatUsuari = mock(EntitatUsuari.class);
         when(entitatUsuari.isActiu()).thenReturn(true);
         when(entitatUsuariRepository.findByEntitatIdAndUsuariCodi(1L, "APP1")).thenReturn(entitatUsuari);
+        when(entitatUsuari.isAplicacio()).thenReturn(true);
+        when(entitatUsuariRepository.findByUsuariCodi("APP1")).thenReturn(java.util.List.of(entitatUsuari));
 
         usuariService.actualitzarDadesAdmin(1L, "APP1", null, null, false, false, false, true, false, true, Boolean.TRUE);
 
@@ -832,6 +834,8 @@ public class UsuariServiceImplTest {
         EntitatUsuari entitatUsuari = mock(EntitatUsuari.class);
         when(entitatUsuari.isActiu()).thenReturn(true);
         when(entitatUsuariRepository.findByEntitatIdAndUsuariCodi(1L, "APP2")).thenReturn(entitatUsuari);
+        when(entitatUsuari.isAplicacio()).thenReturn(true);
+        when(entitatUsuariRepository.findByUsuariCodi("APP2")).thenReturn(java.util.List.of(entitatUsuari));
 
         usuariService.actualitzarDadesAdmin(1L, "APP2", null, null, false, false, false, true, false, true);
 
@@ -888,6 +892,89 @@ public class UsuariServiceImplTest {
         usuariService.actualitzarDadesRepresentant(2L, "USR6", null, "Dept", true, false, true, false, true);
 
         verify(entitatUsuariRepository).save(any(EntitatUsuari.class));
+    }
+
+    @Test
+    public void actualitzarDadesRepresentant_ambConfiguracioJustificant_actualitzaUsuari() throws Exception {
+        Entitat entitat = mock(Entitat.class);
+        when(entitat.getId()).thenReturn(2L);
+        when(entitatRepository.findById(2L)).thenReturn(Optional.of(entitat));
+        Usuari usuari = mock(Usuari.class);
+        when(usuari.isInicialitzat()).thenReturn(true);
+        when(usuari.getCodi()).thenReturn("APP1");
+        when(usuariRepository.findByCodi("APP1")).thenReturn(usuari);
+        EntitatUsuari entitatUsuari = mock(EntitatUsuari.class);
+        when(entitatUsuari.isActiu()).thenReturn(true);
+        when(entitatUsuariRepository.findByEntitatIdAndUsuariCodi(2L, "APP1")).thenReturn(entitatUsuari);
+        when(entitatUsuari.isAplicacio()).thenReturn(true);
+        when(entitatUsuariRepository.findByUsuariCodi("APP1")).thenReturn(java.util.List.of(entitatUsuari));
+
+        usuariService.actualitzarDadesRepresentant(2L, "APP1", null, null, false, false, true, false, true, Boolean.TRUE);
+
+        verify(usuari).updateJustificantGestionatPerAplicacio(true);
+    }
+
+    @Test
+    public void actualitzarDadesRepresentant_senseConfiguracioJustificant_noModificaUsuari() throws Exception {
+        Entitat entitat = mock(Entitat.class);
+        when(entitat.getId()).thenReturn(2L);
+        when(entitatRepository.findById(2L)).thenReturn(Optional.of(entitat));
+        Usuari usuari = mock(Usuari.class);
+        when(usuari.isInicialitzat()).thenReturn(true);
+        when(usuari.getCodi()).thenReturn("APP2");
+        when(usuariRepository.findByCodi("APP2")).thenReturn(usuari);
+        EntitatUsuari entitatUsuari = mock(EntitatUsuari.class);
+        when(entitatUsuari.isActiu()).thenReturn(true);
+        when(entitatUsuariRepository.findByEntitatIdAndUsuariCodi(2L, "APP2")).thenReturn(entitatUsuari);
+        when(entitatUsuari.isAplicacio()).thenReturn(true);
+        when(entitatUsuariRepository.findByUsuariCodi("APP2")).thenReturn(java.util.List.of(entitatUsuari));
+
+        usuariService.actualitzarDadesRepresentant(2L, "APP2", null, null, false, false, true, false, true);
+
+        verify(usuari, never()).updateJustificantGestionatPerAplicacio(anyBoolean());
+    }
+
+    @Test
+    public void actualitzarDadesRepresentant_esTreuRolAplicacioIJaNoEnTeCap_justificantAFalse() throws Exception {
+        Entitat entitat = mock(Entitat.class);
+        when(entitat.getId()).thenReturn(2L);
+        when(entitatRepository.findById(2L)).thenReturn(Optional.of(entitat));
+        Usuari usuari = mock(Usuari.class);
+        when(usuari.isInicialitzat()).thenReturn(true);
+        when(usuari.getCodi()).thenReturn("APP3");
+        when(usuariRepository.findByCodi("APP3")).thenReturn(usuari);
+        EntitatUsuari entitatUsuari = mock(EntitatUsuari.class);
+        when(entitatUsuari.isActiu()).thenReturn(true);
+        when(entitatUsuari.isAplicacio()).thenReturn(false);
+        when(entitatUsuariRepository.findByEntitatIdAndUsuariCodi(2L, "APP3")).thenReturn(entitatUsuari);
+        when(entitatUsuariRepository.findByUsuariCodi("APP3")).thenReturn(java.util.List.of(entitatUsuari));
+
+        // El controlador passa null quan l'usuari no té el rol d'aplicació
+        usuariService.actualitzarDadesRepresentant(2L, "APP3", null, null, false, true, false, false, true, null);
+
+        verify(usuari).updateJustificantGestionatPerAplicacio(false);
+    }
+
+    @Test
+    public void actualitzarDadesAdmin_esTreuRolAplicacioPeroElTeEnAltraEntitat_conservaJustificant() throws Exception {
+        Entitat entitat = mock(Entitat.class);
+        when(entitat.getId()).thenReturn(1L);
+        when(entitatRepository.findById(1L)).thenReturn(Optional.of(entitat));
+        Usuari usuari = mock(Usuari.class);
+        when(usuari.isInicialitzat()).thenReturn(true);
+        when(usuari.getCodi()).thenReturn("APP4");
+        when(usuariRepository.findByCodi("APP4")).thenReturn(usuari);
+        EntitatUsuari entitatUsuari = mock(EntitatUsuari.class);
+        when(entitatUsuari.isActiu()).thenReturn(true);
+        when(entitatUsuari.isAplicacio()).thenReturn(false);
+        EntitatUsuari altraEntitatUsuari = mock(EntitatUsuari.class);
+        when(altraEntitatUsuari.isAplicacio()).thenReturn(true);
+        when(entitatUsuariRepository.findByEntitatIdAndUsuariCodi(1L, "APP4")).thenReturn(entitatUsuari);
+        when(entitatUsuariRepository.findByUsuariCodi("APP4")).thenReturn(java.util.List.of(entitatUsuari, altraEntitatUsuari));
+
+        usuariService.actualitzarDadesAdmin(1L, "APP4", null, null, false, true, false, false, false, true, null);
+
+        verify(usuari, never()).updateJustificantGestionatPerAplicacio(anyBoolean());
     }
 
     // ---- actualitzarDadesAuditor ----

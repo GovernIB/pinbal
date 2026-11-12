@@ -146,6 +146,32 @@ public class UsuariService extends AbstractService<es.caib.pinbal.logic.intf.ser
 	}
 
 	@Override
+	@RolesAllowed("PBL_REPRES")
+	public void actualitzarDadesRepresentant(
+			Long id,
+			String codi,
+			String nif,
+			String departament,
+			boolean representant,
+			boolean delegat,
+			boolean aplicacio,
+			boolean afegir,
+			boolean actiu,
+			Boolean justificantGestionatPerAplicacio) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
+		getDelegateService().actualitzarDadesRepresentant(
+				id,
+				codi,
+				nif,
+				departament,
+				representant,
+				delegat,
+				aplicacio,
+				afegir,
+				actiu,
+				justificantGestionatPerAplicacio);
+	}
+
+	@Override
 	@RolesAllowed("PBL_AUDIT")
 	public void actualitzarDadesAuditor(
 			Long id,

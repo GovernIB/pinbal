@@ -55,6 +55,7 @@ public class EntitatUsuariResourceServiceImpl
 		EntitatUsuariResource resource = super.entityToResource(entity);
 		if (entity.getUsuari() != null) {
 			resource.setUsuariCodi(entity.getUsuari().getId());
+			resource.setJustificantGestionatPerAplicacio(entity.getUsuari().isJustificantGestionatPerAplicacio());
 		}
 		return resource;
 	}
@@ -67,6 +68,25 @@ public class EntitatUsuariResourceServiceImpl
 		String usuariCodiNou = resolUsuariCodi(resource);
 		if (usuariCodiNou != null && !usuariCodiNou.equals(entity.getUsuari().getId())) {
 			throw new UnsupportedOperationException("L'usuari d'una assignació entitat-usuari no es pot modificar, només crear o desactivar");
+		}
+	}
+
+	@Override
+	protected void beforeUpdateSave(
+			EntitatUsuariResourceEntity entity,
+			EntitatUsuariResource resource,
+			Map<String, AnswerRequiredException.AnswerValue> answers) {
+		// La configuració del justificant només aplica als usuaris d'aplicació (clients) i es desa a l'usuari:
+		// - si té el rol d'aplicació, es desa el valor configurat;
+		// - si no el té ni en aquesta ni en cap altra entitat, es desa a false;
+		// - si no el té aquí però sí en una altra entitat, es conserva la configuració actual.
+		if (entity.getUsuari() == null) {
+			return;
+		}
+		if (resource.isAplicacio()) {
+			entity.getUsuari().setJustificantGestionatPerAplicacio(resource.isJustificantGestionatPerAplicacio());
+		} else if (!entitatUsuariResourceRepository.existsAltraAssignacioAplicacio(entity.getUsuari().getId(), entity.getId())) {
+			entity.getUsuari().setJustificantGestionatPerAplicacio(false);
 		}
 	}
 
@@ -94,7 +114,9 @@ public class EntitatUsuariResourceServiceImpl
 					resource.isAuditor(),
 					resource.isAplicacio(),
 					false,
-					resource.isActiu());
+					resource.isActiu(),
+					// La configuració del justificant només aplica als usuaris d'aplicació (clients)
+					resource.isAplicacio() ? resource.isJustificantGestionatPerAplicacio() : null);
 		} catch (EntitatNotFoundException ex) {
 			throw new ResourceNotFoundException(EntitatUsuariResource.class, String.valueOf(entitatId));
 		} catch (UsuariExternNotFoundException ex) {

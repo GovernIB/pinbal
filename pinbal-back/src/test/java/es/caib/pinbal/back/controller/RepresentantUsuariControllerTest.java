@@ -251,7 +251,40 @@ public class RepresentantUsuariControllerTest {
         BindingResult bindingResult = new BeanPropertyBindingResult(command, "command");
 
         assertEquals("redirect:../usuari", controller.usuariPost(request, command, bindingResult, new ExtendedModelMap()));
-        verify(usuariService).actualitzarDadesRepresentant(1L, "U1", null, null, false, false, false, false, true);
+        verify(usuariService).actualitzarDadesRepresentant(1L, "U1", null, null, false, false, false, false, true, null);
+    }
+
+    @Test
+    public void usuariPostAplicacioPassaConfiguracioJustificant() throws Exception {
+        representant();
+        entitatAmbUsuaris();
+        EntitatUsuariCommand command = new EntitatUsuariCommand();
+        command.setId(1L);
+        command.setCodi("APP1");
+        command.setNom("Aplicació 1");
+        command.setRolAplicacio(true);
+        command.setJustificantGestionatPerAplicacio(true);
+        BindingResult bindingResult = new BeanPropertyBindingResult(command, "command");
+
+        assertEquals("redirect:../usuari", controller.usuariPost(request, command, bindingResult, new ExtendedModelMap()));
+        verify(usuariService).actualitzarDadesRepresentant(1L, "APP1", null, null, false, false, true, false, true, Boolean.TRUE);
+    }
+
+    @Test
+    public void usuariPostNoAplicacioNoModificaConfiguracioJustificant() throws Exception {
+        representant();
+        entitatAmbUsuaris();
+        EntitatUsuariCommand command = new EntitatUsuariCommand();
+        command.setId(1L);
+        command.setCodi("U2");
+        command.setNom("Usuari 2");
+        command.setRolDelegat(true);
+        // Valor residual del formulari: s'ha d'ignorar si no és usuari d'aplicació
+        command.setJustificantGestionatPerAplicacio(true);
+        BindingResult bindingResult = new BeanPropertyBindingResult(command, "command");
+
+        assertEquals("redirect:../usuari", controller.usuariPost(request, command, bindingResult, new ExtendedModelMap()));
+        verify(usuariService).actualitzarDadesRepresentant(1L, "U2", null, null, false, true, false, false, true, null);
     }
 
     @Test
@@ -262,7 +295,7 @@ public class RepresentantUsuariControllerTest {
         command.setCodi("U1");
         BindingResult bindingResult = new BeanPropertyBindingResult(command, "command");
         org.mockito.Mockito.doThrow(new UsuariExternNotFoundException())
-                .when(usuariService).actualitzarDadesRepresentant(null, "U1", null, null, false, false, false, false, true);
+                .when(usuariService).actualitzarDadesRepresentant(null, "U1", null, null, false, false, false, false, true, null);
 
         assertEquals("redirect:../usuari", controller.usuariPost(request, command, bindingResult, new ExtendedModelMap()));
     }

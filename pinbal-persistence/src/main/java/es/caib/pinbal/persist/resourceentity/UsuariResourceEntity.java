@@ -57,6 +57,9 @@ public class UsuariResourceEntity extends es.caib.pinbal.persist.base.entity.Bas
 	private String finalitat;
 	@Column(name = "num_elements_pagina")
 	private Integer numElementsPagina;
+	// Configuració de client (usuari d'aplicació): vegeu Usuari.justificantGestionatPerAplicacio
+	@Column(name = "app_guarda_just_arx", nullable = false)
+	private boolean justificantGestionatPerAplicacio = false;
 
 	@Version
 	private long version = 0;

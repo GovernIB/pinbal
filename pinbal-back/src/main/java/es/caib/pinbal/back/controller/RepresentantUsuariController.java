@@ -366,7 +366,9 @@ public class RepresentantUsuariController extends BaseController {
 					command.isRolDelegat(),
 					command.isRolAplicacio(),
 					command.isAfegir(),
-					command.isActiu());
+					command.isActiu(),
+					// La configuració del justificant només aplica als usuaris d'aplicació (clients)
+					command.isRolAplicacio() ? command.isJustificantGestionatPerAplicacio() : null);
 
 			return getModalControllerReturnValueSuccess(request, "redirect:../usuari", "representant.controller.usuari.actualitzat", new Object[] {command.getNom()});
 		} catch (UsuariExternNotFoundException ex) {

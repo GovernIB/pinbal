@@ -13,11 +13,30 @@ const columns: MuiDataGridColDef[] = [
     { field: 'auditor', flex: 0.8, type: 'boolean', sortable: false },
     { field: 'aplicacio', flex: 0.8, type: 'boolean', sortable: false },
     { field: 'actiu', flex: 0.6, type: 'boolean', sortable: false },
+    {
+        field: 'justificantGestionatPerAplicacio',
+        flex: 1.2,
+        type: 'boolean',
+        sortable: false,
+        // Només té sentit per als usuaris d'aplicació
+        valueGetter: (value: any, row: any) => (row?.aplicacio ? value : null),
+    },
 ];
 
 const EntitatFormTabUsuarisFormContent: React.FC = () => {
+    const { t } = useTranslation();
     // Un cop creada l'assignació, l'usuari no es pot canviar (només editar rols/estat).
-    const { id } = useFormContext();
+    const { id, data, apiRef } = useFormContext();
+    const aplicacio = !!data?.aplicacio;
+    // Per defecte, en marcar el rol aplicació el justificant el gestiona l'aplicació client
+    // (mateix comportament que el formulari JSP d'usuaris de l'entitat).
+    const aplicacioAnterior = React.useRef<boolean | undefined>(undefined);
+    React.useEffect(() => {
+        if (aplicacioAnterior.current === false && aplicacio) {
+            apiRef?.current?.setFieldValue?.('justificantGestionatPerAplicacio', true);
+        }
+        aplicacioAnterior.current = aplicacio;
+    }, [aplicacio, apiRef]);
     return (
         <Grid container spacing={2}>
             <GridFormField size={6} name="usuariCodi" disabled={id != null} />
@@ -28,6 +47,14 @@ const EntitatFormTabUsuarisFormContent: React.FC = () => {
             <GridFormField size={4} name="auditor" />
             <GridFormField size={4} name="aplicacio" />
             <GridFormField size={4} name="actiu" />
+            {/* Configuració de client: només aplica als usuaris d'aplicació */}
+            {aplicacio && (
+                <GridFormField
+                    size={12}
+                    name="justificantGestionatPerAplicacio"
+                    label={t('page.entitats.form.usuaris.field.justificantGestionatPerAplicacio')}
+                />
+            )}
         </Grid>
     );
 };

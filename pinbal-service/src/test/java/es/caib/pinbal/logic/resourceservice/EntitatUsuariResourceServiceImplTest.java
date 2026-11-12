@@ -90,13 +90,95 @@ public class EntitatUsuariResourceServiceImplTest {
         assertEquals("USUARI1", created.getUsuariCodi());
         verify(usuariService).actualitzarDadesAdmin(
                 eq(5L), eq("USUARI1"), isNull(), eq("Departament"),
-                eq(true), eq(false), eq(false), eq(false), eq(false), eq(true));
+                eq(true), eq(false), eq(false), eq(false), eq(false), eq(true),
+                isNull());
+    }
+
+    @Test
+    public void create_usuariAplicacio_passaConfiguracioJustificant() throws Exception {
+        when(entitatUsuariResourceRepository.findByEntitatIdAndUsuariCodi(5L, "APP1"))
+                .thenReturn(buildEntity(1L, 5L, "APP1"));
+        EntitatUsuariResource resource = buildResource(5L, "APP1");
+        resource.setRepresentant(false);
+        resource.setAplicacio(true);
+        resource.setJustificantGestionatPerAplicacio(true);
+
+        service.create(resource, null);
+
+        verify(usuariService).actualitzarDadesAdmin(
+                eq(5L), eq("APP1"), isNull(), eq("Departament"),
+                eq(false), eq(false), eq(false), eq(true), eq(false), eq(true),
+                eq(Boolean.TRUE));
+    }
+
+    @Test
+    public void entityToResource_informaJustificantDeLUsuari() throws Exception {
+        EntitatUsuariResourceEntity entity = buildEntity(1L, 5L, "APP1");
+        entity.getUsuari().setJustificantGestionatPerAplicacio(true);
+        when(entitatUsuariResourceRepository.findByEntitatIdAndUsuariCodi(5L, "APP1")).thenReturn(entity);
+
+        EntitatUsuariResource created = service.create(buildResource(5L, "APP1"), null);
+
+        assertTrue(created.isJustificantGestionatPerAplicacio());
+    }
+
+    @Test
+    public void beforeUpdateSave_usuariAplicacio_actualitzaJustificantALUsuari() {
+        EntitatUsuariResourceEntity entity = buildEntity(1L, 5L, "APP1");
+        EntitatUsuariResource resource = buildResource(5L, "APP1");
+        resource.setAplicacio(true);
+        resource.setJustificantGestionatPerAplicacio(true);
+
+        service.beforeUpdateSave(entity, resource, null);
+
+        assertTrue(entity.getUsuari().isJustificantGestionatPerAplicacio());
+    }
+
+    @Test
+    public void beforeUpdateSave_esTreuRolAplicacioIJaNoEnTeCap_justificantAFalse() {
+        EntitatUsuariResourceEntity entity = buildEntity(1L, 5L, "APP1");
+        entity.getUsuari().setJustificantGestionatPerAplicacio(true);
+        EntitatUsuariResource resource = buildResource(5L, "APP1");
+        resource.setAplicacio(false);
+        resource.setJustificantGestionatPerAplicacio(true);
+        when(entitatUsuariResourceRepository.existsAltraAssignacioAplicacio("APP1", 1L)).thenReturn(false);
+
+        service.beforeUpdateSave(entity, resource, null);
+
+        assertFalse(entity.getUsuari().isJustificantGestionatPerAplicacio());
+    }
+
+    @Test
+    public void beforeUpdateSave_esTreuRolAplicacioPeroElTeEnAltraEntitat_conservaJustificant() {
+        EntitatUsuariResourceEntity entity = buildEntity(1L, 5L, "APP1");
+        entity.getUsuari().setJustificantGestionatPerAplicacio(true);
+        EntitatUsuariResource resource = buildResource(5L, "APP1");
+        resource.setAplicacio(false);
+        resource.setJustificantGestionatPerAplicacio(false);
+        when(entitatUsuariResourceRepository.existsAltraAssignacioAplicacio("APP1", 1L)).thenReturn(true);
+
+        service.beforeUpdateSave(entity, resource, null);
+
+        assertTrue(entity.getUsuari().isJustificantGestionatPerAplicacio());
+    }
+
+    @Test
+    public void beforeUpdateSave_usuariAplicacioDesmarcaJustificant_desaFalse() {
+        EntitatUsuariResourceEntity entity = buildEntity(1L, 5L, "APP1");
+        entity.getUsuari().setJustificantGestionatPerAplicacio(true);
+        EntitatUsuariResource resource = buildResource(5L, "APP1");
+        resource.setAplicacio(true);
+        resource.setJustificantGestionatPerAplicacio(false);
+
+        service.beforeUpdateSave(entity, resource, null);
+
+        assertFalse(entity.getUsuari().isJustificantGestionatPerAplicacio());
     }
 
     @Test
     public void create_usuariNoExisteixAlSistemaExtern_llancaResourceNotFound() throws Exception {
         doThrow(new es.caib.pinbal.logic.intf.service.exception.UsuariExternNotFoundException())
-                .when(usuariService).actualitzarDadesAdmin(any(), any(), any(), any(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean());
+                .when(usuariService).actualitzarDadesAdmin(any(), any(), any(), any(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), anyBoolean(), any());
 
         assertThrows(ResourceNotFoundException.class, () -> service.create(buildResource(5L, "USUARI1"), null));
     }

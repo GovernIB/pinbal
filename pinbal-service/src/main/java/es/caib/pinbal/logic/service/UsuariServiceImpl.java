@@ -653,9 +653,7 @@ public class UsuariServiceImpl implements UsuariService {
 				aplicacio,
 				afegir,
 				actiu);
-		if (justificantGestionatPerAplicacio != null) {
-			usuari.updateJustificantGestionatPerAplicacio(justificantGestionatPerAplicacio);
-		}
+		actualitzarJustificantGestionatPerAplicacio(usuari, justificantGestionatPerAplicacio);
 	}
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
@@ -670,7 +668,33 @@ public class UsuariServiceImpl implements UsuariService {
 			boolean aplicacio,
 			boolean afegir,
 			boolean actiu) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
-		log.debug("Actualitzant dades no auditor de l'usuari (codi=" + codi + ", nif=" + nif + ", actiu=" + actiu + ") a l'entitat (id=" + id + ")");
+		actualitzarDadesRepresentant(
+				id,
+				codi,
+				nif,
+				departament,
+				representant,
+				delegat,
+				aplicacio,
+				afegir,
+				actiu,
+				null);
+	}
+
+	@Transactional(rollbackFor = EntitatNotFoundException.class)
+	@Override
+	public void actualitzarDadesRepresentant(
+			Long id,
+			String codi,
+			String nif,
+			String departament,
+			boolean representant,
+			boolean delegat,
+			boolean aplicacio,
+			boolean afegir,
+			boolean actiu,
+			Boolean justificantGestionatPerAplicacio) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException {
+		log.debug("Actualitzant dades no auditor de l'usuari (codi=" + codi + ", nif=" + nif + ", actiu=" + actiu + ", justificantGestionatPerAplicacio=" + justificantGestionatPerAplicacio + ") a l'entitat (id=" + id + ")");
 		Entitat entitat = entitatRepository.findById(id).orElse(null);
 		if (entitat == null) {
 			log.debug("No s'ha trobat l'entitat (id=" + id + ")");
@@ -690,7 +714,7 @@ public class UsuariServiceImpl implements UsuariService {
 			log.debug("No es pot modificar un usuari principal (codi=" + codi + ", nif=" + nif + ") de l'entitat (id=" + id + ")");
 			throw new EntitatUsuariProtegitException();
 		}
-		usuariActualitzarDades(
+		Usuari usuari = usuariActualitzarDades(
 				entitat,
 				codi,
 				nif,
@@ -705,6 +729,7 @@ public class UsuariServiceImpl implements UsuariService {
 				aplicacio,
 				afegir,
 				actiu);
+		actualitzarJustificantGestionatPerAplicacio(usuari, justificantGestionatPerAplicacio);
 	}
 
 	@Transactional(rollbackFor = EntitatNotFoundException.class)
@@ -839,6 +864,36 @@ public class UsuariServiceImpl implements UsuariService {
 	}
 
 
+
+	/**
+	 * Actualitza la configuració de client del justificant després de modificar els rols de l'usuari.
+	 * La configuració és de l'usuari, però el rol d'aplicació és per entitat:
+	 * <ul>
+	 *     <li>si l'usuari ja no té el rol d'aplicació a cap entitat, es desa a false;</li>
+	 *     <li>si el té, es desa el valor indicat (si és null, no es modifica: p.ex. quan se li ha
+	 *     tret el rol en aquesta entitat però el conserva en una altra).</li>
+	 * </ul>
+	 */
+	private void actualitzarJustificantGestionatPerAplicacio(Usuari usuari, Boolean justificantGestionatPerAplicacio) {
+		if (usuari == null) {
+			return;
+		}
+		boolean teRolAplicacio = false;
+		List<EntitatUsuari> entitatsUsuari = entitatUsuariRepository.findByUsuariCodi(usuari.getCodi());
+		if (entitatsUsuari != null) {
+			for (EntitatUsuari entitatUsuari : entitatsUsuari) {
+				if (entitatUsuari.isAplicacio()) {
+					teRolAplicacio = true;
+					break;
+				}
+			}
+		}
+		if (!teRolAplicacio) {
+			usuari.updateJustificantGestionatPerAplicacio(false);
+		} else if (justificantGestionatPerAplicacio != null) {
+			usuari.updateJustificantGestionatPerAplicacio(justificantGestionatPerAplicacio);
+		}
+	}
 
 	private Usuari usuariActualitzarDades(
 			Entitat entitat,

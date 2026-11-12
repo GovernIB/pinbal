@@ -12,6 +12,7 @@ import org.keycloak.admin.client.resource.ClientsResource;
 import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.RoleResource;
 import org.keycloak.admin.client.resource.RolesResource;
+import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 
@@ -163,39 +164,90 @@ class DadesUsuariPluginKeycloakTest {
 
     @Test
     void consultarAmbUsuariNifAmbUsuariTrobatConsultaRolsAmbElUsernameResolt() throws Exception {
-        DadesUsuariPluginKeycloak spy = spy(crearPlugin());
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(propietatsCerca()));
+        UsersResource usersResource = stubUsersResource(spy);
+        when(usersResource.list(eq(0), eq(500)))
+                .thenReturn(Collections.singletonList(userRep("usuari-resolt", "Maria", "Bonet", null, "12345678A")));
         UserInfo userInfo = new UserInfo();
         userInfo.setUsername("usuari-resolt");
         userInfo.setName("Maria");
         userInfo.setSurname1("Bonet");
         userInfo.setAdministrationID("12345678A");
         userInfo.setEmail("maria@test.com");
-        doReturn(userInfo).when(spy).getUserInfoByAdministrationID("12345678A");
+        doReturn(userInfo).when(spy).getUserInfoByUserName("usuari-resolt");
         doReturn(new RolesInfo("usuari-resolt", new String[]{"ROL1"})).when(spy).getRolesByUsername("usuari-resolt");
 
-        DadesUsuari resultat = spy.consultarAmbUsuariNif("12345678A");
+        DadesUsuari resultat = spy.consultarAmbUsuariNif("12345678a");
 
         assertThat(resultat.getCodi()).isEqualTo("usuari-resolt");
         // El nom ha de ser el nom complet (nom + llinatges), no només el nom de pila
         assertThat(resultat.getNom()).isEqualTo("Maria Bonet");
+        assertThat(resultat.getEmail()).isEqualTo("maria@test.com");
         assertThat(resultat.getRols()).containsExactly("ROL1");
         // Les rols es consulten amb l'username resolt, no amb el NIF cercat
         verify(spy).getRolesByUsername("usuari-resolt");
         verify(spy, never()).getRolesByUsername("12345678A");
+        // No s'empra la consulta per NIF de la llibreria (cache interna)
+        verify(spy, never()).getUserInfoByAdministrationID(any());
+    }
+
+    @Test
+    void consultarAmbUsuariNifNoEsTrobaPerCoincidenciaParcial() throws Exception {
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(propietatsCerca()));
+        UsersResource usersResource = stubUsersResource(spy);
+        when(usersResource.list(eq(0), eq(500)))
+                .thenReturn(Collections.singletonList(userRep("u1", "A", null, null, "12345678A")));
+
+        assertThat(spy.consultarAmbUsuariNif("2345678A")).isNull();
     }
 
     @Test
     void consultarAmbUsuariNifUsuariNoTrobatRetornaNull() throws Exception {
-        DadesUsuariPluginKeycloak spy = spy(crearPlugin());
-        doReturn(null).when(spy).getUserInfoByAdministrationID("00000000Z");
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(propietatsCerca()));
+        UsersResource usersResource = stubUsersResource(spy);
+        when(usersResource.list(eq(0), eq(500))).thenReturn(Collections.emptyList());
 
         assertThat(spy.consultarAmbUsuariNif("00000000Z")).isNull();
+        verify(spy, never()).getUserInfoByUserName(any());
+    }
+
+    @Test
+    void consultarAmbUsuariNifNoTrobatAmbIndexRecentNoReconstrueixIndex() throws Exception {
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(propietatsCerca()));
+        UsersResource usersResource = stubUsersResource(spy);
+        when(usersResource.list(eq(0), eq(500))).thenReturn(Collections.emptyList());
+
+        spy.consultarAmbUsuariNif("00000000Z");
+        spy.consultarAmbUsuariNif("11111111H");
+
+        // Només la construcció inicial: l'índex és més recent que l'interval mínim de reconstrucció
+        verify(usersResource, org.mockito.Mockito.times(1)).list(any(Integer.class), any(Integer.class));
+    }
+
+    @Test
+    void consultarAmbUsuariNifNoTrobatReconstrueixIndexITrobaUsuariNou() throws Exception {
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(propietatsCerca()));
+        spy.nifIndexRefreshMinMillis = 0;
+        UsersResource usersResource = stubUsersResource(spy);
+        // Primera construcció: l'usuari encara no existeix; segona: ja s'ha donat d'alta
+        when(usersResource.list(eq(0), eq(500)))
+                .thenReturn(Collections.emptyList())
+                .thenReturn(Collections.singletonList(userRep("nou", "Nou", null, null, "43123456X")));
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUsername("nou");
+        userInfo.setName("Nou");
+        doReturn(userInfo).when(spy).getUserInfoByUserName("nou");
+        doReturn(new RolesInfo("nou", new String[]{})).when(spy).getRolesByUsername("nou");
+
+        assertThat(spy.consultarAmbUsuariNif("43123456X").getCodi()).isEqualTo("nou");
+        verify(usersResource, org.mockito.Mockito.times(2)).list(any(Integer.class), any(Integer.class));
     }
 
     @Test
     void consultarAmbUsuariNifAmbExcepcioLlancaSistemaExternException() throws Exception {
-        DadesUsuariPluginKeycloak spy = spy(crearPlugin());
-        doThrow(new RuntimeException("boom")).when(spy).getUserInfoByAdministrationID("12345678A");
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(propietatsCerca()));
+        UsersResource usersResource = stubUsersResource(spy);
+        when(usersResource.list(any(Integer.class), any(Integer.class))).thenThrow(new RuntimeException("boom"));
 
         assertThatThrownBy(() -> spy.consultarAmbUsuariNif("12345678A"))
                 .isInstanceOf(SistemaExternException.class);
@@ -252,51 +304,160 @@ class DadesUsuariPluginKeycloakTest {
     // ---- consultarAmbUsuariAny ----
 
     @Test
-    void consultarAmbUsuariAnyRetornaLlistaMapejadaSenseRols() throws Exception {
-        DadesUsuariPluginKeycloak spy = spy(crearPlugin());
-        UserInfo u1 = new UserInfo();
-        u1.setUsername("usuari1");
-        u1.setName("Joan");
-        u1.setAdministrationID("12345678A");
-        u1.setEmail("joan@test.com");
-        UserInfo u2 = new UserInfo();
-        u2.setUsername("usuari2");
-        u2.setName("Maria");
-        doReturn(new SearchUsersResult(Arrays.asList(u1, u2)))
-                .when(spy).getUsersByPartialValuesOr("text", "text", "text", null, "text");
+    void consultarAmbUsuariAnyCombinaCercaKeycloakIIndexNifSenseDuplicats() throws Exception {
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(propietatsCerca()));
+        UsersResource usersResource = stubUsersResource(spy);
+        // Usuari d'aplicació sense NIF: abans deixava de trobar-se un cop la cache de la llibreria era completa
+        UserRepresentation app = userRep("$app_text", null, null, null, null);
+        UserRepresentation persona = userRep("ptext", "Joan", "March", "joan@test.com", "11111111H");
+        when(usersResource.search(eq("text"), eq(0), eq(30), eq(false))).thenReturn(Arrays.asList(app, persona));
+        // L'índex de NIFs conté la mateixa persona (no s'ha de duplicar) i una altra amb NIF que conté "text"
+        UserRepresentation perNif = userRep("maria", "Maria", "Bonet", "maria@test.com", "TEXT1234");
+        when(usersResource.list(eq(0), eq(500))).thenReturn(Arrays.asList(persona, perNif, app));
 
         List<DadesUsuari> resultat = spy.consultarAmbUsuariAny(" text ");
 
-        assertThat(resultat).hasSize(2);
-        assertThat(resultat.stream().map(DadesUsuari::getCodi).collect(Collectors.toList()))
-                .containsExactly("usuari1", "usuari2");
-        assertThat(resultat.get(0).getRols()).isNull();
-        verify(spy).getUsersByPartialValuesOr("text", "text", "text", null, "text");
+        assertThat(resultat).extracting(DadesUsuari::getCodi).containsExactly("$app_text", "ptext", "maria");
+        DadesUsuari joan = resultat.get(1);
+        assertThat(joan.getNom()).isEqualTo("Joan March");
+        assertThat(joan.getNif()).isEqualTo("11111111H");
+        assertThat(joan.getEmail()).isEqualTo("joan@test.com");
+        assertThat(joan.getRols()).isNull();
+        assertThat(resultat.get(2).getNif()).isEqualTo("TEXT1234");
     }
 
     @Test
-    void consultarAmbUsuariAnyResultatNullRetornaLlistaBuida() throws Exception {
-        DadesUsuariPluginKeycloak spy = spy(crearPlugin());
-        doReturn(null).when(spy).getUsersByPartialValuesOr(any(), any(), any(), any(), any());
+    void consultarAmbUsuariAnyTrobaPerNifParcialSenseDistingirMajuscules() throws Exception {
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(propietatsCerca()));
+        UsersResource usersResource = stubUsersResource(spy);
+        when(usersResource.search(any(String.class), any(Integer.class), any(Integer.class), any(Boolean.class)))
+                .thenReturn(Collections.emptyList());
+        when(usersResource.list(eq(0), eq(500))).thenReturn(Arrays.asList(
+                userRep("u1", "A", null, null, "43123456X"),
+                userRep("u2", "B", null, null, "99999999R")));
+
+        assertThat(spy.consultarAmbUsuariAny("3456x")).extracting(DadesUsuari::getCodi).containsExactly("u1");
+    }
+
+    @Test
+    void consultarAmbUsuariAnyReutilitzaIndexNifEntreCerques() throws Exception {
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(propietatsCerca()));
+        UsersResource usersResource = stubUsersResource(spy);
+        when(usersResource.search(any(String.class), any(Integer.class), any(Integer.class), any(Boolean.class)))
+                .thenReturn(Collections.emptyList());
+        when(usersResource.list(eq(0), eq(500))).thenReturn(Collections.singletonList(userRep("u1", "A", null, null, "43123456X")));
+
+        spy.consultarAmbUsuariAny("4312");
+        spy.consultarAmbUsuariAny("3456");
+
+        verify(usersResource, org.mockito.Mockito.times(1)).list(any(Integer.class), any(Integer.class));
+    }
+
+    @Test
+    void consultarAmbUsuariAnyReconstrueixIndexNifQuanCaduca() throws Exception {
+        Properties props = propietatsCerca();
+        props.setProperty(DadesUsuariPluginKeycloak.PROPERTY_NIF_INDEX_TTL_MINUTS, "0");
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(props));
+        UsersResource usersResource = stubUsersResource(spy);
+        when(usersResource.search(any(String.class), any(Integer.class), any(Integer.class), any(Boolean.class)))
+                .thenReturn(Collections.emptyList());
+        when(usersResource.list(eq(0), eq(500)))
+                .thenReturn(Collections.emptyList())
+                .thenReturn(Collections.singletonList(userRep("nou", "Nou", null, null, "43123456X")));
+
+        assertThat(spy.consultarAmbUsuariAny("4312")).isEmpty();
+        assertThat(spy.consultarAmbUsuariAny("4312")).extracting(DadesUsuari::getCodi).containsExactly("nou");
+    }
+
+    @Test
+    void consultarAmbUsuariAnyPaginaElLlistatPerConstruirIndexNif() throws Exception {
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(propietatsCerca()));
+        UsersResource usersResource = stubUsersResource(spy);
+        when(usersResource.search(any(String.class), any(Integer.class), any(Integer.class), any(Boolean.class)))
+                .thenReturn(Collections.emptyList());
+        List<UserRepresentation> primeraPagina = new java.util.ArrayList<>();
+        for (int i = 0; i < 500; i++) {
+            primeraPagina.add(userRep("u" + i, "N", null, null, "0000" + i + "A"));
+        }
+        when(usersResource.list(eq(0), eq(500))).thenReturn(primeraPagina);
+        when(usersResource.list(eq(500), eq(500))).thenReturn(Collections.singletonList(userRep("darrer", "N", null, null, "77777777B")));
+
+        assertThat(spy.consultarAmbUsuariAny("77777777")).extracting(DadesUsuari::getCodi).containsExactly("darrer");
+    }
+
+    @Test
+    void consultarAmbUsuariAnySenseAtributNifConfiguratNoRecorreElsUsuaris() throws Exception {
+        Properties props = propietatsCerca();
+        props.remove(PROP_MAPPING_NIF);
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(props));
+        UsersResource usersResource = stubUsersResource(spy);
+        when(usersResource.search(eq("text"), eq(0), eq(30), eq(false)))
+                .thenReturn(Collections.singletonList(userRep("ptext", "Joan", null, null, null)));
+
+        assertThat(spy.consultarAmbUsuariAny("text")).extracting(DadesUsuari::getCodi).containsExactly("ptext");
+        verify(usersResource, never()).list(any(Integer.class), any(Integer.class));
+    }
+
+    @Test
+    void consultarAmbUsuariAnyAmbMassaResultatsRetornaLlistaBuida() throws Exception {
+        Properties props = propietatsCerca();
+        props.setProperty("pluginsib.userinformation.keycloak.maxallowednumberofresultsinpartialsearches", "1");
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(props));
+        UsersResource usersResource = stubUsersResource(spy);
+        when(usersResource.search(eq("text"), eq(0), eq(30), eq(false)))
+                .thenReturn(Arrays.asList(userRep("a_text", "A", null, null, null), userRep("b_text", "B", null, null, null)));
 
         assertThat(spy.consultarAmbUsuariAny("text")).isEmpty();
     }
 
     @Test
-    void consultarAmbUsuariAnyAmbTextNullNoLlancaNullPointerException() throws Exception {
-        DadesUsuariPluginKeycloak spy = spy(crearPlugin());
-        doReturn(null).when(spy).getUsersByPartialValuesOr(eq(null), eq(null), eq(null), eq(null), eq(null));
+    void consultarAmbUsuariAnyAmbTextMassaCurtORetornaLlistaBuidaSenseConsultarKeycloak() throws Exception {
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(propietatsCerca()));
+        UsersResource usersResource = stubUsersResource(spy);
 
         assertThat(spy.consultarAmbUsuariAny(null)).isEmpty();
+        assertThat(spy.consultarAmbUsuariAny("ab")).isEmpty();
+        verify(usersResource, never()).search(any(String.class), any(Integer.class), any(Integer.class), any(Boolean.class));
+        verify(usersResource, never()).list(any(Integer.class), any(Integer.class));
     }
 
     @Test
     void consultarAmbUsuariAnyAmbExcepcioLlancaSistemaExternException() throws Exception {
-        DadesUsuariPluginKeycloak spy = spy(crearPlugin());
-        doThrow(new RuntimeException("boom")).when(spy).getUsersByPartialValuesOr(any(), any(), any(), any(), any());
+        DadesUsuariPluginKeycloak spy = spy(crearPlugin(propietatsCerca()));
+        UsersResource usersResource = stubUsersResource(spy);
+        when(usersResource.search(any(String.class), any(Integer.class), any(Integer.class), any(Boolean.class)))
+                .thenThrow(new RuntimeException("boom"));
 
         assertThatThrownBy(() -> spy.consultarAmbUsuariAny("text"))
                 .isInstanceOf(SistemaExternException.class);
+    }
+
+    private static final String PROP_MAPPING_NIF = "pluginsib.userinformation.keycloak.mapping.administrationID";
+
+    private Properties propietatsCerca() {
+        Properties props = new Properties();
+        props.setProperty(PROP_MAPPING_NIF, "nif");
+        return props;
+    }
+
+    private UsersResource stubUsersResource(DadesUsuariPluginKeycloak spy) throws Exception {
+        UsersResource usersResource = mock(UsersResource.class);
+        metodePare("getKeyCloakConnectionForUsers").invoke(doReturn(usersResource).when(spy));
+        return usersResource;
+    }
+
+    private UserRepresentation userRep(String username, String nom, String llinatges, String email, String nif) {
+        UserRepresentation ur = new UserRepresentation();
+        ur.setUsername(username);
+        ur.setFirstName(nom);
+        ur.setLastName(llinatges);
+        ur.setEmail(email);
+        if (nif != null) {
+            java.util.Map<String, List<String>> attrs = new java.util.HashMap<>();
+            attrs.put("nif", Collections.singletonList(nif));
+            ur.setAttributes(attrs);
+        }
+        return ur;
     }
 
 

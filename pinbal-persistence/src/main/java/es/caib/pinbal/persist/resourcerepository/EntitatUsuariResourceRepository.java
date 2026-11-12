@@ -14,4 +14,8 @@ public interface EntitatUsuariResourceRepository extends BaseRepository<EntitatU
 	@Query("select eu from EntitatUsuariResourceEntity eu where eu.entitat.id = ?1 and eu.usuari.id = ?2")
 	EntitatUsuariResourceEntity findByEntitatIdAndUsuariCodi(Long entitatId, String usuariCodi);
 
+	/** Indica si l'usuari té el rol d'aplicació en alguna altra entitat (diferent de l'assignació indicada). */
+	@Query("select case when count(eu) > 0 then true else false end from EntitatUsuariResourceEntity eu where eu.usuari.id = ?1 and eu.aplicacio = true and eu.id <> ?2")
+	boolean existsAltraAssignacioAplicacio(String usuariCodi, Long entitatUsuariIdExclos);
+
 }

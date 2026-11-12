@@ -173,6 +173,7 @@ const translationEs = {
                         auditor: 'Auditor',
                         aplicacio: 'Aplicación',
                         actiu: 'Activo',
+                        justificantGestionatPerAplicacio: 'Justificante gestionado por la aplicación',
                     },
                 },
             },

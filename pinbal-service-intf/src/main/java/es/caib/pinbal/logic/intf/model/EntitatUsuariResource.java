@@ -42,5 +42,12 @@ public class EntitatUsuariResource extends BaseResource<Long> {
     private boolean auditor;
     private boolean aplicacio;
     private boolean actiu;
+    /**
+     * Configuració de client (només per a usuaris d'aplicació): si és true, el justificant de les
+     * consultes de recobriment el desa l'aplicació client (PINBAL el genera sota demanda); si és
+     * false, PINBAL el genera automàticament i el desa a l'arxiu. Es desa a l'usuari, no a la
+     * relació entitat-usuari.
+     */
+    private boolean justificantGestionatPerAplicacio;
 
 }

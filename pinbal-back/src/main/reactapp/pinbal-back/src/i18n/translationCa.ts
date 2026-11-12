@@ -173,6 +173,7 @@ const translationCa = {
                         auditor: 'Auditor',
                         aplicacio: 'Aplicació',
                         actiu: 'Actiu',
+                        justificantGestionatPerAplicacio: "Justificant gestionat per l'aplicació",
                     },
                 },
             },

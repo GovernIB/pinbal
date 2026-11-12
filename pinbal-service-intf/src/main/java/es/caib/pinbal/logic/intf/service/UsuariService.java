@@ -186,6 +186,31 @@ public interface UsuariService {
 			boolean actiu) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException;
 
 	/**
+	 * Actualitza les dades d'un usuari per a un representant, incloent la
+	 * configuració de client (usuari d'aplicació) de la gestió del justificant.
+	 *
+	 * @param justificantGestionatPerAplicacio
+	 *            Si és true, el justificant de les consultes de recobriment
+	 *            que faci aquest usuari no es desa a l'arxiu: es genera i firma
+	 *            sota demanda i és l'aplicació client qui el desa. Si és false,
+	 *            PINBAL genera automàticament el justificant i el desa a
+	 *            l'arxiu. Si és null no es modifica la configuració actual.
+	 * @see #actualitzarDadesRepresentant(Long, String, String, String, boolean, boolean, boolean, boolean, boolean)
+	 */
+	@PreAuthorize("hasRole('PBL_REPRES')")
+	public void actualitzarDadesRepresentant(
+			Long id,
+			String codi,
+			String nif,
+			String departament,
+			boolean representant,
+			boolean delegat,
+			boolean aplicacio,
+			boolean afegir,
+			boolean actiu,
+			Boolean justificantGestionatPerAplicacio) throws EntitatNotFoundException, EntitatUsuariProtegitException, UsuariExternNotFoundException;
+
+	/**
 	 * Actualitza les dades d'un usuari per a un auditor.
 	 * 
 	 * @param id

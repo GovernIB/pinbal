@@ -110,13 +110,21 @@ $(document).ready(function() {
 				var template = $('#template-actiu').html();
 				return Mustache.render(template, row);
 			}
+		}, {
+			targets: 6,
+			width: "10%",
+			orderable: false,
+			render: function (data, type, row, meta) {
+				var template = $('#template-justificant-aplicacio').html();
+				return Mustache.render(template, row);
+			}
 		},
 		{
-			targets: [6, 8, 10],
+			targets: [7, 9, 11],
 			orderable: false,
 			visible: false
 		}, {
-			targets: 7,
+			targets: 8,
 			width: "1%",
 			orderable: false,
 			render: function (data, type, row, meta) {
@@ -128,7 +136,7 @@ $(document).ready(function() {
 				}
 			}
 		}, {
-			targets: 9,
+			targets: 10,
 			orderable: false,
 			width: "1%",
 			render: function (data, type, row, meta) {
@@ -380,6 +388,7 @@ function actualitzarInfo(usuariCodi) {
 			<th data-data="departament"><spring:message code="representant.usuaris.camp.departament" /></th>
 			<th data-data="representant"><spring:message code="representant.usuaris.camp.rols" /></th>
 			<th data-data="actiu"><spring:message code="representant.usuaris.camp.actiu" /></th>
+			<th data-data="usuari.justificantGestionatPerAplicacio"><spring:message code="entitat.usuaris.camp.justificant.aplicacio" /></th>
 			<th data-data="delegat"></th>
 			<th data-data="aplicacio"></th>
 			<th data-data="auditor"></th>
@@ -409,6 +418,13 @@ function actualitzarInfo(usuariCodi) {
 {{#actiu}}
  	<i class="fas fa-check"></i>
 {{/actiu}}
+</script>
+<script id="template-justificant-aplicacio" type="x-tmpl-mustache">
+{{#aplicacio}}
+	{{#usuari.justificantGestionatPerAplicacio}}
+		<i class="fas fa-check" title="<spring:message code="usuari.form.camp.justificant.gestionat.aplicacio"/>"></i>
+	{{/usuari.justificantGestionatPerAplicacio}}
+{{/aplicacio}}
 </script>
 <script id="template-permisos" type="x-tmpl-mustache">
 	<a class="btn btn-default" href="<c:url value="/representant/usuari/{{ usuari.codi }}/permis"/>">
