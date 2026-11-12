@@ -208,10 +208,17 @@
 								<div class="panel-heading"><h4 style="margin:0"><strong><spring:message code="contingut.arxiu.grup.firma"/> ${firma.tipus}</strong></h4></div>
 								<table class="table table-striped table-bordered">
 								<tbody>
-									<c:if test="${not empty firma.perfil}">
+									<tr>
+										<td><strong><spring:message code="contingut.arxiu.camp.firma.tipus"/></strong></td>
+										<td>
+											${firma.tipus}
+											<c:if test="${firma.integrada}">&nbsp;<span class="text-muted">(<spring:message code="contingut.arxiu.camp.firma.integrada"/>)</span></c:if>
+										</td>
+									</tr>
+									<c:if test="${not empty firma.perfilDescripcio}">
 										<tr>
 											<td><strong><spring:message code="contingut.arxiu.camp.firma.perfil"/></strong></td>
-											<td>${firma.perfil}</td>
+											<td>${firma.perfilDescripcio}</td>
 										</tr>
 									</c:if>
 									<c:if test="${not empty firma.fitxerNom}">

@@ -20,6 +20,13 @@ public class ArxiuFirmaDto {
 
 	private ArxiuFirmaTipusEnumDto tipus;
 	private ArxiuFirmaPerfilEnumDto perfil;
+	/**
+	 * Perfil tal com l'informa l'arxiu (metadada {@code eni:perfil_firma}). Es fa servir per mostrar
+	 * el perfil quan el valor no correspon a cap valor de {@link ArxiuFirmaPerfilEnumDto}.
+	 */
+	private String perfilDescripcio;
+	/** Indica si la firma està integrada dins el contingut del document (PAdES, CAdES attached, XAdES enveloped). */
+	private boolean integrada;
 	private String fitxerNom;
 	private byte[] contingut;
 	private String tipusMime;

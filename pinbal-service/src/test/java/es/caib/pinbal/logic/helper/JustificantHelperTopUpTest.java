@@ -364,6 +364,27 @@ public class JustificantHelperTopUpTest {
     }
 
     @Test
+    public void descarregarFitxerGenerat_okAmbArxiuDocumentUuidIVersioImprimible_demanaVersioImprimibleAArxiu() throws Exception {
+        Consulta consulta = mockConsulta("PET-13", "SOL-13");
+        when(consulta.getJustificantEstat()).thenReturn(JustificantEstat.OK);
+        when(consulta.getArxiuDocumentUuid()).thenReturn("DOC-EXISTENT");
+
+        byte[] contingutImprimible = "contingut imprimible".getBytes();
+        Document documentArxiu = Mockito.mock(Document.class);
+        DocumentContingut documentContingut = Mockito.mock(DocumentContingut.class);
+        when(documentContingut.getContingut()).thenReturn(contingutImprimible);
+        when(documentArxiu.getContingut()).thenReturn(documentContingut);
+        when(pluginHelper.arxiuDocumentConsultar("PET-13", "DOC-EXISTENT", null, true, true))
+                .thenReturn(documentArxiu);
+
+        FitxerDto result = justificantHelper.descarregarFitxerGenerat(consulta, scspHelper, true);
+
+        assertArrayEquals(contingutImprimible, result.getContingut());
+        Mockito.verify(pluginHelper).arxiuDocumentConsultar("PET-13", "DOC-EXISTENT", null, true, true);
+        Mockito.verify(pluginHelper, Mockito.never()).arxiuDocumentConsultar("PET-13", "DOC-EXISTENT", null, true, false);
+    }
+
+    @Test
     public void descarregarFitxerGenerat_okAplicacioGuardaArxiuNoRecobriment_desaAArxiu() throws Exception {
         Consulta consulta = mockConsulta("PET-13", "SOL-13");
         when(consulta.getJustificantEstat()).thenReturn(JustificantEstat.OK);

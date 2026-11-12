@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @Slf4j
 public class ArxiuHelper {
@@ -44,8 +46,89 @@ public class ArxiuHelper {
         List<Firma> firmes = arxiuDocument.getFirmes();
         if (firmes != null) {
             List<ArxiuFirmaDto> dtos = convertFirmesToFirmaDtos(firmes);
+            completarFirmes(dtos, arxiuDocument, arxiuDetall);
             arxiuDetall.setFirmes(dtos);
         }
+    }
+
+    private static final String METADADA_PERFIL_FIRMA = "eni:perfil_firma";
+
+    /**
+     * La informació del document es consulta a l'arxiu sense contingut, i per a les firmes
+     * integrades el plugin només retorna el tipus (i el perfil si el pot convertir a enumerat).
+     * Es completen les dades que falten amb la informació que ja tenim del document:
+     * <ul>
+     *     <li>el perfil, a partir de la metadada {@code eni:perfil_firma};</li>
+     *     <li>per a les firmes integrades al document, el nom del fitxer i el tipus MIME del
+     *     propi document (en una firma PAdES el contingut és sempre un PDF).</li>
+     * </ul>
+     */
+    private static void completarFirmes(List<ArxiuFirmaDto> firmes, Document arxiuDocument, ArxiuDetallDto arxiuDetall) {
+        String perfilMetadada = getMetadadaPerfilFirma(arxiuDetall.getMetadadesAddicionals());
+        for (ArxiuFirmaDto firma : firmes) {
+            if (firma.getPerfil() == null && perfilMetadada != null) {
+                firma.setPerfil(toPerfil(perfilMetadada));
+            }
+            firma.setPerfilDescripcio(firma.getPerfil() != null ? firma.getPerfil().name() : perfilMetadada);
+
+            boolean integrada = isFirmaIntegrada(firma.getTipus());
+            firma.setIntegrada(integrada);
+            if (integrada) {
+                if (isBuit(firma.getFitxerNom())) {
+                    firma.setFitxerNom(!isBuit(arxiuDetall.getContingutArxiuNom())
+                            ? arxiuDetall.getContingutArxiuNom()
+                            : arxiuDocument.getNom());
+                }
+                if (isBuit(firma.getTipusMime())) {
+                    if (!isBuit(arxiuDetall.getContingutTipusMime())) {
+                        firma.setTipusMime(arxiuDetall.getContingutTipusMime());
+                    } else if (ArxiuFirmaTipusEnumDto.PADES.equals(firma.getTipus())) {
+                        firma.setTipusMime("application/pdf");
+                    }
+                }
+            }
+        }
+    }
+
+    private static String getMetadadaPerfilFirma(Map<String, Object> metadadesAddicionals) {
+        if (metadadesAddicionals == null) {
+            return null;
+        }
+        Object valor = metadadesAddicionals.get(METADADA_PERFIL_FIRMA);
+        if (valor == null || isBuit(valor.toString())) {
+            return null;
+        }
+        return valor.toString().trim();
+    }
+
+    /**
+     * Converteix el perfil informat a l'arxiu a l'enumerat, acceptant variants habituals
+     * ("EPES", "AdES-EPES", "BASELINE B-Level"...). Retorna null si no es reconeix.
+     */
+    static ArxiuFirmaPerfilEnumDto toPerfil(String valor) {
+        if (isBuit(valor)) {
+            return null;
+        }
+        String normalitzat = valor.trim().toUpperCase(Locale.ROOT).replaceAll("[\\s\\-]+", "_");
+        if (normalitzat.startsWith("ADES_")) {
+            normalitzat = normalitzat.substring("ADES_".length());
+        }
+        for (ArxiuFirmaPerfilEnumDto perfil : ArxiuFirmaPerfilEnumDto.values()) {
+            if (perfil.name().equalsIgnoreCase(normalitzat)) {
+                return perfil;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isFirmaIntegrada(ArxiuFirmaTipusEnumDto tipus) {
+        return ArxiuFirmaTipusEnumDto.PADES.equals(tipus)
+                || ArxiuFirmaTipusEnumDto.CADES_ATT.equals(tipus)
+                || ArxiuFirmaTipusEnumDto.XADES_ENV.equals(tipus);
+    }
+
+    private static boolean isBuit(String valor) {
+        return valor == null || valor.trim().isEmpty();
     }
 
     private static void setEniProperties(ArxiuDetallDto arxiuDetall, DocumentMetadades metadades) {
