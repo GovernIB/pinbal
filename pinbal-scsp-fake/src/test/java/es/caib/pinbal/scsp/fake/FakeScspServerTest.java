@@ -183,6 +183,94 @@ public class FakeScspServerTest {
 		assertTrue("no hi hauria d'haver cap ds:Signature directa a la capçalera", directChild(header, "Signature") == null);
 	}
 
+	// ------------------------- SVDDGPCIWS02 asíncron (sense plantilles asíncrones) -------------------------
+
+	private static String peticionDgp(String idPeticion, String... documents) {
+		StringBuilder solicituds = new StringBuilder();
+		for (int i = 0; i < documents.length; i++) {
+			String idSolicitud = documents.length == 1 ? idPeticion : String.format("%06d", i + 1);
+			solicituds.append("<SolicitudTransmision><DatosGenericos>")
+				.append("<Titular><TipoDocumentacion>DNI</TipoDocumentacion><Documentacion>").append(documents[i])
+				.append("</Documentacion></Titular>")
+				.append("<Transmision><CodigoCertificado>SVDDGPCIWS02</CodigoCertificado>")
+				.append("<IdSolicitud>").append(idSolicitud).append("</IdSolicitud></Transmision>")
+				.append("</DatosGenericos></SolicitudTransmision>");
+		}
+		return "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+			+ "<soapenv:Body><Peticion xmlns=\"http://intermediacion.redsara.es/scsp/esquemas/V3/peticion\">"
+			+ "<Atributos><IdPeticion>" + idPeticion + "</IdPeticion><NumElementos>" + documents.length + "</NumElementos>"
+			+ "<CodigoCertificado>SVDDGPCIWS02</CodigoCertificado></Atributos>"
+			+ "<Solicitudes>" + solicituds + "</Solicitudes></Peticion></soapenv:Body></soapenv:Envelope>";
+	}
+
+	private static String solicitudRespuestaDgp(String idPeticion, int numElementos) {
+		return "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"><soapenv:Body>"
+			+ "<SolicitudRespuesta xmlns=\"http://intermediacion.redsara.es/scsp/esquemas/V3/solicitudRespuesta\">"
+			+ "<Atributos><IdPeticion>" + idPeticion + "</IdPeticion><NumElementos>" + numElementos + "</NumElementos>"
+			+ "<CodigoCertificado>SVDDGPCIWS02</CodigoCertificado></Atributos>"
+			+ "</SolicitudRespuesta></soapenv:Body></soapenv:Envelope>";
+	}
+
+	private static java.util.List<String> textsByLocalName(Document document, String localName) {
+		java.util.List<String> values = new java.util.ArrayList<String>();
+		NodeList nodes = document.getElementsByTagNameNS("*", localName);
+		for (int i = 0; i < nodes.getLength(); i++) {
+			values.add(nodes.item(i).getTextContent().trim());
+		}
+		return values;
+	}
+
+	@Test
+	public void svddgpciws02_peticioAsincrona_retornaConfirmacioGenerada() throws Exception {
+		HttpResponse<String> response = send(BASE_URL + "/servicios/SVDDGPCIWS02/asincrona",
+			peticionDgp("PINBALASYNC0001", "12345678Z", "00000000T"));
+		assertEquals(200, response.statusCode());
+		Document document = parseNamespaceAware(response.body());
+		Element body = directChild(document.getDocumentElement(), "Body");
+		Element root = (Element) body.getElementsByTagNameNS("*", "ConfirmacionPeticion").item(0);
+		assertTrue("s'esperava una ConfirmacionPeticion, resposta: " + response.body(), root != null);
+		assertEquals("PINBALASYNC0001", textsByLocalName(document, "IdPeticion").get(0));
+		assertEquals("2", textsByLocalName(document, "NumElementos").get(0));
+		assertEquals("0002", textsByLocalName(document, "CodigoEstado").get(0));
+		assertEquals("SVDDGPCIWS02", textsByLocalName(document, "CodigoCertificado").get(0));
+		Element header = directChild(document.getDocumentElement(), "Header");
+		assertTrue("la confirmació ha d'anar signada", directChild(header, "Security") != null);
+	}
+
+	@Test
+	public void svddgpciws02_solicitudRespuestaMultiple_retornaUnaTransmissioPerSollicitud() throws Exception {
+		HttpResponse<String> response = send(BASE_URL + "/servicios/SVDDGPCIWS02/asincrona",
+			solicitudRespuestaDgp("PINBALASYNC0001", 2));
+		assertEquals(200, response.statusCode());
+		Document document = parseNamespaceAware(response.body());
+		assertEquals(1, document.getElementsByTagNameNS("*", "Respuesta").getLength());
+		assertEquals(2, document.getElementsByTagNameNS("*", "TransmisionDatos").getLength());
+		assertEquals(java.util.Arrays.asList("000001", "000002"), textsByLocalName(document, "IdSolicitud"));
+		assertEquals("PINBALASYNC0001", textsByLocalName(document, "IdPeticion").get(0));
+		assertEquals("0003", textsByLocalName(document, "CodigoEstado").get(0));
+	}
+
+	@Test
+	public void svddgpciws02_solicitudRespuestaUnaSollicitud_idSolicitudIgualAIdPeticion() throws Exception {
+		HttpResponse<String> response = send(BASE_URL + "/servicios/SVDDGPCIWS02/asincrona",
+			solicitudRespuestaDgp("PINBALASYNC0002", 1));
+		assertEquals(200, response.statusCode());
+		Document document = parseNamespaceAware(response.body());
+		assertEquals(1, document.getElementsByTagNameNS("*", "TransmisionDatos").getLength());
+		assertEquals(java.util.Collections.singletonList("PINBALASYNC0002"), textsByLocalName(document, "IdSolicitud"));
+	}
+
+	@Test
+	public void svddgpciws02_peticioSincrona_segueixRetornantRespuesta() throws Exception {
+		HttpResponse<String> response = send(BASE_URL + "/servicios/SVDDGPCIWS02/sincrona",
+			peticionDgp("PINBALSYNC0001", "12345678Z"));
+		assertEquals(200, response.statusCode());
+		Document document = parseNamespaceAware(response.body());
+		assertEquals(1, document.getElementsByTagNameNS("*", "Respuesta").getLength());
+		assertEquals(0, document.getElementsByTagNameNS("*", "ConfirmacionPeticion").getLength());
+		assertEquals(java.util.Collections.singletonList("PINBALSYNC0001"), textsByLocalName(document, "IdSolicitud"));
+	}
+
 	private static void assertFirstSignatureIsValidXmlDsigOverBody(String xml) throws Exception {
 		Document document = parseNamespaceAware(xml);
 		Element signature = (Element) document.getElementsByTagNameNS("*", "Signature").item(0);

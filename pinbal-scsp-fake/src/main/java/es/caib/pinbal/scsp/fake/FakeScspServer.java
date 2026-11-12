@@ -55,6 +55,10 @@ public final class FakeScspServer {
 		"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary";
 	private static final String DEFAULT_ERROR_TRIGGER_DOC = "00000000ERR";
 	private static final String ERROR_CODIGO_ESTADO = "9999";
+	private static final String CONFIRMACION_PETICION_NS =
+		"http://intermediacion.redsara.es/scsp/esquemas/V3/confirmacionPeticion";
+	/** Hores estimades de resposta de la confirmació generada (0 = es pot recuperar immediatament). */
+	private static final String DEFAULT_ASYNC_TIEMPO_ESTIMADO = "0";
 
 	private FakeScspServer() {
 	}
@@ -118,27 +122,46 @@ public final class FakeScspServer {
 			if (service.getSyncResponse() != null) {
 				sb.append("  Síncrona   (Peticion -> Respuesta):            POST ").append(syncUrl).append('\n');
 			}
-			if (service.getAsyncConfirmation() != null) {
-				sb.append("  Asíncrona  (Peticion -> ConfirmacionPeticion): POST ").append(asyncUrl).append('\n');
+			if (supportsAsyncConfirmation(service)) {
+				sb.append("  Asíncrona  (Peticion -> ConfirmacionPeticion): POST ").append(asyncUrl)
+					.append(service.getAsyncConfirmation() == null ? "  [generada]" : "").append('\n');
 			}
-			if (service.getAsyncResponse() != null || service.getAsyncConfirmation() != null) {
-				sb.append("  Asíncrona  (SolicitudRespuesta -> Respuesta):  POST ").append(asyncUrl).append('\n');
+			if (supportsAsyncResponse(service)) {
+				sb.append("  Asíncrona  (SolicitudRespuesta -> Respuesta):  POST ").append(asyncUrl)
+					.append(service.getAsyncResponse() == null && service.getAsyncConfirmation() == null
+						? "  [basada en la resposta síncrona]" : "").append('\n');
 			}
 			if (service.getSyncResponse() != null) {
 				sb.append("\n  Exemple síncron:\n");
 				appendCurl(sb, syncUrl, peticionExample(code, "1"));
 			}
-			if (service.getAsyncConfirmation() != null) {
+			if (supportsAsyncConfirmation(service)) {
 				sb.append("\n  Exemple petició asíncrona:\n");
 				appendCurl(sb, asyncUrl, peticionExample(code, "2"));
 			}
-			if (service.getAsyncResponse() != null || service.getAsyncConfirmation() != null) {
+			if (supportsAsyncResponse(service)) {
 				sb.append("\n  Exemple sol·licitud de resposta asíncrona:\n");
 				appendCurl(sb, asyncUrl, solicitudRespuestaExample(code));
 			}
 		}
 		sb.append(sep).append('\n');
 		return sb.toString();
+	}
+
+	/**
+	 * Un servei admet peticions asíncrones si té plantilla de confirmació o,
+	 * si no en té, si té resposta síncrona: en aquest cas la confirmació es
+	 * genera i la resposta asíncrona es construeix a partir de la síncrona
+	 * (p.ex. SVDDGPCIWS02).
+	 */
+	static boolean supportsAsyncConfirmation(ServiceExamples service) {
+		return service.getAsyncConfirmation() != null || service.getSyncResponse() != null;
+	}
+
+	static boolean supportsAsyncResponse(ServiceExamples service) {
+		return service.getAsyncResponse() != null
+			|| service.getAsyncConfirmation() != null
+			|| service.getSyncResponse() != null;
 	}
 
 	private static void appendCurl(StringBuilder sb, String url, String body) {
@@ -254,6 +277,11 @@ public final class FakeScspServer {
 						+ " servei=" + requestInfo.getServiceCode());
 					return service.getSyncResponse();
 				}
+				if (service.getAsyncResponse() == null && service.getSyncResponse() != null) {
+					System.out.println("[FAKE-SCSP] Sense plantilla de resposta asincrona; s'utilitza la resposta sincrona com a base"
+						+ " servei=" + requestInfo.getServiceCode());
+					return service.getSyncResponse();
+				}
 				System.out.println("[FAKE-SCSP] Resolent resposta asincrona"
 					+ " servei=" + requestInfo.getServiceCode()
 					+ " teAsyncResponse=" + (service.getAsyncResponse() != null));
@@ -270,6 +298,12 @@ public final class FakeScspServer {
 						+ " servei=" + requestInfo.getServiceCode());
 					return service.getAsyncConfirmation();
 				}
+				if ((isAsync(exchange.getRequestURI().getPath()) || hasMultipleElements(requestInfo))
+					&& service.getAsyncConfirmation() == null) {
+					System.out.println("[FAKE-SCSP] Sense plantilla de confirmacio asincrona; es genera una ConfirmacionPeticion"
+						+ " servei=" + requestInfo.getServiceCode());
+					return buildAsyncConfirmation(requestInfo);
+				}
 				System.out.println("[FAKE-SCSP] Resolent resposta sincrona"
 					+ " servei=" + requestInfo.getServiceCode()
 					+ " teSyncResponse=" + (service.getSyncResponse() != null));
@@ -277,6 +311,38 @@ public final class FakeScspServer {
 			}
 			System.err.println("[FAKE-SCSP] Body SOAP no suportat: " + requestInfo.getBodyRoot());
 			return null;
+		}
+
+		/**
+		 * Genera una {@code ConfirmacionPeticion} (estat 0002, "en tramitació")
+		 * per als serveis que no en tenen plantilla. El temps estimat de
+		 * resposta (hores) es pot canviar amb {@code -Dfake.scsp.asyncTiempoEstimado}.
+		 */
+		private String buildAsyncConfirmation(SoapEnvelopeInfo requestInfo) {
+			String tiempoEstimado = System.getProperty("fake.scsp.asyncTiempoEstimado", DEFAULT_ASYNC_TIEMPO_ESTIMADO);
+			String timeStamp = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(new Date());
+			String numElementos = requestInfo.getNumElementos();
+			if ((numElementos == null || numElementos.trim().length() == 0) && !requestInfo.getIdSolicitudes().isEmpty()) {
+				numElementos = String.valueOf(requestInfo.getIdSolicitudes().size());
+			}
+			return "<soapenv:Envelope xmlns:soapenv=\"" + SOAPENV_NS + "\"><soapenv:Header/>"
+				+ "<soapenv:Body Id=\"Body\"><ConfirmacionPeticion xmlns=\"" + CONFIRMACION_PETICION_NS + "\">"
+				+ "<Atributos>"
+				+ "<IdPeticion>" + escapeXml(requestInfo.getIdPeticion()) + "</IdPeticion>"
+				+ "<NumElementos>" + escapeXml(numElementos) + "</NumElementos>"
+				+ "<TimeStamp>" + timeStamp + "</TimeStamp>"
+				+ "<Estado><CodigoEstado>0002</CodigoEstado>"
+				+ "<LiteralError>Su petición está siendo tramitada</LiteralError>"
+				+ "<TiempoEstimadoRespuesta>" + escapeXml(tiempoEstimado) + "</TiempoEstimadoRespuesta></Estado>"
+				+ "<CodigoCertificado>" + escapeXml(requestInfo.getServiceCode()) + "</CodigoCertificado>"
+				+ "</Atributos></ConfirmacionPeticion></soapenv:Body></soapenv:Envelope>";
+		}
+
+		private String escapeXml(String value) {
+			if (value == null) {
+				return "";
+			}
+			return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
 		}
 
 		private boolean containsEncryptedData(String xml) {
@@ -401,6 +467,13 @@ public final class FakeScspServer {
 		private List<String> resolveResponseIds(SoapEnvelopeInfo requestInfo, int expectedTransmissions) {
 			if (!requestInfo.getIdSolicitudes().isEmpty()) {
 				return requestInfo.getIdSolicitudes();
+			}
+			// Igual que PINBAL (ScspHelper.getIdSolicitud): si només hi ha una sol·licitud,
+			// el seu id és el de la petició; si n'hi ha més, 000001, 000002...
+			if (expectedTransmissions == 1
+				&& requestInfo.getIdPeticion() != null
+				&& requestInfo.getIdPeticion().trim().length() > 0) {
+				return Collections.singletonList(requestInfo.getIdPeticion().trim());
 			}
 			List<String> ids = new ArrayList<String>();
 			for (int i = 1; i <= expectedTransmissions; i++) {
@@ -591,9 +664,13 @@ public final class FakeScspServer {
 				}
 				if (service.getAsyncConfirmation() != null) {
 					builder.append(" async-confirm");
+				} else if (supportsAsyncConfirmation(service)) {
+					builder.append(" async-confirm(generada)");
 				}
 				if (service.getAsyncResponse() != null) {
 					builder.append(" async-response");
+				} else if (service.getAsyncConfirmation() == null && service.getSyncResponse() != null) {
+					builder.append(" async-response(sincrona)");
 				}
 				builder.append('\n');
 			}
