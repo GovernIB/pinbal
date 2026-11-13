@@ -2,14 +2,7 @@ databaseChangeLog:
 - changeSet:
     id: 2.0.1-add-justificant-error-consulta-list
     author: Limit
-    comment: >-
-      pbl_consulta_list/pbl_consulta_hist_list (taules desnormalitzades de
-      llistat, veure LlistatConsulta/LlistatHistoricConsulta) mai van tenir
-      la columna justificant_error, tot i que existeix a pbl_consulta/
-      pbl_consulta_hist i el mapeig de l'entitat estava comentat. Resultat:
-      el modal "Veure error" del llistat de consultes (administrador i
-      delegat/representant) sempre mostra el textarea buit, encara que
-      Consulta.justificantError tingui contingut.
+    comment: Afegir columna justificanterror a les taules pbl_consulta_list/pbl_consulta_hist_list.
     changes:
     - addColumn:
         tableName: pbl_consulta_list
