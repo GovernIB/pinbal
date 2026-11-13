@@ -101,59 +101,76 @@ $(document).ready(function() {
 												<c:when test="${not empty camp.campPare}">
 													<c:set var="campPareId" value="camp_${camp.campPare.id}"/>
 <script>
-$("#${campPareId}").change(function(event, valor) {
-	$('#${campId}').empty();
-	if ($('#${campPareId}').val().length > 0) {
-		$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.carregant"/>'));
-		$.ajax({
-			url:'<c:url value="/dades/municipis"/>/' + $('#${campPareId}').val(),
-			type:'GET',
-			dataType: 'json',
-			success: function(json) {
-				$('#${campId}').empty();
-				$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
-				$.each(json, function(i, value) {
-					var valueCodi = value.codi;
-					<c:if test="${codiMunicipiSenseCodiProvincia}">valueCodi = value.codi.substring(2);</c:if>
-					if ( $('#${campId}').data('defecte-processat')) {
-						$('#${campId}').append($('<option>').text(value.nom).attr('value', valueCodi));
-					} else {
-						var valorPerDefecte = '${campValorDefecte}';
-						if (value.codi == valorPerDefecte) {
-							$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', valueCodi));
-						} else {
-							$('#${campId}').append($('<option>').text(value.nom).attr('value', valueCodi));
-						}
-					}
-				});
-				$('#${campId}').data('defecte-processat', true);
-			}
-		});
-	} else {
-		$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
+(function() {
+	var $municipi = $('#${campId}');
+	var valorPerDefecte = '${campValorDefecte}';
+	// El valor pot venir amb 5 dígits (provincia + municipi) o només amb els 3 del municipi (MUNICIPI_3)
+	function esValorPerDefecte(codi) {
+		return valorPerDefecte.length > 0 && (codi == valorPerDefecte || codi.substring(2) == valorPerDefecte);
 	}
-});
+	function carregarMunicipis() {
+		var $pare = $('#${campPareId}');
+		$municipi.empty();
+		if ($pare.val() && $pare.val().length > 0) {
+			$municipi.append($('<option value="">').text('<spring:message code="comu.opcio.carregant"/>'));
+			$.ajax({
+				url:'<c:url value="/dades/municipis"/>/' + $pare.val(),
+				type:'GET',
+				dataType: 'json',
+				success: function(json) {
+					var seleccionarDefecte = !$municipi.data('defecte-processat');
+					$municipi.empty();
+					$municipi.append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
+					$.each(json, function(i, value) {
+						var valueCodi = value.codi;
+						<c:if test="${codiMunicipiSenseCodiProvincia}">valueCodi = value.codi.substring(2);</c:if>
+						var $option = $('<option>').text(value.nom).attr('value', valueCodi);
+						if (seleccionarDefecte && esValorPerDefecte(value.codi)) {
+							$option.attr('selected', 'selected');
+						}
+						$municipi.append($option);
+					});
+					$municipi.data('defecte-processat', true);
+				}
+			});
+		} else {
+			$municipi.append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
+		}
+	}
+	// S'enllaça quan el document està carregat perquè el camp pare pot estar definit després d'aquest camp
+	$(function() {
+		$('#${campPareId}').change(carregarMunicipis);
+		if ($('#${campPareId}').val()) {
+			carregarMunicipis();
+		}
+	});
+})();
 </script>
 												</c:when>
 												<c:when test="${not empty camp.valorPare}">
 <script>
-$.ajax({
-	url:'<c:url value="/dades/municipis"/>/${camp.valorPare}',
-	type:'GET',
-	dataType: 'json',
-	success: function(json) {
-		$('#${campId}').empty();
-		$('#${campId}').append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
-		$.each(json, function(i, value) {
-			var valorPerDefecte = '${campValorDefecte}';
-			if (value.codi == valorPerDefecte) {
-				$('#${campId}').append($('<option selected="selected">').text(value.nom).attr('value', value.codi));
-			} else {
-				$('#${campId}').append($('<option>').text(value.nom).attr('value', value.codi));
-			}
-		});
-	}
-});
+(function() {
+	var $municipi = $('#${campId}');
+	var valorPerDefecte = '${campValorDefecte}';
+	$.ajax({
+		url:'<c:url value="/dades/municipis"/>/${camp.valorPare}',
+		type:'GET',
+		dataType: 'json',
+		success: function(json) {
+			$municipi.empty();
+			$municipi.append($('<option value="">').text('<spring:message code="comu.opcio.sense.definir"/>'));
+			$.each(json, function(i, value) {
+				var valueCodi = value.codi;
+				<c:if test="${codiMunicipiSenseCodiProvincia}">valueCodi = value.codi.substring(2);</c:if>
+				var $option = $('<option>').text(value.nom).attr('value', valueCodi);
+				if (valorPerDefecte.length > 0 && (value.codi == valorPerDefecte || value.codi.substring(2) == valorPerDefecte)) {
+					$option.attr('selected', 'selected');
+				}
+				$municipi.append($option);
+			});
+		}
+	});
+})();
 </script>
 												</c:when>
 											</c:choose>
