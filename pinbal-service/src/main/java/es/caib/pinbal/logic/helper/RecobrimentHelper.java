@@ -179,6 +179,22 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 		}
 	}
 
+	/**
+	 * Converteix el valor de numElementos (String a PINBAL i SCSP 4) a l'int que requereix SCSP 5.
+	 * Si el valor és null, buit o no numèric, retorna el valor per defecte (normalment el nombre
+	 * de sol·licituds) en lloc de llançar una NumberFormatException.
+	 */
+	public static int parseNumElements(String numElements, int valorPerDefecte) {
+		if (numElements != null && !numElements.trim().isEmpty()) {
+			try {
+				return Integer.parseInt(numElements.trim());
+			} catch (NumberFormatException ex) {
+				log.warn("Valor de numElementos no numèric (" + numElements + "), s'utilitzarà " + valorPerDefecte);
+			}
+		}
+		return valorPerDefecte;
+	}
+
 	public ConfirmacionPeticion peticionAsincrona(
 			Peticion peticion,
 			boolean justificantGestionatPerAplicacio) throws ScspException {
@@ -206,7 +222,7 @@ public class RecobrimentHelper implements ApplicationContextAware, MessageSource
 			estado.setTiempoEstimadoRespuesta(atributs.getEstatTempsEstimatResposta());
 			atributos.setEstado(estado);
 			atributos.setIdPeticion(atributs.getPeticioId());
-			atributos.setNumElementos(Integer.parseInt(atributs.getNumElements()));
+			atributos.setNumElementos(parseNumElements(atributs.getNumElements(), solicituds.size()));
 			atributos.setTimeStamp(atributs.getTimestamp());
 			confirmacionPeticion.setAtributos(atributos);
             SubsistemaMetricHelper.addSuccessOperation("CRA", codigoCertificado, System.currentTimeMillis() - startTime);

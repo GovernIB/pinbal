@@ -326,13 +326,24 @@ public class RecobrimentServiceImpl implements RecobrimentService, ApplicationCo
         }
     }
 
+    /**
+     * Amb SCSP 4 (PINBAL 1.4.x) el camp numElementos era un String i s'acceptava null. Amb SCSP 5 és
+     * un int: si el client no l'envia (o l'envia buit) s'agafa el nombre de sol·licituds, igual que
+     * fa pinbal-client, per mantenir la compatibilitat amb clients que no l'informen.
+     */
+    static int getNumElementos(ScspPeticion scspPeticion) {
+        String numElementos = scspPeticion.getAtributos() != null ? scspPeticion.getAtributos().getNumElementos() : null;
+        int numSolicitudes = scspPeticion.getSolicitudes() != null ? scspPeticion.getSolicitudes().size() : 0;
+        return RecobrimentHelper.parseNumElements(numElementos, numSolicitudes);
+    }
+
     private Peticion toPeticion(ScspPeticion scspPeticion, boolean multiple) throws ParserConfigurationException, SAXException, IOException {
         if (scspPeticion != null) {
             Peticion peticion = new Peticion();
             if (scspPeticion.getAtributos() != null) {
                 Atributos atributos = new Atributos();
                 atributos.setIdPeticion(scspPeticion.getAtributos().getIdPeticion());
-                atributos.setNumElementos(Integer.parseInt(scspPeticion.getAtributos().getNumElementos()));
+                atributos.setNumElementos(getNumElementos(scspPeticion));
                 atributos.setTimeStamp(scspPeticion.getAtributos().getTimeStamp());
                 atributos.setCodigoCertificado(scspPeticion.getAtributos().getCodigoCertificado());
                 if (scspPeticion.getAtributos().getEstado() != null) {
