@@ -112,6 +112,10 @@ public class ServeiConfig extends PinbalAuditable<Long> {
     @Column(name = "use_cert_entitat")
     private boolean useCertificatEntitat = false;
 
+	/** Generar les peticions SCSP amb el format de namespaces de SCSP 4 (vegeu ScspJaxb2Marshaller). */
+	@Column(name = "format_ns_scsp4", nullable = false)
+	private boolean formatNamespacesScsp4 = false;
+
 	@Version
 	private long version = 0;
 
@@ -384,6 +388,7 @@ public class ServeiConfig extends PinbalAuditable<Long> {
 				.append("useAutoClasse", useAutoClasse)
 				.append("arrelRespostaPath", arrelRespostaPath)
 				.append("useCertificatEntitat", useCertificatEntitat)
+				.append("formatNamespacesScsp4", formatNamespacesScsp4)
 				.append("version", version)
 				.toString();
 	}

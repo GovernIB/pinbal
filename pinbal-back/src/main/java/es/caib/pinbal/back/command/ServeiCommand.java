@@ -132,6 +132,7 @@ public class ServeiCommand {
 	private boolean pinbalAddDadesEspecifiques = true;
 	private boolean useAutoClasse = true;
 	private boolean enviarSolicitant = false;
+	private boolean formatNamespacesScsp4 = false;
 
 	private Date dataDarreraActualitzacio;
 

@@ -370,6 +370,20 @@ function showModalXsd(element) {
 							</div>
 						</div>
 					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<c:set var="campPath" value="formatNamespacesScsp4"/>
+							<c:set var="campErrors"><form:errors path="${campPath}"/></c:set>
+							<div class="form-group vcenter<c:if test="${not empty campErrors}"> error</c:if>">
+								<label class="control-label col-md-4" for="${campPath}" title="<spring:message code="servei.form.camp.pinbal.format.ns.scsp4.info"/>"><spring:message code="servei.form.camp.pinbal.format.ns.scsp4"/></label>
+								<div class="col-md-8">
+									<form:checkbox path="${campPath}" id="${campPath}"/>
+									<form:errors path="${campPath}" cssClass="help-block"/>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<script>

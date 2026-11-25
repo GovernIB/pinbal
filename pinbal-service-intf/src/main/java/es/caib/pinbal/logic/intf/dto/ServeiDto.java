@@ -105,6 +105,7 @@ public class ServeiDto extends AbstractIdentificable<Long> implements Serializab
 	
 	private boolean pinbalIniDadesEspecifiques;
 	private boolean pinbalAddDadesEspecifiques;
+	private boolean formatNamespacesScsp4;
 
 	
 	@ToString.Exclude

@@ -53,8 +53,11 @@
 	<alias name="jaxbMarshaller" alias="marshaller" />
 	<alias name="jaxbMarshaller" alias="unmarshaller" />
 
-	<!-- Requerit per ClienteUnico (@Qualifier("getMarshaller")) i MessageRecover: inclou tots els paquets necessaris -->
-	<bean id="getMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+	<!-- Requerit per ClienteUnico (@Qualifier("getMarshaller")) i MessageRecover: inclou tots els paquets necessaris.
+	     Per als serveis amb PBL_SERVEI_CONFIG.FORMAT_NS_SCSP4 = 1, ScspJaxb2Marshaller genera Peticion i
+	     SolicitudRespuesta amb la forma de namespaces de SCSP 4 (DatosEspecificos amb xmlns per defecte,
+	     sense ns2..ns5 a l'arrel). La resta es generen igual que amb Jaxb2Marshaller. Vegeu la seva documentació. -->
+	<bean id="getMarshaller" class="es.caib.pinbal.scsp.binding.ScspJaxb2Marshaller">
 		<property name="classesToBeBound">
 			<list>
 				<value>es.scsp.bean.common.peticion.Peticion</value>
@@ -63,6 +66,7 @@
 				<value>es.scsp.bean.common.confirmacion.ConfirmacionPeticion</value>
 			</list>
 		</property>
+		<property name="serveiDao" ref="serveiDao"/>
 	</bean>
 
 	<!-- ==================================================================== -->

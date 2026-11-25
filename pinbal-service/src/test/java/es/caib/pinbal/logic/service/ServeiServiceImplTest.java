@@ -372,6 +372,37 @@ public class ServeiServiceImplTest {
     }
 
     @Test
+    public void save_serveiConfigNoExisteix_desaFormatNamespacesScsp4() throws ServeiNotFoundException {
+        ServeiDto dto = new ServeiDto();
+        dto.setCodi("SV001");
+        dto.setFormatNamespacesScsp4(true);
+        when(scspHelper.getServicio("SV001")).thenReturn(null);
+        when(serveiConfigRepository.findByServei("SV001")).thenReturn(null);
+
+        serveiService.save(dto);
+
+        org.mockito.ArgumentCaptor<ServeiConfig> captor = org.mockito.ArgumentCaptor.forClass(ServeiConfig.class);
+        verify(serveiConfigRepository).save(captor.capture());
+        assertTrue(captor.getValue().isFormatNamespacesScsp4());
+    }
+
+    @Test
+    public void save_serveiConfigExisteix_actualitzaFormatNamespacesScsp4() throws ServeiNotFoundException {
+        ServeiDto dto = new ServeiDto();
+        dto.setCodi("SV001");
+        dto.setFormatNamespacesScsp4(true);
+
+        ServeiConfig config = mock(ServeiConfig.class);
+        when(config.getId()).thenReturn(10L);
+        when(config.getRoleName()).thenReturn(null);
+        when(serveiConfigRepository.findByServei("SV001")).thenReturn(config);
+
+        serveiService.save(dto);
+
+        verify(config).setFormatNamespacesScsp4(true);
+    }
+
+    @Test
     public void save_serveiConfigExisteix_ambFitxerAjuda_actualitzaFitxer() throws ServeiNotFoundException {
         ServeiDto dto = new ServeiDto();
         dto.setCodi("SV001");

@@ -1,0 +1,15 @@
+databaseChangeLog:
+- changeSet:
+    id: 2.0.1-add-servei-config-format-ns-scsp4
+    author: Limit
+    comment: Afegir la columna format_ns_scsp4 a la configuració del servei (peticions SCSP amb el format de namespaces de SCSP 4).
+    changes:
+    - addColumn:
+        tableName: pbl_servei_config
+        columns:
+        - column:
+            name: format_ns_scsp4
+            type: NUMBER(1,0)
+            defaultValueNumeric: 0
+            constraints:
+              nullable: false

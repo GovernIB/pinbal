@@ -60,6 +60,7 @@ public class ServeiConfigTest {
         assertTrue(config.isUseCertificatEntitat());
         assertTrue(config.isActiu());
         assertEquals(0L, config.getVersion());
+        assertFalse(config.isFormatNamespacesScsp4(), "Per defecte, format de namespaces actual");
         assertTrue(config.isPermesDocumentTipusDni());
         assertTrue(config.isPermesDocumentTipusNif());
         assertTrue(config.isPermesDocumentTipusCif());

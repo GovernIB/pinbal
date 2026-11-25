@@ -262,6 +262,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
                     servei.isUseCertificatEntitat(),
 					true).build();
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
+			serveiConfig.setFormatNamespacesScsp4(servei.isFormatNamespacesScsp4());
 			serveiConfigRepository.save(serveiConfig);
 			cacheHelper.evictServeis();
 		} else {
@@ -297,6 +298,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 					servei.isEnviarSolicitant(),
                     servei.isUseCertificatEntitat());
 			serveiConfig.setPinbalUnitatDir3FromEntitat(servei.isPinbalUnitatDir3FromEntitat());
+			serveiConfig.setFormatNamespacesScsp4(servei.isFormatNamespacesScsp4());
 			if (servei.getFitxerAjudaNom() != null && !servei.getFitxerAjudaNom().isEmpty()) {
 				serveiConfig.updateFitxerAjuda(
 						servei.getFitxerAjudaNom(),
@@ -2137,6 +2139,7 @@ public class ServeiServiceImpl implements ServeiService, ApplicationContextAware
 			dto.setUseAutoClasse(serveiConfig.isUseAutoClasse());
 			dto.setEnviarSolicitant(serveiConfig.isEnviarSolicitant());
             dto.setUseCertificatEntitat(serveiConfig.isUseCertificatEntitat());
+			dto.setFormatNamespacesScsp4(serveiConfig.isFormatNamespacesScsp4());
 
 			dto.setDataDarreraActualitzacio(serveiConfig.getLastModifiedDate().isPresent()
 					? toDate(serveiConfig.getLastModifiedDate().get())
