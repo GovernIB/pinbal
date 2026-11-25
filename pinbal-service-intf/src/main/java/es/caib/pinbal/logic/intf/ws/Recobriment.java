@@ -3,9 +3,9 @@
  */
 package es.caib.pinbal.logic.intf.ws;
 
-import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
-import es.scsp.bean.common.peticion.Peticion;
-import es.scsp.bean.common.respuesta.Respuesta;
+import es.caib.pinbal.logic.intf.ws.model.WsConfirmacionPeticion;
+import es.caib.pinbal.logic.intf.ws.model.WsPeticion;
+import es.caib.pinbal.logic.intf.ws.model.WsRespuesta;
 import es.scsp.common.exceptions.ScspException;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -14,6 +14,10 @@ import javax.jws.WebService;
 /**
  * Declaració dels mètodes per al recobriment de les peticions
  * SCSP.
+ * <p>
+ * El contracte (WSDL) ha de ser el mateix que publicava PINBAL 1.4.x: les aplicacions integrades
+ * tenen el client generat a partir d'aquell WSDL. Per això els tipus són els de
+ * {@code es.caib.pinbal.logic.intf.ws.model} i no els beans de SCSP 5.
  * 
  * @author Limit Tecnologies <limit@limit.es>
  */
@@ -30,8 +34,8 @@ public interface Recobriment {
 	 * @throws ScspException Si s'ha produit algun error.
 	 */
 	@PreAuthorize("hasRole('PBL_WS')")
-	public Respuesta peticionSincrona(
-			Peticion peticion) throws ScspException;
+	public WsRespuesta peticionSincrona(
+			WsPeticion peticion) throws ScspException;
 
 	/**
 	 * Realitza una petició de tipus asíncron emprant SCSP.
@@ -41,8 +45,8 @@ public interface Recobriment {
 	 * @throws ScspException Si s'ha produit algun error.
 	 */
 	@PreAuthorize("hasRole('PBL_WS')")
-	public ConfirmacionPeticion peticionAsincrona(
-			Peticion peticion) throws ScspException;
+	public WsConfirmacionPeticion peticionAsincrona(
+			WsPeticion peticion) throws ScspException;
 
 	/**
 	 * Obtenir l'estat de la petició i la resposta de les taules SCSP.
@@ -52,7 +56,7 @@ public interface Recobriment {
 	 * @throws ScspException Si s'ha produit algun error.
 	 */
 	@PreAuthorize("hasRole('PBL_WS')")
-	public Respuesta getRespuesta(
+	public WsRespuesta getRespuesta(
 			String idpeticion) throws ScspException;
 
 	/**

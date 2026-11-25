@@ -4,17 +4,17 @@
 package es.caib.pinbal.logic.ws;
 
 import es.caib.pinbal.logic.intf.ws.Recobriment;
-import es.scsp.bean.common.peticion.Atributos;
-import es.scsp.bean.common.peticion.Consentimiento;
-import es.scsp.bean.common.peticion.DatosGenericos;
-import es.scsp.bean.common.peticion.Funcionario;
-import es.scsp.bean.common.peticion.Peticion;
-import es.scsp.bean.common.peticion.Procedimiento;
-import es.scsp.bean.common.peticion.Solicitante;
-import es.scsp.bean.common.peticion.SolicitudTransmision;
-import es.scsp.bean.common.peticion.Solicitudes;
-import es.scsp.bean.common.peticion.TipoDocumentacion;
-import es.scsp.bean.common.peticion.Titular;
+import es.caib.pinbal.logic.intf.ws.model.WsAtributos;
+import es.caib.pinbal.logic.intf.ws.model.WsConsentimiento;
+import es.caib.pinbal.logic.intf.ws.model.WsDatosGenericos;
+import es.caib.pinbal.logic.intf.ws.model.WsFuncionario;
+import es.caib.pinbal.logic.intf.ws.model.WsPeticion;
+import es.caib.pinbal.logic.intf.ws.model.WsProcedimiento;
+import es.caib.pinbal.logic.intf.ws.model.WsSolicitante;
+import es.caib.pinbal.logic.intf.ws.model.WsSolicitudTransmision;
+import es.caib.pinbal.logic.intf.ws.model.WsSolicitudes;
+import es.caib.pinbal.logic.intf.ws.model.WsTipoDocumentacion;
+import es.caib.pinbal.logic.intf.ws.model.WsTitular;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -66,7 +66,7 @@ public class RecobrimentTest {
 					"Prova de concepte",
 					"Sion Andreu",
 					"97669911C",
-					TipoDocumentacion.NIF,
+					WsTipoDocumentacion.NIF,
 					"12345678Z");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -82,7 +82,7 @@ public class RecobrimentTest {
 			String procedimentNom,
 			String funcionarioNombre,
 			String funcionarioNif,
-			TipoDocumentacion titularTipoDocumentacion,
+			WsTipoDocumentacion titularTipoDocumentacion,
 			String titularDocumentacion) throws Exception {
 		URL url = new URL(ENDPOINT_ADDRESS + "?wsdl");
 		QName qname = new QName(
@@ -97,30 +97,30 @@ public class RecobrimentTest {
 		prov.getBinding().setHandlerChain(handlerChain);
 		prov.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, USERNAME);
 		prov.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, PASSWORD);
-		Peticion peticion = new Peticion();
-		Atributos atributos = new Atributos();
+		WsPeticion peticion = new WsPeticion();
+		WsAtributos atributos = new WsAtributos();
 		atributos.setCodigoCertificado(codigoCertificado);
 		peticion.setAtributos(atributos);
-		Solicitudes solicitudes = new Solicitudes();
-		ArrayList<SolicitudTransmision> solicitudesList = new ArrayList<SolicitudTransmision>();
-		SolicitudTransmision solicitudTransmision = new SolicitudTransmision();
-		DatosGenericos datosGenericos = new DatosGenericos();
-		Solicitante solicitante = new Solicitante();
+		WsSolicitudes solicitudes = new WsSolicitudes();
+		ArrayList<WsSolicitudTransmision> solicitudesList = new ArrayList<WsSolicitudTransmision>();
+		WsSolicitudTransmision solicitudTransmision = new WsSolicitudTransmision();
+		WsDatosGenericos datosGenericos = new WsDatosGenericos();
+		WsSolicitante solicitante = new WsSolicitante();
 		solicitante.setIdentificadorSolicitante(solicitanteId);
 		solicitante.setNombreSolicitante(solicitanteNombre);
-		Procedimiento procedimiento = new Procedimiento();
+		WsProcedimiento procedimiento = new WsProcedimiento();
 		procedimiento.setCodProcedimiento(procedimentCodi);
 		procedimiento.setNombreProcedimiento(procedimentNom);
 		solicitante.setProcedimiento(procedimiento);
-		Funcionario funcionario = new Funcionario();
+		WsFuncionario funcionario = new WsFuncionario();
 		funcionario.setNombreCompletoFuncionario(funcionarioNombre);
 		funcionario.setNifFuncionario(funcionarioNif);
 		solicitante.setFuncionario(funcionario);
 		solicitante.setFinalidad(procedimentNom);
 		solicitante.setUnidadTramitadora(solicitanteUnidadTramitadora);
-		solicitante.setConsentimiento(Consentimiento.SI);
+		solicitante.setConsentimiento(WsConsentimiento.Si);
 		datosGenericos.setSolicitante(solicitante);
-		Titular titular = new Titular();
+		WsTitular titular = new WsTitular();
 		titular.setTipoDocumentacion(titularTipoDocumentacion);
 		titular.setDocumentacion(titularDocumentacion);
 		datosGenericos.setTitular(titular);

@@ -6,9 +6,9 @@ package es.caib.pinbal.api.interna.ws;
 import es.caib.pinbal.client.recobriment.model.ScspJustificante;
 import es.caib.pinbal.logic.intf.service.RecobrimentService;
 import es.caib.pinbal.logic.intf.service.exception.RecobrimentScspException;
-import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
-import es.scsp.bean.common.peticion.Peticion;
-import es.scsp.bean.common.respuesta.Respuesta;
+import es.caib.pinbal.logic.intf.ws.model.WsConfirmacionPeticion;
+import es.caib.pinbal.logic.intf.ws.model.WsPeticion;
+import es.caib.pinbal.logic.intf.ws.model.WsRespuesta;
 import es.scsp.common.exceptions.ScspException;
 import org.jboss.ws.api.annotation.WebContext;
 import org.springframework.security.core.Authentication;
@@ -60,7 +60,7 @@ public class RecobrimentBean implements es.caib.pinbal.logic.intf.ws.Recobriment
 	}
 
 	@Override
-	public Respuesta peticionSincrona(Peticion peticion) throws ScspException {
+	public WsRespuesta peticionSincrona(WsPeticion peticion) throws ScspException {
 		checkPermission();
 		try {
 			return mapper.toRespuesta(
@@ -71,7 +71,7 @@ public class RecobrimentBean implements es.caib.pinbal.logic.intf.ws.Recobriment
 	}
 
 	@Override
-	public ConfirmacionPeticion peticionAsincrona(Peticion peticion) throws ScspException {
+	public WsConfirmacionPeticion peticionAsincrona(WsPeticion peticion) throws ScspException {
 		checkPermission();
 		try {
 			return mapper.toConfirmacionPeticion(
@@ -82,7 +82,7 @@ public class RecobrimentBean implements es.caib.pinbal.logic.intf.ws.Recobriment
 	}
 
 	@Override
-	public Respuesta getRespuesta(String idpeticion) throws ScspException {
+	public WsRespuesta getRespuesta(String idpeticion) throws ScspException {
 		checkPermission();
 		try {
 			return mapper.toRespuesta(recobrimentService.getRespuesta(idpeticion));

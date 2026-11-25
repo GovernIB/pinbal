@@ -116,6 +116,19 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Runtime JAXB per als tests del contracte SOAP (a JBoss el proporciona el servidor) -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <!-- No canviar el classpath dels altres tests (p.ex. MimetypesFileTypeMap a RecobrimentRestControllerTest) -->
+                <exclusion>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
     </dependencies>
     <build>

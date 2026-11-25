@@ -58,6 +58,12 @@
 			<version>${scsp.core.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- Anotacions JAXB del model SOAP de recobriment (es.caib.pinbal.logic.intf.ws.model); les proporciona JBoss -->
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>es.scsp</groupId>
 			<artifactId>scsp-core</artifactId>

@@ -7,10 +7,10 @@ import es.caib.pinbal.client.recobriment.model.ScspPeticion;
 import es.caib.pinbal.client.recobriment.model.ScspRespuesta;
 import es.caib.pinbal.logic.intf.service.RecobrimentService;
 import es.caib.pinbal.logic.intf.service.exception.RecobrimentScspException;
-import es.scsp.bean.common.confirmacion.ConfirmacionPeticion;
-import es.scsp.bean.common.peticion.Atributos;
-import es.scsp.bean.common.peticion.Peticion;
-import es.scsp.bean.common.respuesta.Respuesta;
+import es.caib.pinbal.logic.intf.ws.model.WsAtributos;
+import es.caib.pinbal.logic.intf.ws.model.WsConfirmacionPeticion;
+import es.caib.pinbal.logic.intf.ws.model.WsPeticion;
+import es.caib.pinbal.logic.intf.ws.model.WsRespuesta;
 import es.scsp.common.exceptions.ScspException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -72,7 +72,7 @@ class RecobrimentBeanTest {
 		serviceResponse.setAtributos(responseAttributes);
 		when(recobrimentService.peticionSincrona(any(ScspPeticion.class))).thenReturn(serviceResponse);
 
-		Respuesta response = recobrimentBean.peticionSincrona(peticion("PET-1", "SERVEI"));
+		WsRespuesta response = recobrimentBean.peticionSincrona(peticion("PET-1", "SERVEI"));
 
 		ArgumentCaptor<ScspPeticion> captor = ArgumentCaptor.forClass(ScspPeticion.class);
 		verify(recobrimentService).peticionSincrona(captor.capture());
@@ -96,7 +96,7 @@ class RecobrimentBeanTest {
 	void peticionAsincronaDelegatesToRestRecobrimentService() throws Exception {
 		when(recobrimentService.peticionAsincrona(any(ScspPeticion.class))).thenReturn(new ScspConfirmacionPeticion());
 
-		ConfirmacionPeticion response = recobrimentBean.peticionAsincrona(peticion("PET-1", "SERVEI"));
+		WsConfirmacionPeticion response = recobrimentBean.peticionAsincrona(peticion("PET-1", "SERVEI"));
 
 		assertNotNull(response);
 		verify(recobrimentService).peticionAsincrona(any(ScspPeticion.class));
@@ -106,7 +106,7 @@ class RecobrimentBeanTest {
 	void getRespuestaDelegatesToRestRecobrimentService() throws Exception {
 		when(recobrimentService.getRespuesta("PET-1")).thenReturn(new ScspRespuesta());
 
-		Respuesta response = recobrimentBean.getRespuesta("PET-1");
+		WsRespuesta response = recobrimentBean.getRespuesta("PET-1");
 
 		assertNotNull(response);
 		verify(recobrimentService).getRespuesta("PET-1");
@@ -161,7 +161,7 @@ class RecobrimentBeanTest {
 		when(webServiceContext.isUserInRole("PBL_WS")).thenReturn(true);
 		when(recobrimentService.getRespuesta("PET-1")).thenReturn(new ScspRespuesta());
 
-		Respuesta response = recobrimentBean.getRespuesta("PET-1");
+		WsRespuesta response = recobrimentBean.getRespuesta("PET-1");
 
 		assertNotNull(response);
 	}
@@ -175,16 +175,16 @@ class RecobrimentBeanTest {
 		when(webServiceContext.getUserPrincipal()).thenThrow(new IllegalStateException("sense context"));
 		when(recobrimentService.getRespuesta("PET-1")).thenReturn(new ScspRespuesta());
 
-		Respuesta response = recobrimentBean.getRespuesta("PET-1");
+		WsRespuesta response = recobrimentBean.getRespuesta("PET-1");
 
 		assertNotNull(response);
 	}
 
-	private Peticion peticion(String idPeticion, String codigoCertificado) {
-		Peticion peticion = new Peticion();
-		Atributos atributos = new Atributos();
+	private WsPeticion peticion(String idPeticion, String codigoCertificado) {
+		WsPeticion peticion = new WsPeticion();
+		WsAtributos atributos = new WsAtributos();
 		atributos.setIdPeticion(idPeticion);
-		atributos.setNumElementos(1);
+		atributos.setNumElementos("1");
 		atributos.setCodigoCertificado(codigoCertificado);
 		peticion.setAtributos(atributos);
 		return peticion;
